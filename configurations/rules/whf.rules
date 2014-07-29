@@ -1,0 +1,75 @@
+import org.openhab.core.library.types.*
+import org.openhab.core.persistence.*
+import org.openhab.model.script.actions.*
+
+rule "Set temp 50"
+when
+	Item SetTemp60_FF_Living changed to ON
+then
+	sendHttpGetRequest("http://pi/_setTarget/77.0")
+end
+
+rule "Set thermo temp"
+when
+	Item TempSet_FF_Living changed
+then
+	sendHttpGetRequest("http://pi/_setTarget/" + TempSet_FF_Living.state)
+end
+
+rule "Fan scaling"
+when
+        Item Fan_FF_Living changed to ON
+then
+        postUpdate(Fan_FF_Living_Scaled, 71)
+end
+
+rule "Fan scaling2"
+when
+        Item Fan_FF_Living changed to OFF
+then
+        postUpdate(Fan_FF_Living_Scaled, 70)
+end
+
+rule "Cool scaling"
+when
+        Item Cool_FF_Living changed to ON
+then
+        postUpdate(Cool_FF_Living_Scaled, 69)
+end
+
+rule "Cool scaling2"
+when
+        Item Cool_FF_Living changed to OFF
+then
+        postUpdate(Cool_FF_Living_Scaled, 68)
+end
+
+rule "Heat scaling"
+when
+        Item Heat_FF_Living changed to ON
+then
+        postUpdate(Heat_FF_Living_Scaled, 67)
+end
+
+rule "Heat scaling2"
+when
+        Item Heat_FF_Living changed to OFF
+then
+        postUpdate(Heat_FF_Living_Scaled, 66)
+end
+
+rule "Heat index"
+
+when 
+        Item Temperature_FF_Living changed
+then
+        if (Temperature_FF_Living.state > 70 {
+
+                var T = Temperature_FF_Living.state as DecimalType
+                var RH = Humidity_thermo_FF_Living.state 
+                postUpdate(HeatIndex_FF_Living, 0.363445176 + 0.988622465 * T + 4.777114035 * RH - 0.114037667 * T * RH - 0.000850208 * T * T -0.020716198 * RH * RH + 0.000687678* T * T * RH + 0.000274954 * T * RH * RH )
+        /*        postUpdate(HeatIndex_FF_Living, -42.379 + 2.04901523 * T + 10.14333127 * RH - 0.22475541 * T * RH - 6.83783e-3 * T * T -5.481717e-2 * RH * RH + 1.22874e-3* T * T * RH + 8.5282e-4 * T * RH * RH -1.99e-6 * T * T * RH * RH) */
+        } else {
+                postUpdate(HeatIndex_FF_Living, Temperature_FF_Living.state)
+        }
+end

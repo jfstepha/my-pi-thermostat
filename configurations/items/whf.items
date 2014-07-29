@@ -1,0 +1,44 @@
+Group All
+Group gSF 		(All)
+Group gFF 		(All)
+Group gB 		(All)
+Group Outdoor 	(All)
+Group Weather 	(All)
+Group Status 	(All)
+Group FF_Living 	"Living Room" 	<video> 	(gFF)
+Group Temp_LR_Chart
+Number Temp_LR_Chart_Period "Living Room Thermostat"
+Number Uptime_Period "Uptime"
+Number Humidity_FF_Living_Chart_Period "Humidity"
+
+/* active groups */
+Group:Number:AVG 				Temperature	"Avg. Room Temperature [%.1f °C]" 	<temperature>	(Status)
+
+/* Indoor Temperatures */
+Number Temperature_FF_Living "Thermostat temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://pi/_liveTemp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
+Number TempSet_FF_Living "Thermostat target [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://pi/_liveTargetTemp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
+String Fan_FF_Living "Fan [%s]" <temperature> (Temperature, FF_Living) {http="<[http://pi/_liveWhatsOn:30000:REGEX(.*?> fan (.*?) </p>.*)]"}
+String Cool_FF_Living "Cool [%s]" <temperature> (Temperature, FF_Living) {http="<[http://pi/_liveWhatsOn:30000:REGEX(.*?> cool (.*?) </p>.*)]"}
+String Heat_FF_Living "Heat [%s]" <temperature> (Temperature, FF_Living) {http="<[http://pi/_liveWhatsOn:30000:REGEX(.*?> heat (.*?) </p>.*)]"}
+String Daemon_FF_Living "Daemon [%s]" <temperature> (Temperature, FF_Living) {http="<[http://pi/_liveDaemonStatus:30000:REGEX(.*?> Daemon is (.*?) </p>.*)]"}
+Number Fan_FF_Living_Scaled "Fan scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
+Number Cool_FF_Living_Scaled "Cool scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
+Number Heat_FF_Living_Scaled "Heat scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
+Number HeatIndex_FF_Living "Heat index [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
+Number Uptime_thermo_FF_Living "Uptime [%d]" <temperature> (Temperature, FF_Living) {http="<[https://api.spark.io/v1/devices/normal_dentist/uptime?access_token=36026ae69dd3f99acdc53e8183087d4df8c48ab6:30000:JS(getValue.js)]"}
+Number Humidity_thermo_FF_Living "Humidity [%.1f]" <temperature> (Temperature, FF_Living) {http="<[https://api.spark.io/v1/devices/normal_dentist/humidity?access_token=36026ae69dd3f99acdc53e8183087d4df8c48ab6:30000:JS(getValue.js)]"}
+/* Windows */
+Switch          TV_GF_Living_TV_power   "Power"     (GF_Living_TV)  { exec="ON:/usr/local/bin/samsungTvStart.sh, OFF:/bin/true", samsungtv="OFF:Livingroo
+m:KEY_POWEROFF, ON:Livingroom:KEY_POWERON" }
+
+
+Group Weather_Chart													(Weather)
+Number Weather_Temperature 		"Outside Temperature [%.1f °F]"	<temperature> (Weather_Chart) { http="<[http://weather.yahooapis.com/forecastrss?w=2424361&u=f:60000:XSLT(yahoo_weather_temperature.xsl)]" }
+Number Weather_Temp_Max 		"Todays Maximum [%.1f °F]"	<temperature> (Weather_Chart)  { http="<[http://weather.yahooapis.com/forecastrss?w=2424361&u=f:60000:XSLT(yahoo_weather_forecast_high.xsl)]" }
+Number Weather_Temp_Min 		"Todays Minimum [%.1f °F]"	<temperature> (Weather_Chart)  { http="<[http://weather.yahooapis.com/forecastrss?w=2424361&u=f:60000:XSLT(yahoo_weather_forecast_low.xsl)]" }
+Number Weather_Chart_Period		"Chart Period"
+DateTime Weather_LastUpdate		"Last Update [%1$ta %1$tR]"	<clock>
+
+/* NTP binding demo item */
+DateTime		Date			"Date [%1$tA, %1$td.%1$tm.%1$tY]"	<calendar>	{ ntp="Europe/Berlin:de_DE" }
+
