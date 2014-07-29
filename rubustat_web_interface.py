@@ -67,6 +67,9 @@ def getDaemonStatus():
             except OSError:
                 return "<p id=\"daemonNotRunning\"> DAEMON IS NOT RUNNING. </p>"
     except IOError:
+        # automatically restart daemon
+        print "restarting daemon"
+        subprocess.Popen("/usr/bin/python rubustat_daemon.py start", shell=True)
         return "<p id=\"daemonNotRunning\"> DAEMON IS NOT RUNNING. </p>"
 
 @app.route('/')
@@ -100,6 +103,18 @@ def my_form():
                                         checked = checked, \
                                         daemonStatus = daemonStatus, \
                                         whatsOn = whatsOn)
+
+@app.route("/_setTarget/<float:target>", methods=['GET'])
+def my_set_form_get(target):
+    file = open("status", "r")
+    oldTargetTemp = float(file.readline())
+    mode = file.readline()
+    file.close()
+
+    f = open("status", "w")
+    f.write(str(target) + "\n" + mode)
+    f.close()
+    return "success" 
 
 @app.route("/", methods=['POST'])
 def my_form_post():
