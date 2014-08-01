@@ -5,8 +5,14 @@ import re
 import ConfigParser
 
 from getIndoorTemp import getIndoorTemp
+from getIndoorTemp import getIndoorTemp2
 from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash, jsonify
+
+from sensor_server import loopThread 
+
+loopThread= loopThread()
+
 
 app = Flask(__name__)
 #hard to be secret in open source... >.>
@@ -149,6 +155,11 @@ def updateTemp():
 
     return str(round(getIndoorTemp(),1))
 
+@app.route('/_liveTemp2', methods= ['GET'])
+def updateTemp2():
+
+    return str(round(getIndoorTemp2(),1))
+
 @app.route('/_liveWhatsOn', methods= ['GET'])
 def updateWhatsOn():
 
@@ -182,4 +193,6 @@ def getMode():
         return "error"
 
 if __name__ == "__main__":
+    loopThread.setDaemon(True)
+    loopThread.start() 
     app.run("0.0.0.0", port=80)

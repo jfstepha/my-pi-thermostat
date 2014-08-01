@@ -15,7 +15,8 @@ Number Humidity_FF_Living_Chart_Period "Humidity"
 Group:Number:AVG 				Temperature	"Avg. Room Temperature [%.1f °C]" 	<temperature>	(Status)
 
 /* Indoor Temperatures */
-Number Temperature_FF_Living "Thermostat temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://pi/_liveTemp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
+Number Temperature_FF_Living "Remote sensor temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://pi/_liveTemp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
+Number Temperature_FF_Living2 "Thermostat temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://pi/_liveTemp2:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
 Number TempSet_FF_Living "Thermostat target [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://pi/_liveTargetTemp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
 String Fan_FF_Living "Fan [%s]" <temperature> (Temperature, FF_Living) {http="<[http://pi/_liveWhatsOn:30000:REGEX(.*?> fan (.*?) </p>.*)]"}
 String Cool_FF_Living "Cool [%s]" <temperature> (Temperature, FF_Living) {http="<[http://pi/_liveWhatsOn:30000:REGEX(.*?> cool (.*?) </p>.*)]"}

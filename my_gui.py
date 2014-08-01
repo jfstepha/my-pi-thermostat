@@ -4,6 +4,7 @@ import wx
 from wx.lib.wordwrap import wordwrap
 import requests
 import re
+import datetime
 
 url = "http://localhost:80"
 
@@ -163,7 +164,7 @@ class MainFrame(wx.Frame):
         self.pnGretch.Hide()
         self.SetSizer(self.sizerV)
    def on_timer(self, evt):
-        print "tick"
+        print "[%s] my_gui tick" % (datetime.datetime.now())
         self.UpdateCurrentTemp()
         self.UpdateTargetTemp()
         self.UpdateMode()

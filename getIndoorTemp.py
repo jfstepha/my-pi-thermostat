@@ -12,3 +12,10 @@ def getIndoorTemp():
     file.close()
      
     return indoorTemp
+
+def getIndoorTemp2():
+    file = open("indoortemp2", "r")
+    indoorTemp = float(file.readline())
+    file.close()
+     
+    return indoorTemp

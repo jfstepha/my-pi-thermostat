@@ -6,6 +6,7 @@ sitemap whf label="Main Menu"
 			Text label="Living Room" icon="firstfloor" {
 				Frame label="Thermostat" {
 					Text item=Temperature_FF_Living
+					Text item=Temperature_FF_Living2
                                         Text item=Humidity_thermo_FF_Living
                                         Text item=HeatIndex_FF_Living
 					Setpoint item=TempSet_FF_Living step=0.5 minValue=40 maxValue=120
