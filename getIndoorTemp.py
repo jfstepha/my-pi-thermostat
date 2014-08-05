@@ -5,17 +5,13 @@
 import subprocess
 import glob
 import time
+import urllib2
+import json
 
 def getIndoorTemp():
-    file = open("indoortemp", "r")
-    indoorTemp = float(file.readline())
-    file.close()
-     
-    return indoorTemp
+    jsonurl = urllib2.urlopen("http://localhost/_liveSensorValue/sum_LR/temp")
+    return float(json.loads(jsonurl.read()))
 
 def getIndoorTemp2():
-    file = open("indoortemp2", "r")
-    indoorTemp = float(file.readline())
-    file.close()
-     
-    return indoorTemp
+    jsonurl = urllib2.urlopen("http://localhost/_liveSensorValue/thermo_LR/temp")
+    return float(json.loads(jsonurl.read()))

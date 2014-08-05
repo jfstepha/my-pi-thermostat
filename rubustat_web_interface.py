@@ -31,7 +31,7 @@ FAN_PIN = int(config.get('main','FAN_PIN'))
 weatherEnabled = config.getboolean('weather','enabled')
 
 #start the daemon in the background
-subprocess.Popen("/usr/bin/python rubustat_daemon.py start", shell=True)
+#subprocess.Popen("/usr/bin/python rubustat_daemon.py start", shell=True)
 
 if weatherEnabled == True:
     import pywapi
@@ -122,6 +122,18 @@ def my_set_form_get(target):
     f.close()
     return "success" 
 
+@app.route("/_setMode/<mode>", methods=['GET'])
+def setMode(mode):
+    file = open("status", "r")
+    TargetTemp = float(file.readline())
+    oldMode = file.readline()
+    file.close()
+
+    f = open("status", "w")
+    f.write(str(TargetTemp) + "\n" + mode)
+    f.close()
+    return "success" 
+
 @app.route("/", methods=['POST'])
 def my_form_post():
 
@@ -153,12 +165,12 @@ def my_form_post():
 @app.route('/_liveTemp', methods= ['GET'])
 def updateTemp():
 
-    return str(round(getIndoorTemp(),1))
+    return "%0.1f" % loopThread.sensors['sum_LR'].temp
 
 @app.route('/_liveTemp2', methods= ['GET'])
 def updateTemp2():
 
-    return str(round(getIndoorTemp2(),1))
+    return "%0.1f" % loopThread.sensors['thermo_LR'].temp
 
 @app.route('/_liveWhatsOn', methods= ['GET'])
 def updateWhatsOn():
@@ -189,6 +201,30 @@ def getMode():
         mode = file.readline()
         file.close()
         return str(mode)
+    except IOError:
+        return "error"
+
+@app.route('/_liveSensor/<sensorname>', methods= ['GET'])
+def getSensor(sensorname):
+    try:
+        return str(loopThread.sensors[sensorname])
+    except IOError:
+        return "error"
+
+@app.route('/_liveSensorValue/<sensorname>/<paramname>', methods= ['GET'])
+def getSensor(sensorname, paramname):
+    try:
+        return str(loopThread.sensors[sensorname].get_dict()[paramname])
+    except IOError:
+        return "error"
+
+@app.route('/_dumpSensors/', methods= ['GET'])
+def dumpSensors():
+    try:
+        s = ""
+        for key in loopThread.sensors:
+            s = s + str( loopThread.sensors[key] ) + "\n" 
+        return s
     except IOError:
         return "error"
 

@@ -15,183 +15,219 @@ import subprocess
 import os
 import Adafruit_DHT
 import datetime
+import serial
 
 FNULL = open(os.devnull,'w')
+############################################################################
+############################################################################
+class Sensor():
+############################################################################
+############################################################################
+
+    ################################################################
+    def __init__(self, name, hw_type, domain="blank", sensor_type="temp"):
+    ################################################################
+        # sensor type is temp or thermo_disp.  (What kind of sensors are on the sensor)
+        # hw_tyoe is spark, local_dht, sum or thermo_disp (what kind or hardware is driving the sensor) 
+        self.name = name
+        self.uptime = 0
+        self.domain = domain
+        self.lsu = 10000
+        self.lsp = 0
+        self.hw_type = hw_type
+        self.name = name
+        self.port = None
+        # only valid for summarys:
+        self.N = 0
+        self.total = 0
+        self.sensor_type = sensor_type
+        if sensor_type == "temp" or sensor_type == "remote_disp":
+            self.temp = -100
+            self.rh = -100
+        if sensor_type == "remote_disp":
+            self.lastmotion = 0
+            self.port = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=3.0)
+            print "serial port initial status:"
+            for i in range(0,5):
+                rcv = self.port.read(100);
+                print rcv;
+
+            
+
+    ################################################################
+    def get_dict(self):
+    ################################################################
+       if self.sensor_type == "temp":
+           return ( { 'temp' : self.temp, 'rh' : self.rh, 'lsu' : self.lsu, 'domain' : self.domain, 'uptime' : self.uptime, 'lsp' : self.lsp } )
+       if self.sensor_type == "remote_disp":
+           return ( { 'temp' : self.temp, 'rh' : self.rh, 'lsu' : self.lsu, 'domain' : self.domain, 'uptime' : self.uptime, 'lsp' : self.lsp, 'lastmotion' : self.lastmotion} )
 
 
-class loopThread(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self.loopcount=0
-        self.msgcount = 0;
-        # lsu = loops since update  (how long since we've received an update from this sensor)
-        # lsp = loops since ping (how long this sensor thinks it's been since it heard from us)
-        self.sensors = {
-            'spark': { 'temp' : 0, 'rh' : 0, 'lsu':100000, 'domain':'LR', 'uptime':0, 'lsp':0  },
-            'thermo_lr' : { 'temp' : 0, 'rh' : 0, 'lsu':100000, 'domain':'LR', 'uptime':0, 'lsp':0 },
-            'sum_LR' : { 'temp' : 0, 'rh' : 0, 'lsu':100000, 'domain':'LR', 'uptime':0, 'lsp':0 },
-        }
-        self.domains = ['LR']
+    ################################################################
+    def __str__(self):
+    ################################################################
+       if self.sensor_type == "temp":
+           return ( "%s : { temp: %0.1f rh: %0.1f lsu: %d domain: %s uptime: %d lsp: %d sensor_type: %s hw_type: %s } " % (self.name, self.temp, self.rh, self.lsu, self.domain, self.uptime, self.lsp, self.sensor_type, self.hw_type) )
+       elif self.sensor_type == "remote_disp":
+           return ( "%s : { temp: %0.1f rh: %0.1f lsu: %d domain: %s uptime: %d lsp: %d sensor_type: %s hw_type: %s lastmotion: %d } " % (self.name, self.temp, self.rh, self.lsu, self.domain, self.uptime, self.lsp, self.sensor_type, self.hw_type, self.lastmotion) )
 
-        print "[%s]sensor array: %s " % (datetime.datetime.now(), str(self.sensors))
 
+    ################################################################
+    def update(self):
+    ################################################################
+        if self.hw_type == "spark":
+            self.updateSpark()
+        elif self.hw_type == "local_dht":
+            self.updateLocalDHT()
+        elif self.hw_type == "remote_disp":
+            self.updateRemoteDisp()
+
+    ################################################################
     def getSparkVal(self,varname):
+    ################################################################
         jsonurl = urllib2.urlopen("https://api.spark.io/v1/devices/normal_dentist/%s?access_token=36026ae69dd3f99acdc53e8183087d4df8c48ab6" % varname)
         text = json.loads(jsonurl.read())
         retval = text['result']
         return(retval)
 
-    def run(self):
-        while 1:
-            if 1:
-                for s in self.sensors:
-                    self.sensors[s]['lsu'] += 1
+    ################################################################
+    def updateSpark(self):
+    ################################################################
             try:
                 #####################################################
                 # read spark core
                 #####################################################
-                self.sensors['spark']['temp'] = self.getSparkVal("temperature")
-                self.sensors['spark']['rh'] = self.getSparkVal("humidity")
-                self.sensors['spark']['uptime'] = self.getSparkVal("uptime")
-                self.sensors['spark']['lsp'] = self.getSparkVal("lsp")
-                self.sensors['spark']['lsu'] = 0
+                self.temp = self.getSparkVal("temperature")
+                self.rh = self.getSparkVal("humidity")
+                self.uptime = self.getSparkVal("uptime")
+                self.lsp = self.getSparkVal("lsp")
+                self.lsu = 0
+
                 r = subprocess.call(["curl", "https://api.spark.io/v1/devices/normal_dentist/ping", "-d", "access_token=36026ae69dd3f99acdc53e8183087d4df8c48ab6", "-d", "args=1"], stdout=FNULL, stderr=subprocess.STDOUT)
 
-                print "[%s] spark: %s " % (datetime.datetime.now(), str(self.sensors['spark']))
+                print "[%s] spark: %s " % (datetime.datetime.now(), str(self))
             except KeyboardInterrupt:
                 print "Keyboard interrupt"
                 exit()
             except:
-                print "[%s] exception:  " % (datetime.datetime.now() ), sys.exc_info()[0]
+                print "[%s] spark exception:  " % (datetime.datetime.now() ), sys.exc_info() 
 
+    ################################################################
+    def updateRemoteDisp(self):
+    ################################################################
+        self.lsu += 1
+        retries = 0
+        rcv = ""
+        while ( str( rcv ).find("ok... got") == -1 and retries < 10):
+            self.port.write("1 80\r\n");
+            rcv = self.port.readline();
+            print "[%s] %s received: %s" % (datetime.datetime.now(), self.name, str(rcv).strip())
+            self.port.flush()
+            retries += 1
+        if str(rcv).find("ok... got") > -1:      
+            l = str(rcv).split()
+            self.temp = float( l[9].split(":")[1] )
+            self.rh = float( l[10].split(":")[1] )
+            self.lsu = int( l[12] )
+            self.lastmotion = int( l[14] )
+            self.uptime = int( l[16] )
+            self.lsu = 0
+            print "[%s] %s: %s" %(datetime.datetime.now(), self.name, str(self))
+        else:
+            print "[%s] failed after retries: %d" % (datetime.datetime.now(), retries)
+        
+
+
+    ################################################################
+    def updateLocalDHT(self):
+    ################################################################
+
+            #########################################################
+            # read local pi thermostat 
+            #########################################################
             try:
-                #########################################################
-                # read local pi thermostat 
-                #########################################################
-                
                 sensor = 22
                 pin = 17
-                rh, tempC = Adafruit_DHT.read_retry(sensor, pin)
-                if rh is not None and tempC is not None:
-                    temp = tempC * 1.8 + 32;
-                    self.sensors['thermo_lr']['temp'] = temp
-                    self.sensors['thermo_lr']['rh'] = rh
-                    self.sensors['thermo_lr']['uptime'] = self.loopcount
-                    self.sensors['thermo_lr']['lsp'] = 0
-                    self.sensors['thermo_lr']['lsu'] = 0
+                humidity, tempC = Adafruit_DHT.read_retry(sensor, pin)
+                if humidity is not None and tempC is not None:
+                    self.temp = tempC * 1.8 + 32;
+                    self.rh = humidity
+                    self.uptime += 1
+                    self.lsp = 0
+                    self.lsu = 0
 
-                print "[%s] thermo_lr: %s " % (datetime.datetime.now(), str(self.sensors['thermo_lr']))
+                print "[%s] thermo_lr: %s " % (datetime.datetime.now(), str(self))
 
-                self.loopcount += 1
+                self.uptime += 1
             except KeyboardInterrupt:
                 print "Keyboard interrupt"
                 exit()
             except:
                 print "[%s] exception:  " % (datetime.datetime.now() ), sys.exc_info()[0]
 
-            if 1:
-                #########################################################
-                # calculate sum
-                #########################################################
-                t_sum = {}
-                rh_sum = {}
-                N = {}
-                for d in self.domains:
-                    t_sum[d] = 0
-                    rh_sum[d] = 0
-                    N[d] = 0
-                for s in self.sensors:
-                    #print " checking sensor %s (lsu=%d)" % (s, self.sensors[s]['lsu'] )
-                    if self.sensors[s]['lsu'] < 120 and s.find("sum") == -1 :
-                        # print " lsu is %d " % self.sensors[s]['lsu']
-                        t_sum[ self.sensors[s]['domain'] ]  += self.sensors[s]['temp']
-                        rh_sum[ self.sensors[s]['domain'] ]  += self.sensors[s]['rh']
-                        N[ self.sensors[s]['domain'] ] += 1
-                for d in self.domains:
-                    if N[d] > 0:
-                        sumname = "sum_%s" % d 
-                        print " setting %s temp to %0.3f" % (sumname , t_sum[d] / N[d])
-                        self.sensors[sumname]['temp'] = t_sum[ d ] / N [ d ]
-                        self.sensors[sumname]['rh' ] = rh_sum[ d ] / N [ d ]
-                        self.sensors[sumname]['uptime'] = self.loopcount
-                        self.sensors[sumname]['lsu'] = 0
+
+############################################################################
+############################################################################
+class loopThread(threading.Thread):
+############################################################################
+############################################################################
+
+    ################################################################
+    def __init__(self):
+    ################################################################
+        threading.Thread.__init__(self)
+        self.loopcount=0
+        self.msgcount = 0;
+        # lsu = loops since update  (how long since we've received an update from this sensor)
+        # lsp = loops since ping (how long this sensor thinks it's been since it heard from us)
+        self.sensors = {}
+        self.sensors['spark'] = Sensor('spark', 'spark', 'LR') 
+        self.sensors['thermo_LR'] = Sensor('thermo_lr', 'local_dht', 'LR' )
+        self.sensors['remote_MBR'] = Sensor('remote_MBR', 'remote_disp', 'LR', "remote_disp")
+        self.sensors['sum_LR'] = Sensor('sum_LR', 'sum', 'LR')
+        self.domains = ['LR']
+
+        for keys in self.sensors:
+            print "[%s] initial: %s: %s " % (datetime.datetime.now(), keys, str(self.sensors[keys]))
+        
+
+
+    ################################################################
+    def run(self):
+    ################################################################
+        while 1:
+           
+            # initialize the average calc stats 
+            for d in self.domains:
+                self.sensors[ "sum_%s" % d ].N = 0
+                self.sensors[ "sum_%s" % d ].total = 0
+             
+            for keys in self.sensors:
+
+                # update the sensors
+                self.sensors[keys].lsu += 1
+                self.sensors[keys].update()
+
+                # update the averages
+                d = self.sensors[keys].domain
+                if keys.find("sum") == -1 and self.sensors[keys].sensor_type == "temp":
+                    self.sensors[ "sum_%s" % d ].N += 1
+                    self.sensors[ "sum_%s" % d ].total += self.sensors[keys].temp
+ 
+            # calculate the averages
+            for d in self.domains:
+                t = self.sensors[ "sum_%s" % d ].total 
+                N = self.sensors[ "sum_%s" % d ].N
+                self.sensors[ "sum_%s" % d ].temp = t / N
+                self.sensors[ "sum_%s" % d ].lsu = 0
+                self.sensors[ "sum_%s" % d ].uptime += 1
+
+                print "[%s] sum: %s " % (datetime.datetime.now(), str(self.sensors['sum_LR']))
 
                 f = open('indoortemp','w')
-                f.write("%0.3f" % self.sensors['sum_LR']['temp'] )
+                f.write("%0.3f" % self.sensors['sum_LR'].temp)
                 f.close()
 
             time.sleep(10)
                 
 
-################################################################################
-class clientThread(threading.Thread):
-################################################################################
-    # created each time a client connects
-    # destroyed on disconnect.
-    def __init__(self, serv):
-        threading.Thread.__init__(self)
-        self.server = serv
-        self.clientList = []
-        self.running = True
-        print("Client thread created. . .")
-        
-    def run(self):
-        print("Beginning client thread loop. . .")
-        while self.running:
-            for client in self.clientList:
-                client.loopThread = self.loopThread
-                message = client.sock.recv(self.server.BUFFSIZE)
-                if message != None and message != "":
-                    client.update(message)
-
-class clientObject(object):
-    def __init__(self,clientInfo):
-        self.sock = clientInfo[0]
-        self.address = clientInfo[1]
-    def update(self,message):
-        # called for every message recieved from a client
-        self.loopThread.msgcount += 1
-        message = message.strip()
-        try:
-            if message == "dump_sensors":
-                self.sock.send( str(self.loopThread.sensors).encode())
-            elif message.find("liveVal") == 0 and message.count(".") == 2:
-                x, sensor, param = message.split(".") 
-                self.sock.send( str(self.loopThread.sensors[sensor][param]).encode() )
-            else:
-                self.sock.send("unrecognized command".encode())
-        except:
-            self.sock.send( str(sys.exc_info()[0]).encode() )
-
-
-class Server(object):
-    def __init__(self):
-        self.HOST = 'localhost'
-        self.PORT = 22085
-        self.BUFFSIZE = 1024
-        self.ADDRESS = (self.HOST,self.PORT)
-        self.clientList = []
-        self.running = True
-        self.serverSock = socket.socket()
-        self.serverSock.bind(self.ADDRESS)
-        self.serverSock.listen(2)
-
-        self.loopThread = loopThread(self)
-        print "Starting loop thread..."
-        self.loopThread.start()
-
-        self.clientThread = clientThread(self)
-        self.clientThread.loopThread = self.loopThread
-
-        print("Starting client thread. . .")
-        self.clientThread.start()
-        print("Awaiting connections. . .")
-        while self.running:
-            clientInfo = self.serverSock.accept()
-            print("Client connected from {}.".format(clientInfo[1]))
-            self.clientThread.clientList.append(clientObject(clientInfo))
-
-        self.serverSock.close()
-        print("- end -")
-
-#serv = Server()
