@@ -25,6 +25,7 @@ float h;
 float t;
 
 struct t_data {
+  short int id;
   float t;
   float h;
   unsigned long lsp;
@@ -84,8 +85,8 @@ void setup(void)
   // Open 'our' pipe for writing
   // Open the 'other' pipe for reading, in position #1 (we can have up to 5 pipes open for reading)
 
-    radio.openWritingPipe(pipes[0]);
-    radio.openReadingPipe(1,pipes[1]);
+  radio.openWritingPipe(pipes[1]);
+  radio.openReadingPipe(1,pipes[0]);
 
   //
   // Start listening
@@ -103,65 +104,42 @@ void setup(void)
 void loop(void)
 {
     // First, stop listening so we can talk.
-    radio.stopListening();
     
-    while(Serial.available() == 0){
-    }
+    if(Serial.available() != 0){
     
     // Message format:
     // <sensor_id> <temp setpoint> <treq_ack> <heat> <cool> <fan>
     
-    sensor_id = Serial.parseInt();
-    if(Serial.available()) s.t_set = Serial.parseFloat();
-    if(Serial.available()) s.treq_ack = Serial.parseInt();
-    if(Serial.available()) s.heat = Serial.parseInt();
-    if(Serial.available()) s.cool = Serial.parseInt();
-    if(Serial.available()) s.fan = Serial.parseInt();
-    
-    if( sensor_id < 1 || sensor_id > 1) {
-        Serial.print("Sensor_id ");
-        Serial.print( sensor_id );
-        Serial.println("invalid");
-    }
-    Serial.print("Sensor_id: ");
-    Serial.print( sensor_id );    
-    Serial.print(" Sending t_set: ");
-    Serial.print( s.t_set);
-    Serial.print(" treq_ack: ");
-    Serial.print( s.treq_ack );
+      sensor_id = Serial.parseInt();
+      if(Serial.available()) s.t_set = Serial.parseFloat();
+      if(Serial.available()) s.treq_ack = Serial.parseInt();
+      if(Serial.available()) s.heat = Serial.parseInt();
+      if(Serial.available()) s.cool = Serial.parseInt();
+      if(Serial.available()) s.fan = Serial.parseInt();
       
-    bool ok = radio.write( &s, sizeof(t_send) );
-    
-    if (ok)
-      printf(" ok...");
-    else
-      printf(" failed.\n\r");
-
-    // Now, continue listening
-    radio.startListening();
-
-    // Wait here until we get a response, or timeout (250ms)
-    unsigned long started_waiting_at = millis();
-    bool timeout = false;
-    while ( ! radio.available() && ! timeout )
-      if (millis() - started_waiting_at > 200 )
-        timeout = true;
-
-    // Describe the results
-    if ( timeout )
-    {
-      printf("Failed, response timed out.\n\r");
+      if( sensor_id < 1 || sensor_id > 1) {
+          Serial.print("Sensor_id ");
+          Serial.print( sensor_id );
+          Serial.println("invalid");
+      }
+      Serial.print("Sensor_id: ");
+      Serial.print( sensor_id );    
+      Serial.print(" Sending t_set: ");
+      Serial.print( s.t_set);
+      Serial.print(" treq_ack: ");
+      Serial.print( s.treq_ack );
     }
-    else
-    {
-      // Grab the response, compare, and send to debugging spew
-
+    
+    if (radio.available()) {
+      Serial.print("radio data available");
       radio.read( &d, sizeof(t_data) );
 
       // Spew it
-      Serial.print(" got t:");
+      Serial.print(" got id: ");
+      Serial.print(d.id);
+      Serial.print(" t: ");
       Serial.print(d.t);
-      Serial.print(" h:");
+      Serial.print(" h: ");
       Serial.print(d.h);
       Serial.print(" lsp: ");
       Serial.print(d.lsp);
@@ -173,21 +151,26 @@ void loop(void)
       Serial.print(d.treq_pending);
       Serial.print(" treq_user: ");
       Serial.print(d.treq_user);
-      Serial.println();
 
       if (d.treq_pending != 0) {
         s.treq_ack = d.treq_pending;
-        s.t_set += d.treq_pending;
-        Serial.print("Updating s.treq_ack to");
-        Serial.println(s.treq_ack);
+        s.t_set = d.treq_pending;
       } else {
         s.treq_ack = 0;
       }
+      radio.stopListening();
+    
+    Serial.print(" sending response:");
+    bool ok = radio.write( &s, sizeof(t_send) );
+    
+    if (ok)
+      Serial.print(" ok.\n\r");
+    else
+      Serial.println(" failed.\n\r");
+    radio.startListening();
+  }
 
-    }
-
-    // Try again 1s later
-    delay(5000);
+  delay(10);
 
 }
 // vim:cin:ai:sts=2 sw=2 ft=cpp

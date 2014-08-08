@@ -3,7 +3,6 @@
 #include <SPI.h>
 #include "nRF24L01.h"
 #include "RF24.h"
-#include "printf.h"
 #include <DFR_Key.h>
 
 
@@ -11,6 +10,7 @@
 #define DHTPIN A3     // what pin we're connected to
 #define DHTTYPE DHT22   // DHT 22  (AM2302)
 #define MOTIONPIN A4
+#define ID 1
 
 DHT dht(DHTPIN, DHTTYPE);
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7); 
@@ -22,12 +22,9 @@ String keyString = "";
 const uint64_t pipes[2] = { 
   0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 
-unsigned long prev_sensor_read;
-
-float h;
-float t;
 
 struct t_data {
+  short int id;
   float t;
   float h;
   unsigned long lsp;
@@ -58,9 +55,21 @@ unsigned long lsp;
 float setpoint;
 int treq_pending;
 int localKey = 0;
+unsigned long prev_sensor_read;
+unsigned long prev_display_update;
+
+float h;
+float t;
 int keyDown = 0;
 
+#define SENSOR_UPDATE_PERIOD 3000
+#define DISPLAY_UPDATE_PERIOD 1000
+
+
+
+//////////////////////////////////////////////////////////////
 void setup() {
+//////////////////////////////////////////////////////////////
   lcd.begin(16, 2);
   lcd.clear();
   lcd.setCursor(0, 0);
@@ -78,9 +87,10 @@ void setup() {
   radio.begin();
   radio.setRetries(15,15);
   radio.setPayloadSize(sizeof(t_data));
-  radio.openWritingPipe(pipes[1]);
-  radio.openReadingPipe(1,pipes[0]);
-  radio.startListening();
+  radio.openWritingPipe(pipes[0]);
+  radio.openReadingPipe(1,pipes[1]);
+
+  //radio.startListening();
 
   pinMode( MOTIONPIN, INPUT);
   lastmotiontime = 0;
@@ -89,16 +99,15 @@ void setup() {
   setpoint=70;
   treq_pending = 0;
   
-  prev_sensor_read = millis();
+  prev_sensor_read = 0;
+  prev_display_update = millis();
   keypad.setRate(10);
 
 }
 
-void loop () {
-  if( digitalRead( MOTIONPIN ) == 0) {
-      lastmotiontime = millis();
-  }
-  if (millis() - prev_sensor_read > 250) {
+//////////////////////////////////////////////////////////////
+void read_DHT_sensor() {
+//////////////////////////////////////////////////////////////
       prev_sensor_read = millis();
       h = dht.readHumidity();
       t = dht.readTemperature(true);
@@ -110,6 +119,12 @@ void loop () {
       
       uptime = (millis() - starttime) / 1000;
       lsp += 1;
+}
+
+//////////////////////////////////////////////////////////////
+void update_display (){
+//////////////////////////////////////////////////////////////
+      prev_display_update = millis();
 
       Serial.print("Humidity: "); 
       Serial.print(h);
@@ -133,10 +148,12 @@ void loop () {
       lcd.print("% ");
       lcd.setCursor(0,0);
       lcd.print("Set:");
-      lcd.print( setpoint + treq_pending);
       if (treq_pending != 0) {
+        lcd.print( treq_pending);
         lcd.print(" *");
-      }
+      } else {
+        lcd.print( setpoint + treq_pending);
+      }        
       if ((millis() - lastmotiontime) < 5000) {
         lcd.setCursor(15,0);
         lcd.print("*");
@@ -153,11 +170,11 @@ void loop () {
         lcd.setCursor(14,1);
         lcd.print("f");
       }
+}
 
-      
-
-  }
-  
+//////////////////////////////////////////////////////////////
+void read_keypad() {
+//////////////////////////////////////////////////////////////
   //
   // keypad stuff
   //
@@ -165,53 +182,36 @@ void loop () {
   if (localKey != SAMPLE_WAIT)
   {
     if (localKey == 3 & keyDown != 3) { // up
-        treq_pending += 1;
+        if (treq_pending == 0) 
+          treq_pending = setpoint + 1;
+        else
+          treq_pending += 1;
         keyDown = 3;
+        update_display();      
+
     }
     if (localKey == 4 & keyDown != 4) { // down
-        treq_pending -= 1;
+        if (treq_pending == 0)
+          treq_pending = setpoint - 1;
+        else
+          treq_pending -= 1;
         keyDown = 4;
+        update_display();      
     }
     if (localKey == 0) {
       keyDown = 0;
     }
   }
-  
-      // if there is data ready
-    if ( radio.available() )
-    {
-      // Dump the payloads until we've gotten everything
-      unsigned long got_time;
-      bool done = false;
-      while (!done)
-      {
-        // Fetch the payload, and see if this was the last one.
-        done = radio.read( &s, sizeof(t_send) );
 
-        // Spew it
-        Serial.print("Got payload t_set: ");
-        Serial.print( s.t_set);
-        Serial.print(" t_ack: ");
-        Serial.print( s.treq_ack);
-        
-        if (s.treq_ack != 0) {
-          treq_pending -= s.treq_ack;
-          setpoint += s.treq_ack;
-        }
-        if (treq_pending == 0) {
-          setpoint = s.t_set;
-        }
-
-        // Delay just a little bit to let the other unit
-        // make the transition to receiver
-        delay(20);
-        
-        
-      }
+}
+//////////////////////////////////////////////////////////////
+void send_radio_status() {
+//////////////////////////////////////////////////////////////
 
       // First, stop listening so we can talk
       radio.stopListening();
       
+      d.id = ID;
       d.t = t;
       d.h = h;
       d.lastmotion = (millis() - lastmotiontime) / 1000;
@@ -220,9 +220,10 @@ void loop () {
       d.treq_pending = treq_pending;
       d.treq_user = d.treq_user;
  
-      // Send the final one back.
       radio.write( &d, sizeof(t_data) );
-      Serial.print(" Sent t:");
+      Serial.print(" Sent id:");
+      Serial.print(d.id);
+      Serial.print(" t:");
       Serial.print(d.t);
       Serial.print(" h:");
       Serial.print(d.h); 
@@ -236,11 +237,73 @@ void loop () {
       Serial.print(d.treq_pending);
       Serial.println();  
 
-      // Now, resume listening so we catch the next packets.
-      radio.startListening();
       
       // reset loops since ping
       lsp = 0;
+
+
+
+
+}
+//////////////////////////////////////////////////////////////
+void get_radio_response () {
+//////////////////////////////////////////////////////////////
+      // Now, resume listening so we catch the next packets.
+      radio.startListening();
+      delay(20);
+
+      // if there is data ready
+    if ( radio.available() )
+    {
+      // Dump the payloads until we've gotten everything
+      unsigned long got_time;
+      bool done = false;
+      while (!done)
+      {
+        // Fetch the payload, and see if this was the last one.
+        done = radio.read( &s, sizeof(t_send) );
+
+        // Spew it
+        Serial.print("Got response t_set: ");
+        Serial.print( s.t_set);
+        Serial.print(" t_ack: ");
+        Serial.print( s.treq_ack);
+        Serial.println();
+        
+        if (s.treq_ack == treq_pending) {
+          setpoint = s.treq_ack;
+          treq_pending = 0;
+        }
+        if (treq_pending == 0) {
+          setpoint = s.t_set;
+        }
+
+        // Delay just a little bit to let the other unit
+        // make the transition to receiver
+        delay(20);
+               
+      }
     }
+}
+
+//////////////////////////////////////////////////////////////
+void loop () {
+//////////////////////////////////////////////////////////////
+  if( digitalRead( MOTIONPIN ) == 0) {
+      lastmotiontime = millis();
+  }
+  if (millis() - prev_sensor_read > SENSOR_UPDATE_PERIOD) {
+    read_DHT_sensor();
+    send_radio_status();
+    get_radio_response();
+
+  }
+  if (millis() - prev_display_update > DISPLAY_UPDATE_PERIOD) {
+    update_display();      
+  }
+  read_keypad();
+  
+  
+
 
 }
