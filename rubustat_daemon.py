@@ -173,6 +173,7 @@ class rubustatDaemon(Daemon):
             file = open("status", "r")
             targetTemp = float(file.readline())
             mode = file.readline()
+            mode = mode.strip()
             file.close()
 
             now = datetime.datetime.now()
@@ -233,7 +234,7 @@ class rubustatDaemon(Daemon):
 
             # ac mode
             elif mode == "cool":
-                #print "DEBUG: daemon run loop - cool mode"
+                self.debuglog("daemon run loop - cool mode")
                 if hvacState == 0: #idle
                     if indoorTemp > targetTemp + inactive_hysteresis:
                         self.debuglog("STATE: Switching to cool")
@@ -251,7 +252,7 @@ class rubustatDaemon(Daemon):
                         self.debuglog("STATE: Switching to fan_to_idle")
                         hvacState = self.idle()
             else:
-                print "It broke."
+                self.debuglog("Unknown mode: %s" % mode)
 
             #loggin'stuff
             if DEBUG == 1:

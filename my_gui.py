@@ -386,9 +386,13 @@ class MainFrame(wx.Frame):
         print "SubmitTemp"
         try:
             r = requests.get(url + "/_setTarget/%0.1f" % float(setTmp))
+        except KeyboardInterrupt:
+            print "Keyboard interrupt"
+            exit()
         except:
             print "submit temp failed"
             return -1
+
         return (r)
 
     #################################################################### 
@@ -397,6 +401,9 @@ class MainFrame(wx.Frame):
         print "SubmitMode"
         try:
             r = requests.get(url + "/_setMode/%s" % mode)
+        except KeyboardInterrupt:
+            print "Keyboard interrupt"
+            exit()
         except:
             print "submit mode failed"
             return -1
@@ -407,6 +414,9 @@ class MainFrame(wx.Frame):
     #################################################################### 
        try:
            r = requests.get(url + "/_liveTemp")
+       except KeyboardInterrupt:
+            print "Keyboard interrupt"
+            exit()
        except:
            print "live temp request failed"
            return -1
@@ -427,6 +437,9 @@ class MainFrame(wx.Frame):
     #################################################################### 
        try:
            r = requests.get(url + "/_liveTargetTemp")
+       except KeyboardInterrupt:
+            print "Keyboard interrupt"
+            exit()
        except:
            print "live target temp request failed"
            return -1
@@ -446,8 +459,11 @@ class MainFrame(wx.Frame):
     #################################################################### 
        try:
            r = requests.get(url + "/_liveMode")
+       except KeyboardInterrupt:
+            print "Keyboard interrupt"
+            exit()
        except:
-           print "live mode request failed"
+           print "live mode request failed r:%s" %str(r)
            return -1
 
        return r.content
@@ -476,6 +492,9 @@ class MainFrame(wx.Frame):
     #################################################################### 
        try:
            r = requests.get(url + "/_liveWhatsOn")
+       except KeyboardInterrupt:
+            print "Keyboard interrupt"
+            exit()
        except:
            print "live mode request failed"
            return -1
@@ -487,8 +506,15 @@ class MainFrame(wx.Frame):
     #################################################################### 
     def UpdateWhatsOn(self):
     #################################################################### 
-       heat, cool, fan = self.GetWhatsOn()
-       self.pnStat.updateWhatsOn( heat=heat, cool=cool, fan=fan)
+       try:
+           heat, cool, fan = self.GetWhatsOn()
+           self.pnStat.updateWhatsOn( heat=heat, cool=cool, fan=fan)
+       except KeyboardInterrupt:
+            print "Keyboard interrupt"
+            exit()
+       except:
+           print "live mode request failed"
+           return -1
        
 ####################################################################################
 ####################################################################################
