@@ -1,57 +1,49 @@
 sitemap whf label="Main Menu"
 {
-	Frame label="Whitehall Farm" {
-		
+	Frame label="Floors" {
 		Text label="First Floor" icon="firstfloor"{
-			Text label="Living Room" icon="firstfloor" {
-				Frame label="Thermostat" {
-					Text item=Temperature_FF_Living3
-					Text item=Temperature_FF_Living
-					Text item=Temperature_FF_Living2
-					Text item=Temperature_FF_MBR
-                                        Text item=Humidity_thermo_FF_Living
-                                        Text item=HeatIndex_FF_Living
-					Setpoint item=TempSet_FF_Living step=0.5 minValue=40 maxValue=120
-                                        Text item=Fan_FF_Living
-                                        Text item=Cool_FF_Living
-                                        Text item=Heat_FF_Living
-                                        Text item=Daemon_FF_Living
+			Frame label="Rooms" {
+				Text label="Living Room" icon="firstfloor" {
+					Frame label="Thermostat" {
+						Text item=Temperature_FF_Living_Thermo
+						Text item=Temperature_FF_AVG
+						Setpoint item=TempSet_FF_Living step=0.5 minValue=40 maxValue=120
+						 Text item=Fan_FF_Living
+						Text item=Cool_FF_Living
+						Text item=Heat_FF_Living
+						Text item=Daemon_FF_Living
+					}
+				       Frame label="Debug"{
+						Text item=Fan_FF_Living_Scaled
+						Text item=Cool_FF_Living_Scaled
+						Text item=Heat_FF_Living_Scaled
+				       }
 				}
-				Frame label="Living Room Temp" {
-					Switch item=Temp_LR_Chart_Period label="Living Room" mappings=[0="Hour", 1="Day", 2="Week"]
-					Chart item=Temp_LR_Chart period=h refresh=600 visibility=[Temp_LR_Chart_Period==0, Temp_LR_Chart_Period=="Uninitialized"]
-					Chart item=Temp_LR_Chart period=D refresh=3600 visibility=[Temp_LR_Chart_Period==1]
-					Chart item=Temp_LR_Chart period=W refresh=3600 visibility=[Temp_LR_Chart_Period==2]
+				Text label="Master Bed Room" icon="firstfloor" {
+					Frame label="Thermostat" {
+						Text item=Temperature_FF_MBR
+						Text item=Lastmotion_FF_MBR
+					}
+					Frame {
+					    Switch item=Motion_Period label="Last Motion" mappings=[0="Hour", 1="Day", 2="Week"]
+					    Chart item=Lastmotion_FF_MBR period=h refresh=60000 visibility=[Motion_Period==0, Motion_Period=="Uninitialized"]
+					    Chart item=Lastmotion_FF_MBR period=D refresh=300000 visibility=[Motion_Period==1]
+					    Chart item=Lastmotion_FF_MBR period=W refresh=1200000 visibility=[Motion_Period==2]
+				       }
 				}
-				Frame label="Living Room Humidity" {
-					Switch item=Humidity_FF_Living_Chart_Period label="Living Room Humidity" mappings=[0="Hour", 1="Day", 2="Week"]
-					Chart item=Humidity_thermo_FF_Living period=h refresh=600 visibility=[Humidity_FF_Living_Chart_Period==0, Humidity_FF_Living_Chart_Period=="Uninitialized"]
-					Chart item=Humidity_thermo_FF_Living period=D refresh=3600 visibility=[Humidity_FF_Living_Chart_Period==1]
-					Chart item=Humidity_thermo_FF_Living period=W refresh=3600 visibility=[Humidity_FF_Living_Chart_Period==2]
-				}
-			        Frame {
-				    Switch item=Weather_Chart_Period label="Outdoor (from yahoo)" mappings=[0="Hour", 1="Day", 2="Week"]
-				    Chart item=Weather_Chart period=h refresh=600 visibility=[Weather_Chart_Period==0, Weather_Chart_Period=="Uninitialized"]
-				    Chart item=Weather_Chart period=D refresh=3600 visibility=[Weather_Chart_Period==1]
-				    Chart item=Weather_Chart period=W refresh=3600 visibility=[Weather_Chart_Period==2]
-			       }
-                               Frame label="Debug"{
-                                        Text item=Fan_FF_Living_Scaled
-                                        Text item=Cool_FF_Living_Scaled
-                                        Text item=Heat_FF_Living_Scaled
-                                        Text item=Uptime_thermo_FF_Living
-                               }
-			        Frame {
-				    Switch item=Uptime_Period label="Uptime" mappings=[0="Hour", 1="Day", 2="Week"]
-				    Chart item=Uptime_thermo_FF_Living period=h refresh=600 visibility=[Uptime_Period==0, Uptime_Period=="Uninitialized"]
-				    Chart item=Uptime_thermo_FF_Living period=D refresh=3600 visibility=[Uptime_Period==1]
-				    Chart item=Uptime_thermo_FF_Living period=W refresh=3600 visibility=[Uptime_Period==2]
-			       }
+			}
+			Frame label="First floor summary" {
+				Switch item=Temp_LR_Chart_Period label="Living Room" mappings=[0="Hour", 1="Day", 2="Week"]
+				Chart item=Temp_LR_Chart period=h refresh=60000 visibility=[Temp_LR_Chart_Period==0, Temp_LR_Chart_Period=="Uninitialized"]
+				Chart item=Temp_LR_Chart period=D refresh=300000 visibility=[Temp_LR_Chart_Period==1]
+				Chart item=Temp_LR_Chart period=W refresh=1200000 visibility=[Temp_LR_Chart_Period==2]
 			}
 		}	
 	}
-	
-	Frame label="Date" {
-		Text item=Date
-	}
+	Frame {
+		Switch item=Weather_Chart_Period label="Outdoor (from yahoo)" mappings=[0="Hour", 1="Day", 2="Week"]
+		Chart item=Weather_Chart period=h refresh=600 visibility=[Weather_Chart_Period==0, Weather_Chart_Period=="Uninitialized"]
+		Chart item=Weather_Chart period=D refresh=600 visibility=[Weather_Chart_Period==1]
+		Chart item=Weather_Chart period=W refresh=600 visibility=[Weather_Chart_Period==2]
+        }
 }
