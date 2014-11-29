@@ -10,15 +10,16 @@ Group Temp_LR_Chart
 Number Temp_LR_Chart_Period "Living Room Thermostat"
 Number Uptime_Period "Uptime"
 Number Humidity_FF_Living_Chart_Period "Humidity"
+Number Motion_Period "Motion"
 
 /* active groups */
 Group:Number:AVG 				Temperature	"Avg. Room Temperature [%.1f °C]" 	<temperature>	(Status)
 
 /* Indoor Temperatures */
-Number Temperature_FF_Living "Remote sensor temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://lr-thermo/_liveSensorValue/spark/temp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
-Number Temperature_FF_Living2 "Thermostat temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://lr-thermo/_liveSensorValue/thermo_LR/temp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
-Number Temperature_FF_Living3 "Average temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://lr-thermo/_liveSensorValue/sum_LR/temp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
+Number Temperature_FF_Living_Thermo "Thermostat temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://lr-thermo/_liveSensorValue/thermo_LR/temp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
+Number Temperature_FF_AVG "Average temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://lr-thermo/_liveSensorValue/sum_LR/temp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
 Number Temperature_FF_MBR "MBR temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://lr-thermo/_liveSensorValue/remote_MBR/temp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
+Number Lastmotion_FF_MBR "MBR last motion [%d]" <clock> (FF_MBR) {http="<[http://lr-thermo/_liveSensorValue/remote_MBR/lastmotion:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
 Number TempSet_FF_Living "Thermostat target [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://lr-thermo/_liveTargetTemp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
 String Fan_FF_Living "Fan [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> fan (.*?) </p>.*)]"}
 String Cool_FF_Living "Cool [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> cool (.*?) </p>.*)]"}
@@ -27,12 +28,6 @@ String Daemon_FF_Living "Daemon [%s]" <temperature> (Temperature, FF_Living) {ht
 Number Fan_FF_Living_Scaled "Fan scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
 Number Cool_FF_Living_Scaled "Cool scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
 Number Heat_FF_Living_Scaled "Heat scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
-Number HeatIndex_FF_Living "Heat index [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
-Number Uptime_thermo_FF_Living "Uptime [%d]" <temperature> (Temperature, FF_Living) {http="<[https://api.spark.io/v1/devices/normal_dentist/uptime?access_token=36026ae69dd3f99acdc53e8183087d4df8c48ab6:30000:JS(getValue.js)]"}
-Number Humidity_thermo_FF_Living "Humidity [%.1f]" <temperature> (Temperature, FF_Living) {http="<[https://api.spark.io/v1/devices/normal_dentist/humidity?access_token=36026ae69dd3f99acdc53e8183087d4df8c48ab6:30000:JS(getValue.js)]"}
-/* Windows */
-Switch          TV_GF_Living_TV_power   "Power"     (GF_Living_TV)  { exec="ON:/usr/local/bin/samsungTvStart.sh, OFF:/bin/true", samsungtv="OFF:Livingroo
-m:KEY_POWEROFF, ON:Livingroom:KEY_POWERON" }
 
 
 Group Weather_Chart													(Weather)

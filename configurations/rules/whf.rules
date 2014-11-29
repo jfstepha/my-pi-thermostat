@@ -6,14 +6,14 @@ rule "Set temp 50"
 when
 	Item SetTemp60_FF_Living changed to ON
 then
-	sendHttpGetRequest("http://pi/_setTarget/77.0")
+	sendHttpGetRequest("http://lr-thermo/_setTarget/77.0")
 end
 
 rule "Set thermo temp"
 when
 	Item TempSet_FF_Living changed
 then
-	sendHttpGetRequest("http://pi/_setTarget/" + TempSet_FF_Living.state)
+	sendHttpGetRequest("http://lr-thermo/_setTarget/" + TempSet_FF_Living.state)
 end
 
 rule "Fan scaling"
