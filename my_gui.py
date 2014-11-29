@@ -5,8 +5,99 @@ from wx.lib.wordwrap import wordwrap
 import requests
 import re
 import datetime
+import random
 
 url = "http://localhost:80"
+
+####################################################################################
+####################################################################################
+class PanelScreenSaver(wx.Panel):
+####################################################################################
+####################################################################################
+
+   #################################################################### 
+   def __init__(self, parent):
+   #################################################################### 
+        #### MAIN panel ######
+        wx.Panel.__init__(self,parent=parent)
+        self.parent = parent
+        self.temp_x = 20
+        self.temp_y = 20
+        self.temp_xmax = 200
+        self.temp_ymax = 150
+        self.minspeed = 0.1
+        self.maxspeed = 10
+        self.temp_xdir = self.GetRandDir()
+        self.temp_ydir = self.GetRandDir()
+        self.bgr = 240
+        self.bgg = 0
+        self.bgb = 0
+        self.colorstep = 10
+
+        self.lblTemp = wx.StaticText(self,label="Starting...", pos=(20,20))
+        font = wx.Font( 30, wx.DEFAULT, wx.NORMAL, wx.NORMAL)
+        self.lblTemp.SetFont( font )
+
+
+        self.Bind(wx.EVT_LEFT_DOWN, self.OnClick)
+        self.SetBackgroundColour( (self.bgr, self.bgg, self.bgb))
+        self.lblTemp.SetForegroundColour( "#FFFFFF")
+        
+        self.temp = 0
+   #################################################################### 
+   def OnClick(self, evt):
+   #################################################################### 
+        self.parent.ShowMain()
+        
+   #################################################################### 
+   def GetRandDir(self):
+   #################################################################### 
+        retval = random.random() * self.maxspeed * 2 - self.maxspeed
+        if retval < self.minspeed and retval >= 0:
+            retval = self.minspeed
+        if retval > -self.minspeed and retval < 0:
+            retval = -self.minspeed 
+        return retval
+    
+        
+   #################################################################### 
+   def Update(self):
+   #################################################################### 
+        self.temp_x += self.temp_xdir
+        if self.temp_x > self.temp_xmax:
+            self.temp_x = self.temp_xmax
+            self.temp_xdir = self.GetRandDir()
+        if self.temp_x < 0:
+            self.temp_x = 0
+            self.temp_xdir = self.GetRandDir()
+            
+
+        self.temp_y += self.temp_ydir
+        if self.temp_y > self.temp_ymax:
+            self.temp_y = self.temp_ymax 
+            self.temp_ydir = self.GetRandDir()
+        if self.temp_y < 0:
+            self.temp_y = 0
+            self.temp_ydir = self.GetRandDir()
+        
+        self.lblTemp.SetPosition((self.temp_x, self.temp_y))
+        print "position: %d, %d" % (self.temp_x, self.temp_y)
+        self.bgr += self.colorstep
+        if self.bgr > 255:
+            self.bgr = 0
+            self.bgg += self.colorstep
+        if self.bgg > 255:
+            self.bgg = 0
+            self.bgb += self.colorstep
+        if self.bgb > 255:
+            self.bgb = 0
+        if (self.bgr + self.bgg + self.bgb) > 1024:
+            self.lblTemp.SetForegroundColour( "#000000")
+        else:
+            self.lblTemp.SetForegroundColour( "#FFFFFF")
+        self.SetBackgroundColour( (self.bgr, self.bgg, self.bgb))
+        if self.IsShown():
+            self.Refresh()
 
 ####################################################################################
 ####################################################################################
@@ -273,15 +364,19 @@ class MainFrame(wx.Frame):
         self.pnJon = PanelJon(self)
         self.pnGretch = PanelGretch(self)
         self.pnStat = PanelStatus(self)
+        self.pnScrenSaver = PanelScreenSaver(self)
 
         self.sizerH.Add(self.pnMain, 1, wx.EXPAND)
         self.sizerH.Add(self.pnJon, 1, wx.EXPAND)
         self.sizerH.Add(self.pnGretch, 1, wx.EXPAND)
+        self.sizerH.Add(self.pnScrenSaver,1,wx.EXPAND)
         self.sizerV.Add(self.sizerH, 1, wx.EXPAND)
         self.sizerV.Add(self.pnStat,0)
 
         self.pnJon.Hide()
         self.pnGretch.Hide()
+        self.pnMain.Hide()
+        self.pnStat.Hide()
         self.SetSizer(self.sizerV)
         
         self.ticks_since_interaction = 0
@@ -299,9 +394,11 @@ class MainFrame(wx.Frame):
         self.UpdateTargetTemp()
         self.UpdateMode()
         self.UpdateWhatsOn()
+        self.pnScrenSaver.Update()
         self.ticks_since_interaction += 1
         if self.ticks_since_interaction > 20:
-            self.GoBack()
+            self.ShowScreenSaver()
+
         
     #################################################################### 
     def OnModeHeat(self, evt):
@@ -347,16 +444,30 @@ class MainFrame(wx.Frame):
     #################################################################### 
     def OnBnBack(self, evt):
     #################################################################### 
-        self.GoBack()
+        self.ShowMain()
 
     #################################################################### 
-    def GoBack(self):
+    def ShowMain(self):
     #################################################################### 
         self.pnMain.Show()
         self.pnJon.Hide()
         self.pnGretch.Hide()
+        self.pnScrenSaver.Hide()
+        self.pnStat.Show()
         self.Layout()
         self.reset_timeout()
+
+    #################################################################### 
+    def ShowScreenSaver(self):
+    #################################################################### 
+        self.pnMain.Hide()
+        self.pnJon.Hide()
+        self.pnGretch.Hide()
+        self.pnScrenSaver.Show()
+        self.pnStat.Hide()
+        self.Layout()
+        self.reset_timeout()
+        self.WarpPointer(240,340)
 
     #################################################################### 
     def OnBnUp(self, evt):
@@ -430,6 +541,7 @@ class MainFrame(wx.Frame):
        self.pnStat.updateCurrent( temp )
        self.pnJon.lCurTmp.SetLabel("Current: %d" % temp)
        self.pnGretch.lCurTmp.SetLabel("Current: %d" % temp)
+       self.pnScrenSaver.lblTemp.SetLabel("%0.1f\nT: %0.1f" % (temp, self.setpt))
 
 
     #################################################################### 
@@ -522,6 +634,8 @@ if __name__ == '__main__':
 ####################################################################################
 ####################################################################################
    app = wx.App(False)
+   cursor = wx.StockCursor(wx.CURSOR_BLANK) 
    frame = MainFrame()
+   frame.SetCursor(cursor) 
    frame.ShowFullScreen(True, style=wx.FULLSCREEN_ALL)
    app.MainLoop()

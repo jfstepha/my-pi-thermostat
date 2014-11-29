@@ -115,12 +115,15 @@ class SensorHub():
                         if lastmotion != None: self.sensor_list[id].lastmotion = int( lastmotion )
                         
                         uptime = self.my_re( "uptime:\s*(\d+)", rcv)
-                        if uptime != None: self.sensor_list[id].uptime = int( uptime )
+                        if uptime != None: 
+                            self.sensor_list[id].uptime = int( uptime )
+                            if self.sensor_list[id].uptime != self.sensor_list[id].prev_uptime:
+                                self.sensor_list[id].prev_uptime = uptime
+                                self.sensor_list[id].lsu = 0
                         
                         treq = self.my_re( "treq_pending:\s*(\d+)", rcv)
                         if treq != None: self.treq = int( treq )
 
-                        self.sensor_list[id].lsu = 0
                         treq_ack = self.treq
                         if self.treq > 50 and self.treq < 100:
                             newTargetTemp = self.treq
@@ -154,6 +157,7 @@ class Sensor():
         # hw_tyoe is spark, local_dht, sum or thermo_disp (what kind or hardware is driving the sensor) 
         self.name = name
         self.uptime = 0
+        self.prev_uptime = 0
         self.domain = domain
         self.lsu = 10000
         self.lsp = 0
@@ -371,8 +375,11 @@ class SensorSpark(Sensor):
                 self.temp = self.getSparkVal("temperature")
                 self.rh = self.getSparkVal("humidity")
                 self.uptime = self.getSparkVal("uptime")
+                if self.uptime != self.prev_uptime:
+                    self.prev_uptime = self.uptime
+                    self.lsu = 0
+                    
                 self.lsp = self.getSparkVal("lsp")
-                self.lsu = 0
 
                 r = subprocess.call(["curl", "https://api.spark.io/v1/devices/normal_dentist/ping", "-d", "access_token=36026ae69dd3f99acdc53e8183087d4df8c48ab6", "-d", "args=1"], stdout=FNULL, stderr=subprocess.STDOUT)
 
@@ -421,7 +428,7 @@ class loopThread(threading.Thread):
         # lsu = loops since update  (how long since we've received an update from this sensor)
         # lsp = loops since ping (how long this sensor thinks it's been since it heard from us)
         self.sensors = {}
-        self.sensors['spark'] = SensorSpark('spark', 'LR') 
+        # self.sensors['spark'] = SensorSpark('spark', 'LR') 
         self.sensors['thermo_LR'] = SensorLocalDHT('thermo_lr', 'LR' )
         self.sensors['remote_MBR'] = SensorRemoteDisp('remote_MBR', 'LR')
         self.sensors['sum_LR'] = SensorSum('sum_LR', 'LR')
@@ -447,14 +454,18 @@ class loopThread(threading.Thread):
             for keys in self.sensors:
                 d = self.sensors[keys].domain
                 if keys.find("sum") == -1 and (self.sensors[keys].sensor_type == "temp" or self.sensors[keys].sensor_type == "remote_disp"):
-                    self.sensors[ "sum_%s" % d ].N += 1
-                    self.sensors[ "sum_%s" % d ].total += self.sensors[keys].temp
+                    if self.sensors[keys].lsu < 60:
+                        self.sensors[ "sum_%s" % d ].N += 1
+                        self.sensors[ "sum_%s" % d ].total += self.sensors[keys].temp
  
             # calculate the averages
             for d in self.domains:
                 t = self.sensors[ "sum_%s" % d ].total 
                 N = self.sensors[ "sum_%s" % d ].N
-                self.sensors[ "sum_%s" % d ].temp = t / N
+                if N > 0:
+                    self.sensors[ "sum_%s" % d ].temp = t / N
+                else:
+                    self.sensors[ "sum_%s" % d ].temp = t
                 self.sensors[ "sum_%s" % d ].lsu = 0
                 self.sensors[ "sum_%s" % d ].uptime += 1
                 
@@ -462,14 +473,18 @@ class loopThread(threading.Thread):
             for keys in self.sensors:
                 d = self.sensors[keys].domain
                 if keys.find("sum") == -1 and self.sensors[keys].sensor_type == "temp":
-                    self.sensors[ "sum_%s" % d ].N += 1
-                    self.sensors[ "sum_%s" % d ].total += self.sensors[keys].rh
+                    if self.sensors[keys].lsu < 60:
+                        self.sensors[ "sum_%s" % d ].N += 1
+                        self.sensors[ "sum_%s" % d ].total += self.sensors[keys].rh
 
             # calculate the averages
             for d in self.domains:
                 t = self.sensors[ "sum_%s" % d ].total 
                 N = self.sensors[ "sum_%s" % d ].N
-                self.sensors[ "sum_%s" % d ].rh = t / N
+                if N > 0:
+                    self.sensors[ "sum_%s" % d ].rh = t / N
+                else:
+                    self.sensors[ "sum_%s" % d ].rh = t 
                 print "[%s] rh sum: %s " % (datetime.datetime.now(), str(self.sensors['sum_LR']))
 
     
