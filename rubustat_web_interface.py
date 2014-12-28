@@ -209,7 +209,7 @@ def getMode():
         return "error"
 
 @app.route('/_liveSensor/<sensorname>', methods= ['GET'])
-def getSensor(sensorname):
+def getSensorAll(sensorname):
     try:
         return str(loopThread.sensors[sensorname])
     except IOError:

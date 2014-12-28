@@ -64,7 +64,7 @@ class rubustatDaemon(Daemon):
         coolStatus = int(subprocess.Popen("cat /sys/class/gpio/gpio" + str(AC_PIN) + "/value", shell=True, stdout=subprocess.PIPE).stdout.read().strip())
         fanStatus = int(subprocess.Popen("cat /sys/class/gpio/gpio" + str(FAN_PIN) + "/value", shell=True, stdout=subprocess.PIPE).stdout.read().strip())
 
-        if heatStatus == 1 and fanStatus == 1:
+        if heatStatus == 1 and fanStatus == 0:
             #heating
             return 1
             
@@ -89,7 +89,7 @@ class rubustatDaemon(Daemon):
     def heat(self):
         GPIO.output(HEATER_PIN, True)
         GPIO.output(AC_PIN, False)
-        GPIO.output(FAN_PIN, True)
+        GPIO.output(FAN_PIN, False)
         return 1
 
     def fan_to_idle(self): 
@@ -223,8 +223,8 @@ class rubustatDaemon(Daemon):
                 elif hvacState == 1: #heating
                     if indoorTemp > targetTemp + active_hysteresis:
                         self.debuglog("STATE: Switching to fan_to_idle")
-                        self.fan_to_idle()
-                        time.sleep(30)
+                        #self.fan_to_idle()
+                        #time.sleep(30)
                         self.debuglog("STATE: Switching to idle")
                         hvacState = self.idle()
 

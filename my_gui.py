@@ -569,6 +569,7 @@ class MainFrame(wx.Frame):
     #################################################################### 
     def GetMode(self):
     #################################################################### 
+       r = ""
        try:
            r = requests.get(url + "/_liveMode")
        except KeyboardInterrupt:
