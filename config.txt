@@ -36,3 +36,8 @@ enabled = False
 enabled = False
 #your zip/postal code. No idea if this works outside the US.
 ZIP = 01748
+
+[sensorhub]
+name = themo_as
+domain = AS
+ishub = 0

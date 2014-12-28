@@ -4,6 +4,7 @@ import subprocess
 import re
 import ConfigParser
 
+
 from getIndoorTemp import getIndoorTemp
 from getIndoorTemp import getIndoorTemp2
 from flask import Flask, request, session, g, redirect, url_for, \
@@ -29,6 +30,9 @@ HEATER_PIN = int(config.get('main','HEATER_PIN'))
 AC_PIN = int(config.get('main','AC_PIN'))
 FAN_PIN = int(config.get('main','FAN_PIN'))
 weatherEnabled = config.getboolean('weather','enabled')
+hubname = config.get('sensorhub','name')
+hubdomain = config.get('sensorhub','domain')
+hubishub = int(config.get('sensorhub', 'ishub'))
 
 #start the daemon in the background
 #subprocess.Popen("/usr/bin/python rubustat_daemon.py start", shell=True)
@@ -165,12 +169,12 @@ def my_form_post():
 @app.route('/_liveTemp', methods= ['GET'])
 def updateTemp():
 
-    return "%0.1f" % loopThread.sensors['sum_LR'].temp
+    return "%0.1f" % loopThread.sensors['sum_'+hubdomain].temp
 
 @app.route('/_liveTemp2', methods= ['GET'])
 def updateTemp2():
 
-    return "%0.1f" % loopThread.sensors['thermo_LR'].temp
+    return "%0.1f" % loopThread.sensors[hubname].temp
 
 @app.route('/_liveWhatsOn', methods= ['GET'])
 def updateWhatsOn():
@@ -223,7 +227,7 @@ def dumpSensors():
     try:
         s = ""
         for key in loopThread.sensors:
-            s = s + str( loopThread.sensors[key] ) + "\n" 
+            s = s + str( loopThread.sensors[key] ) + "<br>" 
         return s
     except IOError:
         return "error"

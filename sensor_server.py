@@ -16,12 +16,20 @@ import os
 import Adafruit_DHT
 import datetime
 import serial
+import ConfigParser
 
 
 FNULL = open(os.devnull,'w')
 INIT = 70
 SENSOR_READ_PERIOD = 10
 SERIAL_CHECK_PERIOD = 0.1
+
+config = ConfigParser.ConfigParser()
+config.read("config.txt")
+servername = config.get('sensorhub','name')
+serverdomain = config.get('sensorhub','domain')
+serverishub = int(config.get('sensorhub', 'ishub'))
+
 
 ############################################################################
 ############################################################################
@@ -423,19 +431,23 @@ class loopThread(threading.Thread):
         threading.Thread.__init__(self)
         self.loopcount=0
         self.msgcount = 0;
-        self.sensorHub = SensorHub()
         
         # lsu = loops since update  (how long since we've received an update from this sensor)
         # lsp = loops since ping (how long this sensor thinks it's been since it heard from us)
         self.sensors = {}
-        # self.sensors['spark'] = SensorSpark('spark', 'LR') 
-        self.sensors['thermo_LR'] = SensorLocalDHT('thermo_lr', 'LR' )
-        self.sensors['remote_MBR'] = SensorRemoteDisp('remote_MBR', 'LR')
-        self.sensors['sum_LR'] = SensorSum('sum_LR', 'LR')
-        self.domains = ['LR']
+        self.sensors[servername] = SensorLocalDHT( servername, serverdomain )
+        self.domains = [serverdomain]
+        self.sensors['sum_'+serverdomain] = SensorSum('sum_'+serverdomain, serverdomain)
+
+        if serverishub :
+
+            self.sensorHub = SensorHub()
+            # self.sensors['spark'] = SensorSpark('spark', 'LR') 
+            self.sensors['remote_MBR'] = SensorRemoteDisp('remote_MBR', 'LR')
         
-        self.sensorHub.sensor_list[1] = self.sensors['remote_MBR']
-        print "Sensor hub sensor list: %s" % (self.sensorHub.sensor_list)
+            self.sensorHub.sensor_list[1] = self.sensors['remote_MBR']
+
+            print "Sensor hub sensor list: %s" % (self.sensorHub.sensor_list)
 
         for keys in self.sensors:
             print "[%s] initial: %s: %s " % (datetime.datetime.now(), keys, str(self.sensors[keys]))
@@ -485,7 +497,7 @@ class loopThread(threading.Thread):
                     self.sensors[ "sum_%s" % d ].rh = t / N
                 else:
                     self.sensors[ "sum_%s" % d ].rh = t 
-                print "[%s] rh sum: %s " % (datetime.datetime.now(), str(self.sensors['sum_LR']))
+                print "[%s] rh sum: %s " % (datetime.datetime.now(), str(self.sensors['sum_'+serverdomain]))
 
     
     ################################################################
@@ -505,7 +517,8 @@ class loopThread(threading.Thread):
             self.init_sums()
             if time.time() - self.last_update_serial_time > SERIAL_CHECK_PERIOD:
                 #print "DEBUG: updating hub"
-                self.sensorHub.update()
+                if serverishub:
+                    self.sensorHub.update()
                 self.last_update_serial_time = time.time()
             if time.time() - self.last_check_sensor_time > SENSOR_READ_PERIOD:
                 #print "DEBUG: Reading sensors"
