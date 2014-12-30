@@ -48,18 +48,67 @@ then
         postUpdate(Cool_FF_Living_Scaled, 68)
 end
 
-rule "Heat scaling"
+rule "Heat FF scaling on"
 when
         Item Heat_FF_Living changed to ON
 then
+	logInfo("FILE", "Executing rule FF Heat Scaling on")
         postUpdate(Heat_FF_Living_Scaled, 67)
+
+	logInfo("FILE", "Heat_FF_Last_On=" + Heat_FF_Last_On.state + " Heat_FF_Last_Off=" + Heat_FF_Last_Off.state)
+
+        if( Heat_FF_Last_On.state == Uninitialized) {
+		logInfo("FILE","Heat_FF_Last_On was not init, setting to now")
+		postUpdate( Heat_FF_Last_On, now.millis)
+	}
+        if( Heat_FF_Last_Off.state == Uninitialized) {
+		logInfo("FILE","Heat_FF_Last_Off was null, setting to now")
+		postUpdate( Heat_FF_Last_Off, now.millis)
+	}
+		
+	logInfo("FILE", "Setting Heat_FF_On_Time")
+	postUpdate(Heat_FF_On_Time, ( ( (Heat_FF_Last_Off.state as DecimalType)  - (Heat_FF_Last_On.state as DecimalType) ) / 60000.0 ) ) 
+
+	logInfo("FILE", "Setting Heat_FF_Cycle_Time")
+	postUpdate(Heat_FF_Cycle_Time,( (now.millis - (Heat_FF_Last_On.state as DecimalType ) ) / 60000.0 ) )
+
+	logInfo("FILE", "Setting Heat_FF_Duty_Cycle")
+	postUpdate(Heat_FF_Duty_Cycle, ( (Heat_FF_On_Time.state as DecimalType) / ( (Heat_FF_Cycle_Time.state as DecimalType) + 0.0001) * 100) 
+
+	logInfo("FILE", "Setting Heat_FF_Last_on")
+	postUpdate(Heat_FF_Last_On, now.millis)
+	logInfo("FILE", "Done with rule FF Heat Scaling on")
 end
 
-rule "Heat scaling2"
+rule "Heat FF scaling off"
 when
         Item Heat_FF_Living changed to OFF
 then
+        if( Heat_FF_Last_On.state == Uninitialized) {
+		logInfo("FILE","Heat_FF_Last_On was not initalized, setting to now")
+		postUpdate( Heat_FF_Last_On, now.millis)
+	}
+        if( Heat_FF_Last_Off.state == Uninitialized) {
+		logInfo("FILE","Heat_FF_Last_Off was not initialized, setting to now")
+		postUpdate( Heat_FF_Last_Off, now.millis)
+	}
+
+	logInfo("FILE","Executing rule FF Heat Scaling off")
         postUpdate(Heat_FF_Living_Scaled, 66)
+
+	logInfo("FILE", "Setting ffHeatOnTime");
+	postUpdate(Heat_FF_On_Time, ((now.millis - (Heat_FF_Last_On.state as DecimalType) ) / 60000.0 )
+
+	logInfo("FILE", "Setting ffHeatCycleTime");
+	postUpdate(Heat_FF_Cycle_Time, ((now.millis - (Heat_FF_Last_Off.state as DecimalType)) / 60000.0 ) 
+
+	logInfo("FILE", "Setting ffHeatDutyCycle");
+	postUpdate(Heat_FF_Duty_Cycle, ((Heat_FF_On_Time.state as DecimalType) / ((Heat_FF_Cycle_Time.state as DecimalType) + 0.0001) * 100.0 )
+
+	logInfo("FILE", "Setting ffHeatLastOff");
+	postUpdate(Heat_FF_Last_Off, now.millis)
+
+	logInfo("FILE", "Rule FF Heat Scaling off finished")
 end
 
 rule "Heat index"
@@ -121,6 +170,16 @@ when
         Item Heat_AS_Studio changed to ON
 then
 	logInfo("FILE", "Executing rule AS Heat Scaling on")
+        postUpdate(Heat_AS_Studio_Scaled, 67)
+
+        if( Heat_AS_Last_On.state == Uninitialized) {
+		logInfo("FILE","Heat_AS_Last_On was not initialized, setting to now")
+		postUpdate( Heat_AS_Last_On, now.millis)
+	}
+        if( Heat_AS_Last_Off.state == Uninitialized) {
+		logInfo("FILE","Heat_AS_Last_Off was not initialized, setting to now")
+		postUpdate( Heat_AS_Last_Off, now.millis)
+	}
 
 	logInfo("FILE", "Setting Heat_AS_On_Time")
 	postUpdate(Heat_AS_On_Time, ( ( (Heat_AS_Last_Off.state as DecimalType)  - (Heat_AS_Last_On.state as DecimalType) ) / 60000.0 ) ) 
@@ -142,7 +201,16 @@ when
         Item Heat_AS_Studio changed to OFF
 then
 	logInfo("FILE","Executing rule AS Heat Scaling off")
-	logInfo("FILE","Initializing values:");
+
+        if( Heat_AS_Last_On.state == Uninitialized) {
+		logInfo("FILE","Heat_AS_Last_On was not initialized, setting to now")
+		postUpdate( Heat_AS_Last_On, now.millis)
+	}
+        if( Heat_AS_Last_Off.state == Uninitialized) {
+		logInfo("FILE","Heat_AS_Last_Off was not initialized, setting to now")
+		postUpdate( Heat_AS_Last_Off, now.millis)
+	}
+        postUpdate(Heat_AS_Studio_Scaled, 66)
 
 	logInfo("FILE", "Setting asHeatOnTime");
 	postUpdate(Heat_AS_On_Time, ((now.millis - (Heat_AS_Last_On.state as DecimalType) ) / 60000.0 )

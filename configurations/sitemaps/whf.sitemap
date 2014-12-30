@@ -22,8 +22,6 @@ sitemap whf label="Main Menu"
 						Text item=Cool_FF_Living
 						Text item=Heat_FF_Living
 						Text item=Daemon_FF_Living
-						Text item=Heat_FF_Last_On
-						Text item=Heat_FF_Last_Off
 						Text item=Heat_FF_Duty_Cycle
 					}
 					Frame label="Thermo state"{
@@ -41,6 +39,18 @@ sitemap whf label="Main Menu"
 						Chart item=Humidity_FF_Living_Thermo period=h refresh=60000 visibility=[Temp_LR_Chart_Period==0, Temp_LR_Chart_Period=="Uninitialized"]
 						Chart item=Humidity_FF_Living_Thermo period=D refresh=300000 visibility=[Temp_LR_Chart_Period==1]
 						Chart item=Humidity_FF_Living_Thermo period=W refresh=1200000 visibility=[Temp_LR_Chart_Period==2]
+					}
+					Frame label="Duty Cycle summary" {
+						Chart item=Heat_AS_Duty_Cycle period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
+						Chart item=Heat_AS_Duty_Cycle period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
+						Chart item=Heat_AS_Duty_Cycle period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
+					}
+					Frame label="Duty Cycle" {
+						Text item=Heat_FF_Last_On
+						Text item=Heat_FF_Last_Off
+						Text item=Heat_FF_Duty_Cycle
+						Text item=Heat_FF_On_Time
+						Text item=Heat_FF_Cycle_Time
 					}
 				}
 				Text label="Master Bed Room" icon="groundfloor" {

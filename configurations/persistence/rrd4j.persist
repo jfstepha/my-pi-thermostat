@@ -10,4 +10,5 @@ Items {
 	Humidity_FF_Living_Thermo : strategy = everyMinute, restoreOnStartup
 	Lastmotion_FF_MBR : strategy = everyMinute, restoreOnStartup
 	Heat_AS_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+	Heat_FF_Duty_Cycle : strategy = everyMinute, restoreOnStartup
 }

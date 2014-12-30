@@ -22,4 +22,6 @@ Items {
 	Uptime_thermo_FF_Living : strategy = everyMinute
         // Humidity_FF_Living_Thermo -> "Humidity_FF_Living_Thermo" : strategy = everyMinute
         Lastmotion_FF_MBR : strategy = everyMinute
+	Heat_AS_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+	Heat_FF_Duty_Cycle : strategy = everyMinute, restoreOnStartup
 }

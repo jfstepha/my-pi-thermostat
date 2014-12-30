@@ -6,3 +6,5 @@ rubustatDaemon.pid
 status2
 stupid.txt
 indoortemp2
+*.swp
+configurations/rules/*.swp
