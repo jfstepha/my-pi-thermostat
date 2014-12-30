@@ -6,28 +6,67 @@ Group Outdoor 	(All)
 Group Weather 	(All)
 Group Status 	(All)
 Group FF_Living 	"Living Room" 	<video> 	(gFF)
+Group AS_Studio		"Art Studio"	<firstfloor>	(gFF)
+
+/* Groups for charts */
 Group Temp_LR_Chart
+Group Temp_FF_Chart
+Group Temp_AS_Chart
+Group Humidity_FF_Chart
 Number Temp_LR_Chart_Period "Living Room Thermostat"
-Number Uptime_Period "Uptime"
+Number Temp_FF_Chart_Period "First Floor Temps"
+Number Humidity_FF_Chart_Period "First Floor Humidities"
 Number Humidity_FF_Living_Chart_Period "Humidity"
+Number Temp_AS_Chart_Period "Art Studio Thermostat"
+
+/* Other numbers */
+Number Uptime_Period "Uptime"
 Number Motion_Period "Motion"
+
+/* For calculating duty cycle */
+Number Heat_FF_Last_On "Last On: [%.1f]"
+Number Heat_FF_Last_Off "Last Off: [%.1f]"
+Number Heat_FF_Duty_Cycle "Duty Cycle: [%.2f]"
+Number Heat_FF_On_Time "On Time (m): [%.2f]"
+Number Heat_FF_Cycle_Time "Cycle time: [%.2f]"
+
+Number Heat_AS_Last_On "Last On: [%.1f]"
+Number Heat_AS_Last_Off "Last Off: [%.1f]"
+Number Heat_AS_Duty_Cycle "Duty Cycle: [%.4f]"
+Number Heat_AS_On_Time "On Time (m): [%.2f]"
+Number Heat_AS_Cycle_Time "Cycle time: [%.2f]"
 
 /* active groups */
 Group:Number:AVG 				Temperature	"Avg. Room Temperature [%.1f °C]" 	<temperature>	(Status)
 
 /* Indoor Temperatures */
-Number Temperature_FF_Living_Thermo "Thermostat temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://lr-thermo/_liveSensorValue/thermo_LR/temp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
+Number Temperature_FF_Living_Thermo "LR Thermostat temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, Temp_FF_Chart) {http="<[http://lr-thermo/_liveSensorValue/thermo_LR/temp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
+Number Humidity_FF_Living_Thermo "Living Room RH [%.1f]" (FF_Living, Humidity_FF_Chart) {http="<[http://lr-thermo/_liveSensorValue/thermo_LR/rh:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
 Number Temperature_FF_AVG "Average temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://lr-thermo/_liveSensorValue/sum_LR/temp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
-Number Temperature_FF_MBR "MBR temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://lr-thermo/_liveSensorValue/remote_MBR/temp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
+Number Temperature_FF_MBR "Bedroom temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, Temp_FF_Chart) {http="<[http://lr-thermo/_liveSensorValue/remote_MBR/temp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
+Number Humidity_FF_MBR "Bedroom RH [%.1f]" (FF_Living, Humidity_FF_Chart) {http="<[http://lr-thermo/_liveSensorValue/remote_MBR/rh:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
 Number Lastmotion_FF_MBR "MBR last motion [%d]" <clock> (FF_MBR) {http="<[http://lr-thermo/_liveSensorValue/remote_MBR/lastmotion:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
-Number TempSet_FF_Living "Thermostat target [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://lr-thermo/_liveTargetTemp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
-String Fan_FF_Living "Fan [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> fan (.*?) </p>.*)]"}
-String Cool_FF_Living "Cool [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> cool (.*?) </p>.*)]"}
-String Heat_FF_Living "Heat [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> heat (.*?) </p>.*)]"}
-String Daemon_FF_Living "Daemon [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveDaemonStatus:30000:REGEX(.*?> Daemon is (.*?) </p>.*)]"}
-Number Fan_FF_Living_Scaled "Fan scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
-Number Cool_FF_Living_Scaled "Cool scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
-Number Heat_FF_Living_Scaled "Heat scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
+Number TempSet_FF_Living "LR Thermostat target [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://lr-thermo/_liveTargetTemp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
+String Fan_FF_Living "LR Fan [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> fan (.*?) </p>.*)]"}
+String Cool_FF_Living "LR Cool [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> cool (.*?) </p>.*)]"}
+String Heat_FF_Living "LR Heat [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> heat (.*?) </p>.*)]"}
+String Daemon_FF_Living "LR Daemon [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveDaemonStatus:30000:REGEX(.*?> Daemon is (.*?) </p>.*)]"}
+Number Fan_FF_Living_Scaled "LR Fan scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
+Number Cool_FF_Living_Scaled "LR Cool scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
+Number Heat_FF_Living_Scaled "LR Heat scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
+
+Number Temperature_AS_Studio_Thermo "Studio temp [%.1f]" <temperature> (Temperature, AS_Studio, Temp_AS_Chart, Temp_FF_Chart) {http="<[http://as-thermo/_liveSensorValue/thermo_AS/temp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
+Number Humidity_AS_Studio_Thermo "Studio RH [%.1f]"  (Temperature, AS_Studio, Humidity_FF_Chart ) {http="<[http://as-thermo/_liveSensorValue/thermo_AS/rh:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
+Number TempSet_AS_Studio "Studio target [%.1f]" <temperature> (Temperature, AS_Studio, Temp_AS_Chart) {http="<[http://as-thermo/_liveTargetTemp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
+
+String Fan_AS_Studio "Studio Fan [%s]" <temperature> (Temperature, AS_Studio) {http="<[http://as-thermo/_liveWhatsOn:30000:REGEX(.*?> fan (.*?) </p>.*)]"}
+String Cool_AS_Studio "Studio Cool [%s]" <temperature> (Temperature, AS_Studio) {http="<[http://as-thermo/_liveWhatsOn:30000:REGEX(.*?> cool (.*?) </p>.*)]"}
+String Heat_AS_Studio "Studio Heat [%s]" <temperature> (Temperature, AS_Studio) {http="<[http://as-thermo/_liveWhatsOn:30000:REGEX(.*?> heat (.*?) </p>.*)]"}
+
+String Daemon_AS_Studio "Studio Daemon [%s]" <temperature> (Temperature, AS_Studio) {http="<[http://as-thermo/_liveDaemonStatus:30000:REGEX(.*?> Daemon is (.*?) </p>.*)]"}
+Number Fan_AS_Studio_Scaled "Studio Fan scaled [%.1f]" <temperature> (Temperature, AS_Studio, Temp_AS_Chart)
+Number Cool_AS_Studio_Scaled "Studio Cool scaled [%.1f]" <temperature> (Temperature, AS_Studio, Temp_AS_Chart)
+Number Heat_AS_Studio_Scaled "Studio Heat scaled [%.1f]" <temperature> (Temperature, AS_Studio, Temp_AS_Chart)
 
 
 Group Weather_Chart													(Weather)

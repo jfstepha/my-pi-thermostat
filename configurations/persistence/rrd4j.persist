@@ -5,7 +5,9 @@ Strategies {
 }
 
 Items {
-	// let's only store temperature values in rrd
 	Temperature*,Weather_Chart* : strategy = everyMinute, restoreOnStartup
+	Humidity* : strategy = everyMinute, restoreOnStartup
+	Humidity_FF_Living_Thermo : strategy = everyMinute, restoreOnStartup
 	Lastmotion_FF_MBR : strategy = everyMinute, restoreOnStartup
+	Heat_AS_Duty_Cycle : strategy = everyMinute, restoreOnStartup
 }

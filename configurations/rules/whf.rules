@@ -6,8 +6,12 @@ rule "Set temp 50"
 when
 	Item SetTemp60_FF_Living changed to ON
 then
-	sendHttpGetRequest("http://lr-thermo/_setTarget/77.0")
+	sendHttpGetRequest("http://pi/_setTarget/77.0")
 end
+
+/********************************/
+/* Living room thermostat rules */
+/*********************************/
 
 rule "Set thermo temp"
 when
@@ -73,3 +77,85 @@ then
                 postUpdate(HeatIndex_FF_Living, Temperature_FF_Living.state)
         }
 end
+
+/*******************************/
+/* Art Studio thermostat rules */
+/*******************************/
+rule "Set thermo temp AS"
+when
+	Item TempSet_AS_Studio changed
+then
+	sendHttpGetRequest("http://as-thermo/_setTarget/" + TempSet_AS_Studio.state)
+end
+
+rule "Fan scaling AS"
+when
+        Item Fan_AS_Studio changed to ON
+then
+        postUpdate(Fan_AS_Studio_Scaled, 71)
+end
+
+rule "Fan scaling2 AS"
+when
+        Item Fan_AS_Studio changed to OFF
+then
+        postUpdate(Fan_AS_Studio_Scaled, 70)
+end
+
+rule "Cool scaling AS"
+when
+        Item Cool_AS_Studio changed to ON
+then
+        postUpdate(Cool_AS_Studio_Scaled, 69)
+end
+
+rule "Cool scaling2 AS"
+when
+        Item Cool_AS_Studio changed to OFF
+then
+        postUpdate(Cool_AS_Studio_Scaled, 68)
+end
+
+rule "Heat scaling AS on"
+when
+        Item Heat_AS_Studio changed to ON
+then
+	logInfo("FILE", "Executing rule AS Heat Scaling on")
+
+	logInfo("FILE", "Setting Heat_AS_On_Time")
+	postUpdate(Heat_AS_On_Time, ( ( (Heat_AS_Last_Off.state as DecimalType)  - (Heat_AS_Last_On.state as DecimalType) ) / 60000.0 ) ) 
+
+	logInfo("FILE", "Setting Heat_AS_Cycle_Time")
+	postUpdate(Heat_AS_Cycle_Time,( (now.millis - (Heat_AS_Last_On.state as DecimalType ) ) / 60000.0 ) )
+
+	logInfo("FILE", "Setting Heat_AS_Duty_Cycle")
+	postUpdate(Heat_AS_Duty_Cycle, ( (Heat_AS_On_Time.state as DecimalType) / ( (Heat_AS_Cycle_Time.state as DecimalType) + 0.0001) * 100) 
+
+	logInfo("FILE", "Setting Heat_AS_Last_on")
+	postUpdate(Heat_AS_Last_On, now.millis)
+	logInfo("FILE", "Done with rule AS Heat Scaling on")
+
+end
+
+rule "Heat scaling off AS"
+when
+        Item Heat_AS_Studio changed to OFF
+then
+	logInfo("FILE","Executing rule AS Heat Scaling off")
+	logInfo("FILE","Initializing values:");
+
+	logInfo("FILE", "Setting asHeatOnTime");
+	postUpdate(Heat_AS_On_Time, ((now.millis - (Heat_AS_Last_On.state as DecimalType) ) / 60000.0 )
+
+	logInfo("FILE", "Setting asHeatCycleTime");
+	postUpdate(Heat_AS_Cycle_Time, ((now.millis - (Heat_AS_Last_Off.state as DecimalType)) / 60000.0 ) 
+
+	logInfo("FILE", "Setting asHeatDutyCycle");
+	postUpdate(Heat_AS_Duty_Cycle, ((Heat_AS_On_Time.state as DecimalType) / ((Heat_AS_Cycle_Time.state as DecimalType) + 0.0001) * 100.0 )
+
+	logInfo("FILE", "Setting asHeatLastOff");
+	postUpdate(Heat_AS_Last_Off, now.millis)
+
+	logInfo("FILE", "Rule AS Heat Scaling off finished")
+end
+
