@@ -104,7 +104,8 @@ class rubustatDaemon(Daemon):
         GPIO.output(FAN_PIN, False)
         #delay to preserve compressor
         self.debuglog("idle pausing for 6 minutes...")
-        time.sleep(360)
+        self.debuglog("WARNING: Skipping sleep!!!!")
+        #time.sleep(360)
         return 0
 
     if mailEnabled == True:
