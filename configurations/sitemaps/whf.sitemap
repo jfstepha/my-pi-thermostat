@@ -60,11 +60,6 @@ sitemap whf label="Main Menu"
 						Text item=Daemon_FF_Living
 						Text item=Heat_FF_Duty_Cycle
 					}
-					Frame label="Thermo state"{
-						Text item=Fan_FF_Living_Scaled
-						Text item=Cool_FF_Living_Scaled
-						Text item=Heat_FF_Living_Scaled
-					}
 					Frame label="Temp summary" {
 						Switch item=Temp_LR_Chart_Period label="Living Room" mappings=[0="Hour", 1="Day", 2="Week"]
 						Chart item=Temp_LR_Chart period=h refresh=60000 visibility=[Temp_LR_Chart_Period==0, Temp_LR_Chart_Period=="Uninitialized"]
@@ -87,6 +82,11 @@ sitemap whf label="Main Menu"
 						Text item=Heat_FF_Duty_Cycle
 						Text item=Heat_FF_On_Time
 						Text item=Heat_FF_Cycle_Time
+					}
+					Frame label="Thermo state"{
+						Text item=Fan_FF_Living_Scaled
+						Text item=Cool_FF_Living_Scaled
+						Text item=Heat_FF_Living_Scaled
 					}
 				}
 				Text label="Master Bed Room" icon="groundfloor" {
@@ -148,10 +148,9 @@ sitemap whf label="Main Menu"
 				Chart item=Temp_FF_Chart period=W refresh=1200000 visibility=[Temp_FF_Chart_Period==2]
 			}
 			Frame label="Humidity summary" {
-				Switch item=Humidity_FF_Chart_Period label="Humidity" mappings=[0="Hour", 1="Day", 2="Week"]
-				Chart item=Humidity_FF_Chart period=h refresh=60000 visibility=[Humidity_FF_Chart_Period==0, Humidity_FF_Chart_Period=="Uninitialized"]
-				Chart item=Humidity_FF_Chart period=D refresh=300000 visibility=[Humidity_FF_Chart_Period==1]
-				Chart item=Humidity_FF_Chart period=W refresh=1200000 visibility=[Humidity_FF_Chart_Period==2]
+				Chart item=Humidity_FF_Chart period=h refresh=60000 visibility=[Temp_FF_Chart_Period==0, Temp_FF_Chart_Period=="Uninitialized"]
+				Chart item=Humidity_FF_Chart period=D refresh=300000 visibility=[Temp_FF_Chart_Period==1]
+				Chart item=Humidity_FF_Chart period=W refresh=1200000 visibility=[Temp_FF_Chart_Period==2]
 			}
 		}	
 	}
@@ -160,6 +159,11 @@ sitemap whf label="Main Menu"
 		Text item=Weather_Temp_Min
 		Text item=Weather_Temp_Max
     }
+	Frame label="Status" {
+		Text item=Daemon_FF_Living
+		Text item=Daemon_SF_Hall
+		Text item=Daemon_AS_Studio
+	}
 	Frame {
 		Switch item=Weather_Chart_Period label="Outdoor (from yahoo)" mappings=[0="Hour", 1="Day", 2="Week"]
 		Chart item=Weather_Chart period=h refresh=600 visibility=[Weather_Chart_Period==0, Weather_Chart_Period=="Uninitialized"]
