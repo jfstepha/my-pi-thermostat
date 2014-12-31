@@ -5,7 +5,41 @@ sitemap whf label="Main Menu"
 			Frame label="Rooms" {
 				Text label="Hall" icon="firstfloor" {
 					Frame label="Thermostat" {
-						Text item=Temperature_AS_Studio_Thermo
+						Text item=Temperature_SF_Hall_Thermo
+						Setpoint item=TempSet_SF_Hall step=0.5 minValue=40 maxValue=120
+						Text item=Humidity_SF_Hall_Thermo
+						Text item=Fan_SF_Hall
+						Text item=Cool_SF_Hall
+						Text item=Heat_SF_Hall 
+						Text item=Daemon_SF_Hall
+					} 
+					Frame label="Temp summary" {
+						Switch item=Temp_SF_Chart_Period label="Second Floor" mappings=[0="Hour", 1="Day", 2="Week"]
+						Chart item=Temp_SF_Chart period=h refresh=60000 visibility=[Temp_SF_Chart_Period==0, Temp_SF_Chart_Period=="Uninitialized"]
+						Chart item=Temp_SF_Chart period=D refresh=300000 visibility=[Temp_SF_Chart_Period==1]
+						Chart item=Temp_SF_Chart period=W refresh=1200000 visibility=[Temp_SF_Chart_Period==2]
+					}
+					Frame label="Humidity summary" {
+						Chart item=Humidity_SF_Chart period=h refresh=60000 visibility=[Temp_SF_Chart_Period==0, Temp_SF_Chart_Period=="Uninitialized"]
+						Chart item=Humidity_SF_Chart period=D refresh=300000 visibility=[Temp_SF_Chart_Period==1]
+						Chart item=Humidity_SF_Chart period=W refresh=1200000 visibility=[Temp_SF_Chart_Period==2]
+					}
+					Frame label="Duty Cycle summary" {
+						Chart item=Heat_SF_Duty_Cycle period=h refresh=60000 visibility=[Temp_SF_Chart_Period==0, Temp_SF_Chart_Period=="Uninitialized"]
+						Chart item=Heat_SF_Duty_Cycle period=D refresh=300000 visibility=[Temp_SF_Chart_Period==1]
+						Chart item=Heat_SF_Duty_Cycle period=W refresh=1200000 visibility=[Temp_SF_Chart_Period==2]
+					}
+					Frame label="Thermo state" {
+						Text item=Fan_SF_Hall_Scaled
+						Text item=Cool_SF_Hall_Scaled
+						Text item=Heat_SF_Hall_Scaled
+					}
+					Frame label="Duty Cycle" {
+						Text item=Heat_SF_Last_On
+						Text item=Heat_SF_Last_Off
+						Text item=Heat_SF_Duty_Cycle
+						Text item=Heat_SF_On_Time
+						Text item=Heat_SF_Cycle_Time
 					}
 				}
 			}
@@ -41,9 +75,9 @@ sitemap whf label="Main Menu"
 						Chart item=Humidity_FF_Living_Thermo period=W refresh=1200000 visibility=[Temp_LR_Chart_Period==2]
 					}
 					Frame label="Duty Cycle summary" {
-						Chart item=Heat_AS_Duty_Cycle period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
-						Chart item=Heat_AS_Duty_Cycle period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
-						Chart item=Heat_AS_Duty_Cycle period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
+						Chart item=Heat_FF_Duty_Cycle period=h refresh=60000 visibility=[Temp_FF_Chart_Period==0, Temp_FF_Chart_Period=="Uninitialized"]
+						Chart item=Heat_FF_Duty_Cycle period=D refresh=300000 visibility=[Temp_FF_Chart_Period==1]
+						Chart item=Heat_FF_Duty_Cycle period=W refresh=1200000 visibility=[Temp_FF_Chart_Period==2]
 					}
 					Frame label="Duty Cycle" {
 						Text item=Heat_FF_Last_On
@@ -129,5 +163,16 @@ sitemap whf label="Main Menu"
 		Chart item=Weather_Chart period=h refresh=600 visibility=[Weather_Chart_Period==0, Weather_Chart_Period=="Uninitialized"]
 		Chart item=Weather_Chart period=D refresh=600 visibility=[Weather_Chart_Period==1]
 		Chart item=Weather_Chart period=W refresh=600 visibility=[Weather_Chart_Period==2]
+	}
+	Frame {
+		Switch item=All_Temp_Chart_Period label="Temperatures" mappings=[0="Hour", 1="Day", 2="Week"]
+		Chart item=All_Temp_Chart period=h refresh=600 visibility=[All_Temp_Chart_Period==0, All_Temp_Chart_Period=="Uninitialized"]
+		Chart item=All_Temp_Chart period=D refresh=600 visibility=[All_Temp_Chart_Period==1]
+		Chart item=All_Temp_Chart period=W refresh=600 visibility=[All_Temp_Chart_Period==2]
+	}
+	Frame {
+		Chart item=All_Humidity_Chart period=h refresh=600 visibility=[All_Temp_Chart_Period==0, All_Temp_Chart_Period=="Uninitialized"]
+		Chart item=All_Humidity_Chart period=D refresh=600 visibility=[All_Temp_Chart_Period==1]
+		Chart item=All_Humidity_Chart period=W refresh=600 visibility=[All_Temp_Chart_Period==2]
 	}
 }

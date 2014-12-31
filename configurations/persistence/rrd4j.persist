@@ -8,7 +8,10 @@ Items {
 	Temperature*,Weather_Chart* : strategy = everyMinute, restoreOnStartup
 	Humidity* : strategy = everyMinute, restoreOnStartup
 	Humidity_FF_Living_Thermo : strategy = everyMinute, restoreOnStartup
+	Humidity_SF_Hall_Thermo : strategy = everyMinute, restoreOnStartup
+	Humidity_AS_Studio_Thermo : strategy = everyMinute, restoreOnStartup
 	Lastmotion_FF_MBR : strategy = everyMinute, restoreOnStartup
 	Heat_AS_Duty_Cycle : strategy = everyMinute, restoreOnStartup
 	Heat_FF_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+	Heat_SF_Duty_Cycle : strategy = everyMinute, restoreOnStartup
 }

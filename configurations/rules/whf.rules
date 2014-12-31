@@ -227,3 +227,121 @@ then
 	logInfo("FILE", "Rule AS Heat Scaling off finished")
 end
 
+/*********************************/
+/* Second floor thermostat rules */
+/*********************************/
+
+rule "Set SF thermo temp"
+when
+	Item TempSet_SF_Hall changed
+then
+	sendHttpGetRequest("http://sf-thermo/_setTarget/" + TempSet_SF_Hall.state)
+end
+
+rule "Fan SF scaling on"
+when
+        Item Fan_SF_Hall changed to ON
+then
+        postUpdate(Fan_SF_Hall_Scaled, 71)
+end
+
+rule "Fan SF scaling off"
+when
+        Item Fan_SF_Hall changed to OFF
+then
+        postUpdate(Fan_SF_Hall_Scaled, 70)
+end
+
+rule "Cool SF scaling on"
+when
+        Item Cool_SF_Hall changed to ON
+then
+        postUpdate(Cool_SF_Hall_Scaled, 69)
+end
+
+rule "Cool SF scaling off"
+when
+        Item Cool_SF_Hall changed to OFF
+then
+        postUpdate(Cool_SF_Hall_Scaled, 68)
+end
+
+rule "Heat SF scaling on"
+when
+        Item Heat_SF_Hall changed to ON
+then
+	logInfo("FILE", "Executing rule SF Heat Scaling on")
+        postUpdate(Heat_SF_Hall_Scaled, 67)
+
+	logInfo("FILE", "Heat_SF_Last_On=" + Heat_SF_Last_On.state + " Heat_SF_Last_Off=" + Heat_SF_Last_Off.state)
+
+        if( Heat_SF_Last_On.state == Uninitialized) {
+		logInfo("FILE","Heat_SF_Last_On was not initialized, setting to now")
+		postUpdate( Heat_SF_Last_On, now.millis)
+	}
+        if( Heat_SF_Last_Off.state == Uninitialized) {
+		logInfo("FILE","Heat_SF_Last_Off was not initialized, setting to now")
+		postUpdate( Heat_SF_Last_Off, now.millis)
+	}
+		
+	logInfo("FILE", "Setting Heat_SF_On_Time")
+	postUpdate(Heat_SF_On_Time, ( ( (Heat_SF_Last_Off.state as DecimalType)  - (Heat_SF_Last_On.state as DecimalType) ) / 60000.0 ) ) 
+
+	logInfo("FILE", "Setting Heat_SF_Cycle_Time")
+	postUpdate(Heat_SF_Cycle_Time,( (now.millis - (Heat_SF_Last_On.state as DecimalType ) ) / 60000.0 ) )
+
+	logInfo("FILE", "Setting Heat_SF_Duty_Cycle")
+	postUpdate(Heat_SF_Duty_Cycle, ( (Heat_SF_On_Time.state as DecimalType) / ( (Heat_SF_Cycle_Time.state as DecimalType) + 0.0001) * 100) 
+
+	logInfo("FILE", "Setting Heat_SF_Last_on")
+	postUpdate(Heat_SF_Last_On, now.millis)
+	logInfo("FILE", "Done with rule SF Heat Scaling on")
+end
+
+rule "Heat SF scaling off"
+when
+        Item Heat_SF_Hall changed to OFF
+then
+        if( Heat_SF_Last_On.state == Uninitialized) {
+		logInfo("FILE","Heat_SF_Last_On was not initalized, setting to now")
+		postUpdate( Heat_SF_Last_On, now.millis)
+	}
+        if( Heat_SF_Last_Off.state == Uninitialized) {
+		logInfo("FILE","Heat_SF_Last_Off was not initialized, setting to now")
+		postUpdate( Heat_SF_Last_Off, now.millis)
+	}
+
+	logInfo("FILE","Executing rule SF Heat Scaling off")
+        postUpdate(Heat_SF_Hall_Scaled, 66)
+
+	logInfo("FILE", "Setting sfHeatOnTime");
+	postUpdate(Heat_SF_On_Time, ((now.millis - (Heat_SF_Last_On.state as DecimalType) ) / 60000.0 )
+
+	logInfo("FILE", "Setting sfHeatCycleTime");
+	postUpdate(Heat_SF_Cycle_Time, ((now.millis - (Heat_SF_Last_Off.state as DecimalType)) / 60000.0 ) 
+
+	logInfo("FILE", "Setting sfHeatDutyCycle");
+	postUpdate(Heat_SF_Duty_Cycle, ((Heat_SF_On_Time.state as DecimalType) / ((Heat_SF_Cycle_Time.state as DecimalType) + 0.0001) * 100.0 )
+
+	logInfo("FILE", "Setting sfHeatLastOff");
+	postUpdate(Heat_SF_Last_Off, now.millis)
+
+	logInfo("FILE", "Rule SF Heat Scaling off finished")
+end
+
+rule "Heat index"
+
+when 
+        Item Temperature_SF_Hall changed
+then
+        if (Temperature_SF_Hall.state > 70 {
+
+                var T = Temperature_SF_Hall.state as DecimalType
+                var RH = Humidity_thermo_SF_Hall.state 
+                postUpdate(HeatIndex_SF_Hall, 0.363445176 + 0.988622465 * T + 4.777114035 * RH - 0.114037667 * T * RH - 0.000850208 * T * T -0.020716198 * RH * RH + 0.000687678* T * T * RH + 0.000274954 * T * RH * RH )
+        /*        postUpdate(HeatIndex_SF_Hall, -42.379 + 2.04901523 * T + 10.14333127 * RH - 0.22475541 * T * RH - 6.83783e-3 * T * T -5.481717e-2 * RH * RH + 1.22874e-3* T * T * RH + 8.5282e-4 * T * RH * RH -1.99e-6 * T * T * RH * RH) */
+        } else {
+                postUpdate(HeatIndex_SF_Hall, Temperature_SF_Living.state)
+        }
+end
+

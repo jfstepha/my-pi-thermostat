@@ -14,7 +14,10 @@ Items {
 	Temperature_FF_Living3 -> "Temperature_FF_Living3" : strategy = everyMinute
 	Temperature_FF_MBR -> "Temperature_FF_MBR" : strategy = everyMinute
 	Temperature_AS_Studio_Thermo -> "Temperature_AS_Studio_Thermo" : strategy = everyMinute
+	Temperature_SF_Studio_Thermo -> "Temperature_SF_Studio_Thermo" : strategy = everyMinute
 	TempSet_FF_Living -> "TempSet_FF_Living" : strategy = everyMinute
+	TempSet_AS_Living -> "TempSet_AS_Living" : strategy = everyMinute
+	TempSet_SF_Living -> "TempSet_SF_Living" : strategy = everyMinute
         Weather_Temperature : strategy = everyChange
         Fan_FF_Living : strategy = everyChange
         Cool_FF_Living : strategy = everyChange
@@ -24,4 +27,5 @@ Items {
         Lastmotion_FF_MBR : strategy = everyMinute
 	Heat_AS_Duty_Cycle : strategy = everyMinute, restoreOnStartup
 	Heat_FF_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+	Heat_SF_Duty_Cycle : strategy = everyMinute, restoreOnStartup
 }
