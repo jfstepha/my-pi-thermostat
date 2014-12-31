@@ -73,7 +73,7 @@ then
 	postUpdate(Heat_FF_Cycle_Time,( (now.millis - (Heat_FF_Last_On.state as DecimalType ) ) / 60000.0 ) )
 
 	logInfo("FILE", "Setting Heat_FF_Duty_Cycle")
-	postUpdate(Heat_FF_Duty_Cycle, ( (Heat_FF_On_Time.state as DecimalType) / ( (Heat_FF_Cycle_Time.state as DecimalType) + 0.0001) * 100) 
+	postUpdate(Heat_FF_Duty_Cycle, ( (Heat_FF_On_Time.state as DecimalType) / ( (Heat_FF_Cycle_Time.state as DecimalType) + 0.0001) * 100 ) ) 
 
 	logInfo("FILE", "Setting Heat_FF_Last_on")
 	postUpdate(Heat_FF_Last_On, now.millis)
@@ -97,13 +97,13 @@ then
         postUpdate(Heat_FF_Living_Scaled, 66)
 
 	logInfo("FILE", "Setting ffHeatOnTime");
-	postUpdate(Heat_FF_On_Time, ((now.millis - (Heat_FF_Last_On.state as DecimalType) ) / 60000.0 )
+	postUpdate(Heat_FF_On_Time, ((now.millis - (Heat_FF_Last_On.state as DecimalType) ) / 60000.0 ) )
 
 	logInfo("FILE", "Setting ffHeatCycleTime");
-	postUpdate(Heat_FF_Cycle_Time, ((now.millis - (Heat_FF_Last_Off.state as DecimalType)) / 60000.0 ) 
+	postUpdate(Heat_FF_Cycle_Time, ((now.millis - (Heat_FF_Last_Off.state as DecimalType)) / 60000.0 ) )
 
 	logInfo("FILE", "Setting ffHeatDutyCycle");
-	postUpdate(Heat_FF_Duty_Cycle, ((Heat_FF_On_Time.state as DecimalType) / ((Heat_FF_Cycle_Time.state as DecimalType) + 0.0001) * 100.0 )
+	postUpdate(Heat_FF_Duty_Cycle, ((Heat_FF_On_Time.state as DecimalType) / ((Heat_FF_Cycle_Time.state as DecimalType) + 0.0001) * 100.0 ) )
 
 	logInfo("FILE", "Setting ffHeatLastOff");
 	postUpdate(Heat_FF_Last_Off, now.millis)
@@ -114,16 +114,15 @@ end
 rule "Heat index"
 
 when 
-        Item Temperature_FF_Living changed
+        Item Temperature_FF_Living_Thermo changed
 then
-        if (Temperature_FF_Living.state > 70 {
+        if (Temperature_FF_Living_Thermo.state > 70 ) {
 
-                var T = Temperature_FF_Living.state as DecimalType
-                var RH = Humidity_thermo_FF_Living.state 
-                postUpdate(HeatIndex_FF_Living, 0.363445176 + 0.988622465 * T + 4.777114035 * RH - 0.114037667 * T * RH - 0.000850208 * T * T -0.020716198 * RH * RH + 0.000687678* T * T * RH + 0.000274954 * T * RH * RH )
-        /*        postUpdate(HeatIndex_FF_Living, -42.379 + 2.04901523 * T + 10.14333127 * RH - 0.22475541 * T * RH - 6.83783e-3 * T * T -5.481717e-2 * RH * RH + 1.22874e-3* T * T * RH + 8.5282e-4 * T * RH * RH -1.99e-6 * T * T * RH * RH) */
+                var T = Temperature_FF_Living_Thermo.state as DecimalType
+                var RH = Humidity_FF_Living_Thermo.state as DecimalType
+                postUpdate(HeatIndex_FF_Living_Thermo, 0.363445176 + 0.988622465 * T + 4.777114035 * RH - 0.114037667 * T * RH - 0.000850208 * T * T -0.020716198 * RH * RH + 0.000687678* T * T * RH + 0.000274954 * T * RH * RH )
         } else {
-                postUpdate(HeatIndex_FF_Living, Temperature_FF_Living.state)
+                postUpdate(HeatIndex_FF_Living_Thermo, Temperature_FF_Living_Thermo.state)
         }
 end
 
@@ -188,7 +187,7 @@ then
 	postUpdate(Heat_AS_Cycle_Time,( (now.millis - (Heat_AS_Last_On.state as DecimalType ) ) / 60000.0 ) )
 
 	logInfo("FILE", "Setting Heat_AS_Duty_Cycle")
-	postUpdate(Heat_AS_Duty_Cycle, ( (Heat_AS_On_Time.state as DecimalType) / ( (Heat_AS_Cycle_Time.state as DecimalType) + 0.0001) * 100) 
+	postUpdate(Heat_AS_Duty_Cycle, ( (Heat_AS_On_Time.state as DecimalType) / ( (Heat_AS_Cycle_Time.state as DecimalType) + 0.0001) * 100) )
 
 	logInfo("FILE", "Setting Heat_AS_Last_on")
 	postUpdate(Heat_AS_Last_On, now.millis)
@@ -213,13 +212,13 @@ then
         postUpdate(Heat_AS_Studio_Scaled, 66)
 
 	logInfo("FILE", "Setting asHeatOnTime");
-	postUpdate(Heat_AS_On_Time, ((now.millis - (Heat_AS_Last_On.state as DecimalType) ) / 60000.0 )
+	postUpdate(Heat_AS_On_Time, ((now.millis - (Heat_AS_Last_On.state as DecimalType) ) / 60000.0 ) )
 
 	logInfo("FILE", "Setting asHeatCycleTime");
-	postUpdate(Heat_AS_Cycle_Time, ((now.millis - (Heat_AS_Last_Off.state as DecimalType)) / 60000.0 ) 
+	postUpdate(Heat_AS_Cycle_Time, ((now.millis - (Heat_AS_Last_Off.state as DecimalType)) / 60000.0 ) )
 
 	logInfo("FILE", "Setting asHeatDutyCycle");
-	postUpdate(Heat_AS_Duty_Cycle, ((Heat_AS_On_Time.state as DecimalType) / ((Heat_AS_Cycle_Time.state as DecimalType) + 0.0001) * 100.0 )
+	postUpdate(Heat_AS_Duty_Cycle, ((Heat_AS_On_Time.state as DecimalType) / ((Heat_AS_Cycle_Time.state as DecimalType) + 0.0001) * 100.0 ) )
 
 	logInfo("FILE", "Setting asHeatLastOff");
 	postUpdate(Heat_AS_Last_Off, now.millis)
@@ -291,7 +290,7 @@ then
 	postUpdate(Heat_SF_Cycle_Time,( (now.millis - (Heat_SF_Last_On.state as DecimalType ) ) / 60000.0 ) )
 
 	logInfo("FILE", "Setting Heat_SF_Duty_Cycle")
-	postUpdate(Heat_SF_Duty_Cycle, ( (Heat_SF_On_Time.state as DecimalType) / ( (Heat_SF_Cycle_Time.state as DecimalType) + 0.0001) * 100) 
+	postUpdate(Heat_SF_Duty_Cycle, ( (Heat_SF_On_Time.state as DecimalType) / ( (Heat_SF_Cycle_Time.state as DecimalType) + 0.0001) * 100) )
 
 	logInfo("FILE", "Setting Heat_SF_Last_on")
 	postUpdate(Heat_SF_Last_On, now.millis)
@@ -315,13 +314,13 @@ then
         postUpdate(Heat_SF_Hall_Scaled, 66)
 
 	logInfo("FILE", "Setting sfHeatOnTime");
-	postUpdate(Heat_SF_On_Time, ((now.millis - (Heat_SF_Last_On.state as DecimalType) ) / 60000.0 )
+	postUpdate(Heat_SF_On_Time, ((now.millis - (Heat_SF_Last_On.state as DecimalType) ) / 60000.0 ) )
 
 	logInfo("FILE", "Setting sfHeatCycleTime");
-	postUpdate(Heat_SF_Cycle_Time, ((now.millis - (Heat_SF_Last_Off.state as DecimalType)) / 60000.0 ) 
+	postUpdate(Heat_SF_Cycle_Time, ((now.millis - (Heat_SF_Last_Off.state as DecimalType)) / 60000.0 ) )
 
 	logInfo("FILE", "Setting sfHeatDutyCycle");
-	postUpdate(Heat_SF_Duty_Cycle, ((Heat_SF_On_Time.state as DecimalType) / ((Heat_SF_Cycle_Time.state as DecimalType) + 0.0001) * 100.0 )
+	postUpdate(Heat_SF_Duty_Cycle, ((Heat_SF_On_Time.state as DecimalType) / ((Heat_SF_Cycle_Time.state as DecimalType) + 0.0001) * 100.0 ) )
 
 	logInfo("FILE", "Setting sfHeatLastOff");
 	postUpdate(Heat_SF_Last_Off, now.millis)
@@ -332,16 +331,16 @@ end
 rule "Heat index"
 
 when 
-        Item Temperature_SF_Hall changed
+        Item Temperature_SF_Hall_Thermo changed
 then
-        if (Temperature_SF_Hall.state > 70 {
+        if (Temperature_SF_Hall_Thermo.state > 70) {
 
-                var T = Temperature_SF_Hall.state as DecimalType
-                var RH = Humidity_thermo_SF_Hall.state 
+                var T = Temperature_SF_Hall_Thermo.state as DecimalType
+                var RH = Humidity_SF_Hall_Thermo.state as DecimalType 
                 postUpdate(HeatIndex_SF_Hall, 0.363445176 + 0.988622465 * T + 4.777114035 * RH - 0.114037667 * T * RH - 0.000850208 * T * T -0.020716198 * RH * RH + 0.000687678* T * T * RH + 0.000274954 * T * RH * RH )
         /*        postUpdate(HeatIndex_SF_Hall, -42.379 + 2.04901523 * T + 10.14333127 * RH - 0.22475541 * T * RH - 6.83783e-3 * T * T -5.481717e-2 * RH * RH + 1.22874e-3* T * T * RH + 8.5282e-4 * T * RH * RH -1.99e-6 * T * T * RH * RH) */
         } else {
-                postUpdate(HeatIndex_SF_Hall, Temperature_SF_Living.state)
+                postUpdate(HeatIndex_SF_Hall, Temperature_SF_Hall_Thermo.state)
         }
 end
 

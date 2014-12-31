@@ -37,6 +37,7 @@ Number Heat_FF_Duty_Cycle "Duty Cycle: [%.2f]"
 Number Heat_FF_On_Time "On Time (m): [%.2f]"
 Number Heat_FF_Cycle_Time "Cycle time: [%.2f]"
 
+
 Number Heat_AS_Last_On "Last On: [%.1f]"
 Number Heat_AS_Last_Off "Last Off: [%.1f]"
 Number Heat_AS_Duty_Cycle "Duty Cycle: [%.4f]"
@@ -62,6 +63,7 @@ Number Temperature_FF_MBR "Bedroom temp [%.1f]" <temperature> (Temperature, FF_L
 Number Humidity_FF_MBR "Bedroom RH [%.1f]" (FF_Living, Humidity_FF_Chart, All_Humidity_Chart) {http="<[http://lr-thermo/_liveSensorValue/remote_MBR/rh:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
 Number Lastmotion_FF_MBR "MBR last motion [%d]" <clock> (FF_MBR) {http="<[http://lr-thermo/_liveSensorValue/remote_MBR/lastmotion:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
 Number TempSet_FF_Living "LR Thermostat target [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, Temp_FF_Chart) {http="<[http://lr-thermo/_liveTargetTemp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
+Number HeatIndex_FF_Living_Thermo "Heat Index: [%.2f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
 String Fan_FF_Living "LR Fan [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> fan (.*?) </p>.*)]"}
 String Cool_FF_Living "LR Cool [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> cool (.*?) </p>.*)]"}
 String Heat_FF_Living "LR Heat [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> heat (.*?) </p>.*)]"}
@@ -90,7 +92,7 @@ Number Heat_AS_Studio_Scaled "Studio Heat scaled [%.1f]" <temperature> (Temperat
 Number Temperature_SF_Hall_Thermo "Second Floor temp [%.1f]" <temperature> (Temperature, SF_Hall, Temp_SF_Chart, All_Temp_Chart) {http="<[http://sf-thermo/_liveSensorValue/thermo_SF/temp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
 Number Humidity_SF_Hall_Thermo "Second Floor RH [%.1f]"  (Temperature, SF_Hall, Humidity_SF_Chart, All_Humidity_Chart ) {http="<[http://sf-thermo/_liveSensorValue/thermo_SF/rh:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
 Number TempSet_SF_Hall "Second Floor target [%.1f]" <temperature> (Temperature, SF_Hall, Temp_SF_Chart) {http="<[http://sf-thermo/_liveTargetTemp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
-
+Number HeatIndex_SF_Hall "Second Floor heat index [%1.f]" <temperature> (Temperature, SF_Hall, Temp_SF_Chart)
 String Fan_SF_Hall "Second Floor Fan [%s]" <temperature> (Temperature, SF_Hall) {http="<[http://sf-thermo/_liveWhatsOn:30000:REGEX(.*?> fan (.*?) </p>.*)]"}
 String Cool_SF_Hall "Second Floor Cool [%s]" <temperature> (Temperature, SF_Hall) {http="<[http://sf-thermo/_liveWhatsOn:30000:REGEX(.*?> cool (.*?) </p>.*)]"}
 String Heat_SF_Hall "Second Floor Heat [%s]" <temperature> (Temperature, SF_Hall) {http="<[http://sf-thermo/_liveWhatsOn:30000:REGEX(.*?> heat (.*?) </p>.*)]"}

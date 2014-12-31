@@ -8,6 +8,7 @@ sitemap whf label="Main Menu"
 						Text item=Temperature_SF_Hall_Thermo
 						Setpoint item=TempSet_SF_Hall step=0.5 minValue=40 maxValue=120
 						Text item=Humidity_SF_Hall_Thermo
+						Text item=HeatIndex_FF_Living_Thermo
 						Text item=Fan_SF_Hall
 						Text item=Cool_SF_Hall
 						Text item=Heat_SF_Hall 
@@ -52,6 +53,7 @@ sitemap whf label="Main Menu"
 						Text item=Temperature_FF_AVG
 						Setpoint item=TempSet_FF_Living step=0.5 minValue=40 maxValue=120
 						Text item=Humidity_FF_Living_Thermo
+						Text item=HeatIndex_FF_Living_Thermo
 						Text item=Fan_FF_Living
 						Text item=Cool_FF_Living
 						Text item=Heat_FF_Living
