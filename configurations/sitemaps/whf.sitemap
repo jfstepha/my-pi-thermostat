@@ -48,6 +48,13 @@ sitemap whf label="Main Menu"
 		Text label="First Floor" icon="groundfloor" {
 			Frame label="Rooms" {
 				Text label="Living Room" icon="groundfloor" {
+					Frame label="TV"{
+						Switch item=mute
+						Slider item=volume
+						Switch item=tvInput
+						Switch item=tvOnOff
+
+					}
 					Frame label="Thermostat" {
 						Text item=Temperature_FF_Living_Thermo
 						Text item=Temperature_FF_AVG
@@ -72,9 +79,9 @@ sitemap whf label="Main Menu"
 						Chart item=Humidity_FF_Living_Thermo period=W refresh=1200000 visibility=[Temp_LR_Chart_Period==2]
 					}
 					Frame label="Duty Cycle summary" {
-						Chart item=Heat_FF_Duty_Cycle period=h refresh=60000 visibility=[Temp_FF_Chart_Period==0, Temp_FF_Chart_Period=="Uninitialized"]
-						Chart item=Heat_FF_Duty_Cycle period=D refresh=300000 visibility=[Temp_FF_Chart_Period==1]
-						Chart item=Heat_FF_Duty_Cycle period=W refresh=1200000 visibility=[Temp_FF_Chart_Period==2]
+						Chart item=Heat_FF_Duty_Cycle period=h refresh=60000 visibility=[Temp_LR_Chart_Period==0, Temp_LR_Chart_Period=="Uninitialized"]
+						Chart item=Heat_FF_Duty_Cycle period=D refresh=300000 visibility=[Temp_LR_Chart_Period==1]
+						Chart item=Heat_FF_Duty_Cycle period=W refresh=1200000 visibility=[Temp_LR_Chart_Period==2]
 					}
 					Frame label="Duty Cycle" {
 						Text item=Heat_FF_Last_On
@@ -100,6 +107,19 @@ sitemap whf label="Main Menu"
 					    Chart item=Lastmotion_FF_MBR period=D refresh=300000 visibility=[Motion_Period==1]
 					    Chart item=Lastmotion_FF_MBR period=W refresh=1200000 visibility=[Motion_Period==2]
 				    }
+				    Frame {
+					    Switch item=Motion_Period label="Temperature" mappings=[0="Hour", 1="Day", 2="Week"]
+					    Chart item=Temperature_FF_MBR period=h refresh=60000 visibility=[Motion_Period==0, Motion_Period=="Uninitialized"]
+					    Chart item=Temperature_FF_MBR period=D refresh=300000 visibility=[Motion_Period==1]
+					    Chart item=Temperature_FF_MBR period=W refresh=1200000 visibility=[Motion_Period==2]
+				    }
+				    Frame {
+					    Switch item=Motion_Period label="Humidity" mappings=[0="Hour", 1="Day", 2="Week"]
+					    Chart item=Humidity_FF_MBR period=h refresh=60000 visibility=[Motion_Period==0, Motion_Period=="Uninitialized"]
+					    Chart item=Humidity_FF_MBR period=D refresh=300000 visibility=[Motion_Period==1]
+					    Chart item=Humidity_FF_MBR period=W refresh=1200000 visibility=[Motion_Period==2]
+				    }
+
 				}
 				Text label="Art Studio" icon="groundfloor" {
 					Frame label="Thermostat" {

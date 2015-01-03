@@ -9,6 +9,79 @@ then
 	sendHttpGetRequest("http://pi/_setTarget/77.0")
 end
 
+
+rule "Duty Cycle Adjust"
+when Time cron "0 * * * * ?" then
+	logInfo("FILE", "** Executing cron job every minute ** ")
+
+    if( Heat_FF_Last_On.state == Uninitialized) {
+		logInfo("FILE","Heat_FF_Last_On was not initialized, setting to now")
+		postUpdate( Heat_FF_Last_On, now.millis)
+	}
+	if( Heat_FF_Last_Off.state == Uninitialized) {
+		logInfo("FILE","Heat_FF_Last_Off was not initialized, setting to now")
+		postUpdate( Heat_FF_Last_Off, now.millis)
+	}
+    if( Heat_SF_Last_On.state == Uninitialized) {
+		logInfo("FILE","Heat_SF_Last_On was not initialized, setting to now")
+		postUpdate( Heat_SF_Last_On, now.millis)
+	}
+	if( Heat_SF_Last_Off.state == Uninitialized) {
+		logInfo("FILE","Heat_SF_Last_Off was not initialized, setting to now")
+		postUpdate( Heat_SF_Last_Off, now.millis)
+	}
+
+	logInfo("FILE", "Checking FF heat duty cycle")
+	
+	if (Heat_FF_Living.state == "ON"){
+		postUpdate( Heat_FF_On_Time, ( ( now.millis  - (Heat_FF_Last_On.state as DecimalType) ) / 60000.0 ) ) 
+		postUpdate(Heat_FF_Cycle_Time, ((now.millis - (Heat_FF_Last_Off.state as DecimalType)) / 60000.0 ) )
+		var dc = (Heat_FF_On_Time.state as DecimalType) / ( ( Heat_FF_Cycle_Time.state as DecimalType ) + 0.0001) * 100 
+		logInfo("FILE", "   on time="+Heat_FF_On_Time.state + " cycle time=" + Heat_FF_Cycle_Time.state)
+		logInfo("FILE", "   dc=" + dc + " Heat_FF_Duty_Cycle="+Heat_FF_Duty_Cycle)
+		if (dc > Heat_FF_Duty_Cycle.state as DecimalType) {
+				logInfo("FILE", "Updating duty cycle: dc > duty cycle when on")
+			postUpdate( Heat_FF_Duty_Cycle, dc )
+		}
+	} else { /* Heat_FF_Living is off */
+		postUpdate(Heat_FF_Cycle_Time, ((now.millis - (Heat_FF_Last_On.state as DecimalType)) / 60000.0 ) )
+		var dc = (Heat_FF_On_Time.state as DecimalType) / ( ( Heat_FF_Cycle_Time.state as DecimalType ) + 0.0001) * 100 
+		logInfo("FILE", "   on time="+Heat_FF_On_Time.state + " cycle time=" + Heat_FF_Cycle_Time.state)
+		logInfo("FILE", "   dc=" + dc + " Heat_FF_Duty_Cycle="+Heat_FF_Duty_Cycle.state)
+		if (dc < Heat_FF_Duty_Cycle.state as DecimalType ) {
+			logInfo("FILE", "Updating duty cycle: dc < duty cycle when off")
+			postUpdate( Heat_FF_Duty_Cycle, dc)
+		}
+	}
+
+	logInfo("FILE", "Checking SF heat duty cycle")
+
+	if (Heat_SF_Hall.state == "ON"){
+		postUpdate(Heat_SF_On_Time, ( (now.millis - (Heat_SF_Last_On.state as DecimalType) ) / 60000.0 ) ) 
+		postUpdate(Heat_SF_Cycle_Time, ((now.millis - (Heat_SF_Last_Off.state as DecimalType)) / 60000.0 ) )
+		var dc = (Heat_SF_On_Time.state as DecimalType) / ( ( Heat_SF_Cycle_Time.state as DecimalType ) + 0.0001) * 100 
+		logInfo("FILE", "   on time="+Heat_SF_On_Time.state + " cycle time=" + Heat_SF_Cycle_Time.state)
+		logInfo("FILE", "   dc=" + dc + " Heat_SF_Duty_Cycle="+Heat_SF_Duty_Cycle.state)
+		if (dc > Heat_SF_Duty_Cycle.state as DecimalType) {
+				logInfo("FILE", "Updating SF duty cycle: dc > duty cycle when on")
+			postUpdate( Heat_SF_Duty_Cycle, dc )
+		}
+	} else { /* Heat_SF_Hall is off */
+		postUpdate(Heat_SF_Cycle_Time, ((now.millis - (Heat_SF_Last_On.state as DecimalType)) / 60000.0 ) )
+		var dc = (Heat_SF_On_Time.state as DecimalType) / ( ( Heat_SF_Cycle_Time.state as DecimalType ) + 0.0001) * 100 
+		logInfo("FILE", "   on time="+Heat_SF_On_Time.state + " cycle time=" + Heat_SF_Cycle_Time.state)
+		logInfo("FILE", "   dc=" + dc + " Heat_SF_Duty_Cycle="+Heat_SF_Duty_Cycle.state)
+		if (dc < Heat_SF_Duty_Cycle.state as DecimalType ) {
+			logInfo("FILE", "Updating duty cycle: dc < duty cycle when off")
+			postUpdate( Heat_SF_Duty_Cycle, dc)
+		}
+	}
+
+
+
+	logInfo("FILE", "** Cron job done **")
+end
+
 /********************************/
 /* Living room thermostat rules */
 /*********************************/
@@ -77,6 +150,7 @@ then
 
 	logInfo("FILE", "Setting Heat_FF_Last_on")
 	postUpdate(Heat_FF_Last_On, now.millis)
+	logInfo("FILE", "New DC=" + Heat_FF_Duty_Cycle.state+" OnTime="+Heat_FF_On_Time.state+" CycleTime="+Heat_FF_Cycle_Time.state)
 	logInfo("FILE", "Done with rule FF Heat Scaling on")
 end
 
@@ -84,7 +158,7 @@ rule "Heat FF scaling off"
 when
         Item Heat_FF_Living changed to OFF
 then
-        if( Heat_FF_Last_On.state == Uninitialized) {
+    if( Heat_FF_Last_On.state == Uninitialized) {
 		logInfo("FILE","Heat_FF_Last_On was not initalized, setting to now")
 		postUpdate( Heat_FF_Last_On, now.millis)
 	}
@@ -94,7 +168,7 @@ then
 	}
 
 	logInfo("FILE","Executing rule FF Heat Scaling off")
-        postUpdate(Heat_FF_Living_Scaled, 66)
+	postUpdate(Heat_FF_Living_Scaled, 66)
 
 	logInfo("FILE", "Setting ffHeatOnTime");
 	postUpdate(Heat_FF_On_Time, ((now.millis - (Heat_FF_Last_On.state as DecimalType) ) / 60000.0 ) )
@@ -107,16 +181,16 @@ then
 
 	logInfo("FILE", "Setting ffHeatLastOff");
 	postUpdate(Heat_FF_Last_Off, now.millis)
-
+	logInfo("FILE", "New DC=" + Heat_FF_Duty_Cycle.state+" OnTime="+Heat_FF_On_Time.state+" CycleTime="+Heat_FF_Cycle_Time.state)
 	logInfo("FILE", "Rule FF Heat Scaling off finished")
 end
 
-rule "Heat index"
+rule "Heat index LR"
 
 when 
         Item Temperature_FF_Living_Thermo changed
 then
-        if (Temperature_FF_Living_Thermo.state > 70 ) {
+        if (Temperature_FF_Living_Thermo.state as DecimalType> 70 ) {
 
                 var T = Temperature_FF_Living_Thermo.state as DecimalType
                 var RH = Humidity_FF_Living_Thermo.state as DecimalType
@@ -294,6 +368,8 @@ then
 
 	logInfo("FILE", "Setting Heat_SF_Last_on")
 	postUpdate(Heat_SF_Last_On, now.millis)
+
+	logInfo("FILE", "New DC=" + Heat_SF_Duty_Cycle.state+" OnTime"+Heat_SF_On_Time.state+" CycleTime="+Heat_SF_Cycle_Time.state)
 	logInfo("FILE", "Done with rule SF Heat Scaling on")
 end
 
@@ -324,16 +400,17 @@ then
 
 	logInfo("FILE", "Setting sfHeatLastOff");
 	postUpdate(Heat_SF_Last_Off, now.millis)
+	logInfo("FILE", "New DC=" + Heat_SF_Duty_Cycle.state+" OnTime"+Heat_SF_On_Time.state+" CycleTime="+Heat_SF_Cycle_Time.state)
 
 	logInfo("FILE", "Rule SF Heat Scaling off finished")
 end
 
-rule "Heat index"
+rule "Heat index SF"
 
 when 
         Item Temperature_SF_Hall_Thermo changed
 then
-        if (Temperature_SF_Hall_Thermo.state > 70) {
+        if (Temperature_SF_Hall_Thermo.state as DecimalType> 70) {
 
                 var T = Temperature_SF_Hall_Thermo.state as DecimalType
                 var RH = Humidity_SF_Hall_Thermo.state as DecimalType 

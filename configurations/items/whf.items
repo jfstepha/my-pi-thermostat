@@ -18,6 +18,8 @@ Group Humidity_FF_Chart
 Group Humidity_SF_Chart
 Group All_Humidity_Chart
 
+
+
 Number Temp_LR_Chart_Period "Living Room Thermostat"
 Number Temp_FF_Chart_Period "First Floor Temps"
 Number Humidity_FF_Chart_Period "First Floor Humidities"
@@ -56,6 +58,15 @@ Group:Number:AVG 				Temperature	"Avg. Room Temperature [%.1f °C]" 	<temperatur
 /* Indoor Temperatures */
 /* First floor */
 /* Living Room */
+
+/* TV */
+Switch        mute    <video>       {samsungtv="ON:livingroom:KEY_MUTE, OFF:Livingroom:KEY_MUTE"}
+Dimmer volume   "Volume"  <video>    {samsungtv="INCREASE:livingroom:KEY_VOLUP, DECREASE:livingroom:KEY_VOLDOWN"}
+Switch tvInput  "ChangeInput" <video>  {samsungtv="ON:livingroom:KEY_HDMI,OFF:livingroom:KEY_HDMI"}
+Switch       tvOnOff "TV On/Off"    <video>       {samsungtv="ON:livingroom:KEY_POWERON, OFF:livingroom:KEY_POWEROFF"}
+
+
+/* Thermostat */
 Number Temperature_FF_Living_Thermo "LR Thermostat temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, Temp_FF_Chart, All_Temp_Chart) {http="<[http://lr-thermo/_liveSensorValue/thermo_LR/temp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
 Number Humidity_FF_Living_Thermo "Living Room RH [%.1f]" (FF_Living, Humidity_FF_Chart, All_Humidity_Chart) {http="<[http://lr-thermo/_liveSensorValue/thermo_LR/rh:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
 Number Temperature_FF_AVG "Average temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://lr-thermo/_liveSensorValue/sum_LR/temp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
@@ -66,7 +77,7 @@ Number TempSet_FF_Living "LR Thermostat target [%.1f]" <temperature> (Temperatur
 Number HeatIndex_FF_Living_Thermo "Heat Index: [%.2f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
 String Fan_FF_Living "LR Fan [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> fan (.*?) </p>.*)]"}
 String Cool_FF_Living "LR Cool [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> cool (.*?) </p>.*)]"}
-String Heat_FF_Living "LR Heat [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> heat (.*?) </p>.*)]"}
+String Heat_FF_Living "LR Heat [%s]" <heating> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> heat (.*?) </p>.*)]"}
 String Daemon_FF_Living "LR Daemon [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveDaemonStatus:30000:REGEX(.*?> Daemon is (.*?) </p>.*)]"}
 Number Fan_FF_Living_Scaled "LR Fan scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
 Number Cool_FF_Living_Scaled "LR Cool scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
