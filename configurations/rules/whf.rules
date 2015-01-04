@@ -31,6 +31,7 @@ when Time cron "0 * * * * ?" then
 		postUpdate( Heat_SF_Last_Off, now.millis)
 	}
 
+
 	logInfo("FILE", "Checking FF heat duty cycle")
 	
 	if (Heat_FF_Living.state == "ON"){

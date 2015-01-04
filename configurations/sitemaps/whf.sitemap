@@ -48,17 +48,25 @@ sitemap whf label="Main Menu"
 		Text label="First Floor" icon="groundfloor" {
 			Frame label="Rooms" {
 				Text label="Living Room" icon="groundfloor" {
-					Frame label="TV"{
-						Switch item=mute
-						Slider item=volume
-						Switch item=tvInput
-						Switch item=tvOnOff
-
+					Frame label="TV" {
+						Text label="TV" icon="video" {
+							Frame label="TV" {
+								Switch item=mute
+								Slider item=volume
+								Switch item=tvInput
+								Switch item=tvOnOff
+							}
+						}	
 					}
 					Frame label="Thermostat" {
 						Text item=Temperature_FF_Living_Thermo
 						Text item=Temperature_FF_AVG
-						Setpoint item=TempSet_FF_Living step=0.5 minValue=40 maxValue=120
+						Setpoint item=TempSet_FF_Living step=0.5 minValue=40 maxValue=120 
+						Switch item=SmartThermo_FF_Mode label="Smart Thermo Mode" mappings=[0="Disabled", 1="Away", 2="Night", 3="Day"]
+						Setpoint item=TempSet_FF_Living_Day step=0.5 minValue=40 maxValue=120
+						Setpoint item=TempSet_FF_Living_Night step=0.5 minValue=40 maxValue=120
+						Setpoint item=TempSet_FF_Living_Away step=0.5 minValue=40 maxValue=120
+						Text item=SmartThermo_FF_Mode_String
 						Text item=Humidity_FF_Living_Thermo
 						Text item=HeatIndex_FF_Living_Thermo
 						Text item=Fan_FF_Living
@@ -125,6 +133,11 @@ sitemap whf label="Main Menu"
 					Frame label="Thermostat" {
 						Text item=Temperature_AS_Studio_Thermo
 						Setpoint item=TempSet_AS_Studio step=0.5 minValue=40 maxValue=120
+						Switch item=SmartThermo_AS_Mode label="Smart Thermo Mode" mappings=[0="Disabled", 1="Away", 2="Night", 3="Day"]
+						Setpoint item=TempSet_AS_Studio_Day step=0.5 minValue=40 maxValue=120
+						Setpoint item=TempSet_AS_Studio_Night step=0.5 minValue=40 maxValue=120
+						Setpoint item=TempSet_AS_Studio_Away step=0.5 minValue=40 maxValue=120
+						Text item=SmartThermo_AS_Mode_String label="Smart Thermo Mode [%s]"
 						Text item=Humidity_AS_Studio_Thermo
 						Text item=Fan_AS_Studio
 						Text item=Cool_AS_Studio

@@ -7,6 +7,7 @@ Strategies {
 Items {
 	Temperature*,Weather_Chart* : strategy = everyMinute, restoreOnStartup
 	Humidity* : strategy = everyMinute, restoreOnStartup
+	Humidity_FF_MBR : strategy = everyMinute, restoreOnStartup
 	Humidity_FF_Living_Thermo : strategy = everyMinute, restoreOnStartup
 	Humidity_SF_Hall_Thermo : strategy = everyMinute, restoreOnStartup
 	Humidity_AS_Studio_Thermo : strategy = everyMinute, restoreOnStartup
@@ -14,4 +15,10 @@ Items {
 	Heat_AS_Duty_Cycle : strategy = everyMinute, restoreOnStartup
 	Heat_FF_Duty_Cycle : strategy = everyMinute, restoreOnStartup
 	Heat_SF_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+	Heat_FF_Last_On : strategy = everyChange, restoreOnStartup
+	Heat_FF_Last_Off : strategy = everyChange, restoreOnStartup
+	Heat_SF_Last_On : strategy = everyChange, restoreOnStartup
+	Heat_SF_Last_Off : strategy = everyChange, restoreOnStartup
+	Heat_AS_Last_On : strategy = everyChange, restoreOnStartup
+	Heat_AS_Last_Off : strategy = everyChange, restoreOnStartup
 }
