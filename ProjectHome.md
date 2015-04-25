@@ -1,0 +1,1 @@
+A raspberry Pi based thermostat based on http://wyattwinters.com/rubustat-the-raspberry-pi-thermostat.html
