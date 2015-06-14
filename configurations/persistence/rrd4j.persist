@@ -21,4 +21,5 @@ Items {
 	Heat_SF_Last_Off : strategy = everyChange, restoreOnStartup
 	Heat_AS_Last_On : strategy = everyChange, restoreOnStartup
 	Heat_AS_Last_Off : strategy = everyChange, restoreOnStartup
+        Lastmotion_AS_Studio: strategy = everyChange, restoreOnStartup
 }

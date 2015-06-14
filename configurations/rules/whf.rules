@@ -14,27 +14,30 @@ rule "Duty Cycle Adjust"
 when Time cron "0 * * * * ?" then
 	logInfo("FILE", "** Executing cron job every minute ** ")
 
-    if( Heat_FF_Last_On.state == Uninitialized) {
+
+    logInfo("FILE", "Checking FF values")
+    if( Heat_FF_Last_On.state == Uninitialized || Heat_FF_Last_Off.state == Uninitialized || Heat_FF_On_Time.state == Uninitialized
+        || Heat_FF_Cycle_Time.state == Uninitialized) {
 		logInfo("FILE","Heat_FF_Last_On was not initialized, setting to now")
-		postUpdate( Heat_FF_Last_On, now.millis)
+		postUpdate( Heat_FF_Last_On, now.millis - 100000)
+		postUpdate( Heat_FF_Last_Off, now.millis - 99000)
+		postUpdate( Heat_FF_On_Time, 1)
+		postUpdate( Heat_FF_Cycle_Time, 100)  
 	}
-	if( Heat_FF_Last_Off.state == Uninitialized) {
-		logInfo("FILE","Heat_FF_Last_Off was not initialized, setting to now")
-		postUpdate( Heat_FF_Last_Off, now.millis)
-	}
-    if( Heat_SF_Last_On.state == Uninitialized) {
+    logInfo("FILE", "Checking SF values")
+    if( Heat_SF_Last_On.state == Uninitialized || Heat_SF_Last_Off.state == Uninitialized || Heat_SF_On_Time.state == Uninitialized 
+        || Heat_SF_Cycle_Time.state == Uninitialized) {
 		logInfo("FILE","Heat_SF_Last_On was not initialized, setting to now")
-		postUpdate( Heat_SF_Last_On, now.millis)
-	}
-	if( Heat_SF_Last_Off.state == Uninitialized) {
-		logInfo("FILE","Heat_SF_Last_Off was not initialized, setting to now")
-		postUpdate( Heat_SF_Last_Off, now.millis)
+		postUpdate( Heat_SF_Last_On, now.millis - 100000)
+		postUpdate( Heat_SF_Last_Off, now.millis - 99000)
+		postUpdate( Heat_SF_On_Time, 1)
+		postUpdate( Heat_SF_Cycle_Time, 100)  
 	}
 
 
 	logInfo("FILE", "Checking FF heat duty cycle")
 	
-	if (Heat_FF_Living.state == "ON"){
+	if (Heat_FF_Living.state == "ON" && Heat_FF_Last_On.state as DecimalType > Heat_FF_Last_Off.state as DecimalType ){ /* second clause is for when this gets executed before the  scaling rule */
 		postUpdate( Heat_FF_On_Time, ( ( now.millis  - (Heat_FF_Last_On.state as DecimalType) ) / 60000.0 ) ) 
 		postUpdate(Heat_FF_Cycle_Time, ((now.millis - (Heat_FF_Last_Off.state as DecimalType)) / 60000.0 ) )
 		var dc = (Heat_FF_On_Time.state as DecimalType) / ( ( Heat_FF_Cycle_Time.state as DecimalType ) + 0.0001) * 100 
@@ -44,7 +47,7 @@ when Time cron "0 * * * * ?" then
 				logInfo("FILE", "Updating duty cycle: dc > duty cycle when on")
 			postUpdate( Heat_FF_Duty_Cycle, dc )
 		}
-	} else { /* Heat_FF_Living is off */
+	} else if (Heat_FF_Last_Off.state as DecimalType > Heat_FF_Last_On.state as DecimalType)  { /* Heat_FF_Living is off */
 		postUpdate(Heat_FF_Cycle_Time, ((now.millis - (Heat_FF_Last_On.state as DecimalType)) / 60000.0 ) )
 		var dc = (Heat_FF_On_Time.state as DecimalType) / ( ( Heat_FF_Cycle_Time.state as DecimalType ) + 0.0001) * 100 
 		logInfo("FILE", "   on time="+Heat_FF_On_Time.state + " cycle time=" + Heat_FF_Cycle_Time.state)
