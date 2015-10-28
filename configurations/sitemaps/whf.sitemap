@@ -143,6 +143,7 @@ sitemap whf label="Main Menu"
 						Text item=Cool_AS_Studio
 						Text item=Heat_AS_Studio 
 						Text item=Daemon_AS_Studio
+						Text item=Lastmotion_AS_Studio
 					} 
 					Frame label="Temp summary" {
 						Switch item=Temp_AS_Chart_Period label="Art Studio" mappings=[0="Hour", 1="Day", 2="Week"]
@@ -160,6 +161,11 @@ sitemap whf label="Main Menu"
 						Chart item=Heat_AS_Duty_Cycle period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
 						Chart item=Heat_AS_Duty_Cycle period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
 					}
+					Frame label="Last Motion" {
+					    Chart item=Lastmotion_AS_Studio period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
+					    Chart item=Lastmotion_AS_Studio period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
+					    Chart item=Lastmotion_AS_Studio period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
+				    }
 					Frame label="Thermo state" {
 						Text item=Fan_AS_Studio_Scaled
 						Text item=Cool_AS_Studio_Scaled
@@ -208,6 +214,11 @@ sitemap whf label="Main Menu"
 		Chart item=All_Temp_Chart period=h refresh=600 visibility=[All_Temp_Chart_Period==0, All_Temp_Chart_Period=="Uninitialized"]
 		Chart item=All_Temp_Chart period=D refresh=600 visibility=[All_Temp_Chart_Period==1]
 		Chart item=All_Temp_Chart period=W refresh=600 visibility=[All_Temp_Chart_Period==2]
+	}
+	Frame {
+		Chart item=All_Motion_Chart period=h refresh=600 visibility=[All_Temp_Chart_Period==0, All_Temp_Chart_Period=="Uninitialized"]
+		Chart item=All_Motion_Chart period=D refresh=600 visibility=[All_Temp_Chart_Period==1]
+		Chart item=All_Motion_Chart period=W refresh=600 visibility=[All_Temp_Chart_Period==2]
 	}
 	Frame {
 		Chart item=All_Humidity_Chart period=h refresh=600 visibility=[All_Temp_Chart_Period==0, All_Temp_Chart_Period=="Uninitialized"]

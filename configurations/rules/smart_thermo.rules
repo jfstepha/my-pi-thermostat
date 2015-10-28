@@ -26,12 +26,21 @@ end
 rule "Smart thermo FF night"
 
 when Time cron "0 30 23 * * ?" then
+	/* Art Studio */
 	if( SmartThermo_AS_Mode.state == 0 /* disabled */) {
 		logInfo("FILE", "Smart AS thermo would switch to night, but it is disabled ")
 	} else {
-		logInfo("FILE", "Smart thermo cron switching FF to night")
+		logInfo("FILE", "Smart thermo cron switching AS to night")
 		postUpdate( SmartThermo_AS_Mode, 2 /* night */)
 	}
+	/* rest of the First Floor */
+	if( SmartThermo_FF_Mode.state == 0 /* disabled */) {
+		logInfo("FILE", "Smart FF thermo would switch to night, but it is disabled ")
+	} else {
+		logInfo("FILE", "Smart thermo cron switching FF to night")
+		postUpdate( SmartThermo_FF_Mode, 2 /* night */)
+	}
+
 end
 
 rule "Smart thermo FF day"
@@ -42,6 +51,14 @@ when Time cron "00 00 5 * * ?" then
 		logInfo("FILE", "Smart thermo cron switching FF to day")
 		postUpdate( SmartThermo_AS_Mode, 3 /* day */ )
 	}
+	
+	if( SmartThermo_FF_Mode.state == 0 /* disabled */) {
+		logInfo("FILE", "Smart FF thermo would switch to day, but it is disabled ")
+	} else {
+		logInfo("FILE", "Smart thermo cron switching FF to day")
+		postUpdate( SmartThermo_FF_Mode, 3 /* day */ )
+	}
+
 end
 
 // rule "Smart thermo FF away"
@@ -52,6 +69,14 @@ end
 //		logInfo("FILE", "Smart thermo cron switching FF to away")
 //		postUpdate( SmartThermo_AS_Mode, 1 /* away */ )
 //	}
+
+//	if( SmartThermo_FF_Mode.state == 0 ) {
+//		logInfo("FILE", "Smart FF thermo would switch to away, but it is disabled ")
+//	} else {
+//		logInfo("FILE", "Smart thermo cron switching FF to away")
+//		postUpdate( SmartThermo_FF_Mode, 1 /* away */ )
+//	}
+
 //end
 
 /* Rules for when the mode changes, to actually do something */
