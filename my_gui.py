@@ -8,6 +8,8 @@ import datetime
 import random
 
 url = "http://localhost:80"
+MAX_TEMP_SET = 99
+MIN_TEMP_SET = 1
 
 ####################################################################################
 ####################################################################################
@@ -473,6 +475,8 @@ class MainFrame(wx.Frame):
     def OnBnUp(self, evt):
     #################################################################### 
        self.setpt += 1
+       if self.setpt > MAX_TEMP_SET:
+           self.setpt = MAX_TEMP_SET
        self.UpdateSetpoint()
        self.reset_timeout()
 
@@ -480,6 +484,8 @@ class MainFrame(wx.Frame):
     def OnBnDown(self, evt):
     #################################################################### 
        self.setpt -= 1
+       if self.setpt < MIN_TEMP_SET:
+            self.setpt = MIN_TEMP_SET
        self.UpdateSetpoint()
        self.reset_timeout()
 

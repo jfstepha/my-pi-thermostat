@@ -21,8 +21,11 @@ import ConfigParser
 
 FNULL = open(os.devnull,'w')
 INIT = 70
+
 SENSOR_READ_PERIOD = 10
 SERIAL_CHECK_PERIOD = 0.1
+# sleep period should be the lowest common denomintor of the above two
+SLEEP_PERIOD = 0.1
 
 config = ConfigParser.ConfigParser()
 config.read("config.txt")
@@ -50,6 +53,7 @@ class SensorHub():
             print rcv;
         self.sensor_list = {};
         self.lsu = 0
+ 	self.name = "SensorHub";
     ################################################################
     def setSetpoint(self, setpoint, mode):
     ################################################################
@@ -513,8 +517,10 @@ class loopThread(threading.Thread):
     ################################################################
         self.last_update_serial_time = 0
         self.last_check_sensor_time = 0
+        print "DEBUG: in run"
         while 1:
             self.init_sums()
+            time.sleep(SLEEP_PERIOD)
             if time.time() - self.last_update_serial_time > SERIAL_CHECK_PERIOD:
                 #print "DEBUG: updating hub"
                 if serverishub:

@@ -14,7 +14,7 @@ DEBUG = 1
 active_hysteresis = 1
 inactive_hysteresis = 1
 
-HEATER_PIN = 0
+HEATER_PIN = 2
 AC_PIN = 1
 FAN_PIN = 4
 
@@ -38,6 +38,6 @@ enabled = False
 ZIP = 01748
 
 [sensorhub]
-name = themo_as
-domain = AS
-ishub = 0
+name = thermo_LR
+domain = LR
+ishub = 1
