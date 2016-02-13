@@ -60,6 +60,7 @@ class Daemon:
         # write pidfile
         atexit.register(self.delpid)
         pid = str(os.getpid())
+        print "DEBUG-daemon: writing pidfile"
         file(self.pidfile,'w+').write("%s\n" % pid)
         print "DEBUG-daemon: done daemonizing"
     
