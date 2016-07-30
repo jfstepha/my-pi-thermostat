@@ -14,9 +14,10 @@ DEBUG = 1
 active_hysteresis = 1
 inactive_hysteresis = 1
 
-HEATER_PIN = 2
+HEATER_PIN = 27
 AC_PIN = 1
 FAN_PIN = 4
+MOTION_PIN = 22
 
 #mail notifications to alert to potential hardware problems
 [mail]
@@ -38,6 +39,6 @@ enabled = False
 ZIP = 01748
 
 [sensorhub]
-name = thermo_LR
-domain = LR
-ishub = 1
+name = thermo_SF
+domain = SF
+ishub = 0

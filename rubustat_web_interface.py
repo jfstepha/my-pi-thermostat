@@ -29,6 +29,7 @@ ZIP = config.get('weather','ZIP')
 HEATER_PIN = int(config.get('main','HEATER_PIN'))
 AC_PIN = int(config.get('main','AC_PIN'))
 FAN_PIN = int(config.get('main','FAN_PIN'))
+MOTION_PIN = int(config.get('main','MOTION_PIN'))
 weatherEnabled = config.getboolean('weather','enabled')
 hubname = config.get('sensorhub','name')
 hubdomain = config.get('sensorhub','domain')
@@ -205,6 +206,16 @@ def getMode():
         mode = file.readline()
         file.close()
         return str(mode)
+    except IOError:
+        return "error"
+
+@app.route('/_liveMotion', methods= ['GET'])
+def getMotion():
+    try:
+        file = open("/dev/shm/motion", "r")
+        motion = int(file.readline())
+        file.close()
+        return str(motion)
     except IOError:
         return "error"
 
