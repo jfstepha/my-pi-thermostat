@@ -7,8 +7,12 @@
 
 # also:
 #   - install python flask
+#   - install python-wxgtk2.8
 #   - add "jfstepha ALL=(ALL) NOPASSWD: ALL" to sudoers file
 #   - install AdafruitDHT
+#   - sudo usermod -a -G gpio jfstepha
+#   - add wifi ssid and password in /etc/network/interfaces
+#   = how to change the theme?
 #   - make a "status" file that looks like this:
 #71.0
 #heat
