@@ -15,7 +15,7 @@ active_hysteresis = 1
 inactive_hysteresis = 1
 
 HEATER_PIN = 2
-AC_PIN = 1
+AC_PIN = 3
 FAN_PIN = 4
 
 #mail notifications to alert to potential hardware problems

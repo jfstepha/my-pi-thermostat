@@ -1,4 +1,12 @@
 #!/bin/bash
+# Setup:
+#sudo adduser jfstepha
+# log in as jfstepha
+#mkdir bin
+#cd bin
+#git clone https://github.com/jfstepha/my-pi-thermostat.git
+#cd my-pi-thermo
+#mkdir logs
 # change the autologin user in /etc/lightdm/lightdm.conf
 # add this to .config/autostart/.desktop:
 #[Desktop Entry]
@@ -6,9 +14,14 @@
 #Exec=/home/jfstepha/bin/my-pi-thermostat/startup.sh
 
 # also:
-#   - install python flask
+#   - sudo adduser jfstepha gpio
+#   - copy /etc/network/interfaces for wpa
+#   - install python-flask
+#   - sudo apt-get install python-wxgtk2.8
 #   - add "jfstepha ALL=(ALL) NOPASSWD: ALL" to sudoers file
-#   - install AdafruitDHT
+#   - install AdafruitDHT: https://learn.adafruit.com/dht-humidity-sensing-on-raspberry-pi-with-gdocs-logging/software-install-updated
+#   - install Adafruit Pi TFT drivers: https://learn.adafruit.com/adafruit-2-8-pitft-capacitive-touch/easy-install
+#   - Edit config file
 #   - make a "status" file that looks like this:
 #71.0
 #heat
