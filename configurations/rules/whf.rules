@@ -2,6 +2,12 @@ import org.openhab.core.library.types.*
 import org.openhab.core.persistence.*
 import org.openhab.model.script.actions.*
 
+import java.util.List
+import java.util.ArrayList
+
+val List<Integer> ASArray = newArrayList(0)
+val List<Integer> SFArray = newArrayList(0)
+
 rule "Set temp 50"
 when
 	Item SetTemp60_FF_Living changed to ON
@@ -9,9 +15,43 @@ then
 	sendHttpGetRequest("http://pi/_setTarget/77.0")
 end
 
-
 rule "Duty Cycle Adjust"
 when Time cron "0 * * * * ?" then
+	logInfo("FILE", "********************************************** ")
+	logInfo("FILE", "****** Executing simplified DC cron job ****** ")
+
+    if( Heat_AS_Duty_Cycle_Simpl.state == Uninitialized ) { postUpdate( Heat_AS_Duty_Cycle_Simpl, 0) } 
+    if( Heat_SF_Duty_Cycle_Simpl.state == Uninitialized ) { postUpdate( Heat_SF_Duty_Cycle_Simpl, 0) } 
+
+    logInfo("FILE", " ** Art Studio heat ** State=" + Heat_AS_Studio.state + " DC=" + Heat_AS_Duty_Cycle_Simpl.state.format("%.7f"))
+    logInfo("FILE", " ** Second Floor heat ** State=" + Heat_SF_Hall.state + " DC = " + Heat_SF_Duty_Cycle_Simpl.state.format("%.7f"))
+	
+	if( Heat_AS_Studio.state == "ON" ) { ASArray.add(1) } else { ASArray.add(0) }
+	if( Heat_SF_Hall.state == "ON" ) { SFArray.add(1) } else { SFArray.add(0) }
+
+	if( ASArray.size() > 240) { ASArray.remove(0) }
+	if( SFArray.size() > 240) { SFArray.remove(0) }
+
+	var sum = 0.0 
+	for( int v: ASArray) { sum = sum + v * 1.0; }
+
+	logInfo("FILE", "AS array:" + ASArray )    
+	logInfo("FILE", "AS array mean:" + sum / ASArray.size() )    
+    
+    postUpdate( Heat_AS_Duty_Cycle_Simpl, String::format("%.7f", ( sum/ASArray.size() * 100.0 ) ) )
+
+    sum = 0.0
+	for( int v: SFArray) { sum = sum + v * 1.0; }
+
+	logInfo("FILE", "SF array:" + SFArray )    
+	logInfo("FILE", "SF array mean:" + sum / ASArray.size())    
+    
+    postUpdate( Heat_SF_Duty_Cycle_Simpl, String::format("%.7f", (sum/SFArray.size() * 100.0 ) ) )
+
+    logInfo( "FILE", "   * New SF DC = " + Heat_SF_Duty_Cycle_Simpl.state.format("%.7f") ) 
+
+
+    /*********************** the old way *****************************************************/
 	logInfo("FILE", "** Executing cron job every minute ** ")
 
     logInfo("FILE", "Checking FF values")

@@ -8,6 +8,10 @@ sitemap whf label="Main Menu"
 		    Text item=Attic_lsp
 		    Text item=Attic_wifi_strength
             Text item=Attic_pings_rec
+            Switch item=Attic_relay1 mappings=["ON"="ON", "OFF"="OFF"]
+            Text item=Attic_relay1_state
+            Switch item=Attic_relay2 mappings=["ON"="ON", "OFF"="OFF"]
+            Text item=Attic_relay2_state
 			Frame label="Temp summary" {
 				Switch item=Temp_AT_Chart_Period label="Attic" mappings=[0="Hour", 1="Day", 2="Week"]
 				Chart item=Temperature_AT_Finished period=h refresh=60000 visibility=[Temp_AT_Chart_Period==0, Temp_AT_Chart_Period=="Uninitialized"]
@@ -29,6 +33,14 @@ sitemap whf label="Main Menu"
 				Chart item=Attic_pings_rec period=h refresh=60000 visibility=[Temp_AT_Chart_Period==0, Temp_AT_Chart_Period=="Uninitialized"]
 				Chart item=Attic_pings_rec period=D refresh=300000 visibility=[Temp_AT_Chart_Period==1]
 				Chart item=Attic_pings_rec period=W refresh=1200000 visibility=[Temp_AT_Chart_Period==2]
+			} Frame label="Attic outlet1" {
+				Chart item=Attic_relay1_state period=h refresh=60000 visibility=[Temp_AT_Chart_Period==0, Temp_AT_Chart_Period=="Uninitialized"]
+				Chart item=Attic_relay1_state period=D refresh=300000 visibility=[Temp_AT_Chart_Period==1]
+				Chart item=Attic_relay1_state period=W refresh=1200000 visibility=[Temp_AT_Chart_Period==2]
+			} Frame label="Attic outlet2" {
+				Chart item=Attic_relay2_state period=h refresh=60000 visibility=[Temp_AT_Chart_Period==0, Temp_AT_Chart_Period=="Uninitialized"]
+				Chart item=Attic_relay2_state period=D refresh=300000 visibility=[Temp_AT_Chart_Period==1]
+				Chart item=Attic_relay2_state period=W refresh=1200000 visibility=[Temp_AT_Chart_Period==2]
             }
         }
 		Text label="Second Floor" icon="firstfloor" {
@@ -56,10 +68,15 @@ sitemap whf label="Main Menu"
 					    Chart item=Lastmotion_SF_Hall period=D refresh=300000 visibility=[Temp_SF_Chart_Period==1]
 					    Chart item=Lastmotion_SF_Hall period=W refresh=1200000 visibility=[Temp_SF_Chart_Period==2]
                     }
-					Frame label="Cool Duty Cycle summary"  {
-						Chart item=Cool_SF_Duty_Cycle period=h refresh=60000 visibility=[Temp_SF_Chart_Period==0, Temp_SF_Chart_Period=="Uninitialized"]
-						Chart item=Cool_SF_Duty_Cycle period=D refresh=300000 visibility=[Temp_SF_Chart_Period==1]
-						Chart item=Cool_SF_Duty_Cycle period=W refresh=1200000 visibility=[Temp_SF_Chart_Period==2]
+					Frame label="Heat Duty Cycle summary"  {
+						Chart item=Heat_SF_Duty_Cycle period=h refresh=60000 visibility=[Temp_SF_Chart_Period==0, Temp_SF_Chart_Period=="Uninitialized"]
+						Chart item=Heat_SF_Duty_Cycle period=D refresh=300000 visibility=[Temp_SF_Chart_Period==1]
+						Chart item=Heat_SF_Duty_Cycle period=W refresh=1200000 visibility=[Temp_SF_Chart_Period==2]
+					}
+					Frame label="Heat Duty Cycle Simplified summary"  {
+						Chart item=Heat_SF_Duty_Cycle_Simpl period=h refresh=60000 visibility=[Temp_SF_Chart_Period==0, Temp_SF_Chart_Period=="Uninitialized"]
+						Chart item=Heat_SF_Duty_Cycle_Simpl period=D refresh=300000 visibility=[Temp_SF_Chart_Period==1]
+						Chart item=Heat_SF_Duty_Cycle_Simpl period=W refresh=1200000 visibility=[Temp_SF_Chart_Period==2]
 					}
 					Frame label="Thermo state" {
 						Text item=Fan_SF_Hall_Scaled
@@ -72,11 +89,12 @@ sitemap whf label="Main Menu"
 						Chart item=Humidity_SF_Chart period=W refresh=1200000 visibility=[Temp_SF_Chart_Period==2]
 					}
 					Frame label="Cool Duty Cycle" {
-						Text item=Cool_SF_Last_On
-						Text item=Cool_SF_Last_Off
-						Text item=Cool_SF_Duty_Cycle
-						Text item=Cool_SF_On_Time
-						Text item=Cool_SF_Cycle_Time
+						Text item=Heat_SF_Last_On
+						Text item=Heat_SF_Last_Off
+						Text item=Heat_SF_Duty_Cycle
+						Text item=Heat_SF_Duty_Cycle_Simpl
+						Text item=Heat_SF_On_Time
+						Text item=Heat_SF_Cycle_Time
 					}
 				}
 			}
@@ -205,6 +223,11 @@ sitemap whf label="Main Menu"
 						Chart item=Heat_AS_Duty_Cycle period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
 						Chart item=Heat_AS_Duty_Cycle period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
 					}
+					Frame label="Duty Cycle Simplified summary" {
+						Chart item=Heat_AS_Duty_Cycle_Simpl period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
+						Chart item=Heat_AS_Duty_Cycle_Simpl period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
+						Chart item=Heat_AS_Duty_Cycle_Simpl period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
+					}
 					Frame label="Humidity summary" {
 						Chart item=Humidity_AS_Studio_Thermo period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
 						Chart item=Humidity_AS_Studio_Thermo period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
@@ -216,6 +239,7 @@ sitemap whf label="Main Menu"
 						Text item=Heat_AS_Studio_Scaled
 					}
 					Frame label="Duty Cycle" {
+						Text item=Heat_AS_Duty_Cycle_Simpl
 						Text item=Heat_AS_Last_On
 						Text item=Heat_AS_Last_Off
 						Text item=Heat_AS_Duty_Cycle
@@ -245,6 +269,12 @@ sitemap whf label="Main Menu"
 		    Text item=Basement_lsdoor2
 		    Text item=Basement_wifi_strength
             Text item=Basement_pings_rec
+            Switch item=Basement_relay1 mappings=["ON"="ON", "OFF"="OFF"]
+            Text item=Basement_relay1_state
+            Text item=Basement_current1
+            Switch item=Basement_relay2 mappings=["ON"="ON", "OFF"="OFF"]
+            Text item=Basement_relay2_state
+            Text item=Basement_current2
 			Frame label="Basement temperature" {
 				Switch item=Temp_BS_Chart_Period label="Basement" mappings=[0="Hour", 1="Day", 2="Week"]
 				Chart item=Basement_Temperature period=h refresh=60000 visibility=[Temp_BS_Chart_Period==0, Temp_BS_Chart_Period=="Uninitialized"]
@@ -270,6 +300,22 @@ sitemap whf label="Main Menu"
 				Chart item=Basement_pings_rec period=h refresh=60000 visibility=[Temp_BS_Chart_Period==0, Temp_BS_Chart_Period=="Uninitialized"]
 				Chart item=Basement_pings_rec period=D refresh=300000 visibility=[Temp_BS_Chart_Period==1]
 				Chart item=Basement_pings_rec period=W refresh=1200000 visibility=[Temp_BS_Chart_Period==2]
+			} Frame label="Xmas Lights" {
+				Chart item=Basement_relay1_state period=h refresh=60000 visibility=[Temp_BS_Chart_Period==0, Temp_BS_Chart_Period=="Uninitialized"]
+				Chart item=Basement_relay1_state period=D refresh=300000 visibility=[Temp_BS_Chart_Period==1]
+				Chart item=Basement_relay1_state period=W refresh=1200000 visibility=[Temp_BS_Chart_Period==2]
+			} Frame label="Eve heaters" {
+				Chart item=Basement_relay2_state period=h refresh=60000 visibility=[Temp_BS_Chart_Period==0, Temp_BS_Chart_Period=="Uninitialized"]
+				Chart item=Basement_relay2_state period=D refresh=300000 visibility=[Temp_BS_Chart_Period==1]
+				Chart item=Basement_relay2_state period=W refresh=1200000 visibility=[Temp_BS_Chart_Period==2]
+			} Frame label="Xmas light current" {
+				Chart item=Basement_current1 period=h refresh=60000 visibility=[Temp_BS_Chart_Period==0, Temp_BS_Chart_Period=="Uninitialized"]
+				Chart item=Basement_current1 period=D refresh=300000 visibility=[Temp_BS_Chart_Period==1]
+				Chart item=Basement_current1 period=W refresh=1200000 visibility=[Temp_BS_Chart_Period==2]
+			} Frame label="Eve heater current" {
+				Chart item=Basement_current2 period=h refresh=60000 visibility=[Temp_BS_Chart_Period==0, Temp_BS_Chart_Period=="Uninitialized"]
+				Chart item=Basement_current2 period=D refresh=300000 visibility=[Temp_BS_Chart_Period==1]
+				Chart item=Basement_current2 period=W refresh=1200000 visibility=[Temp_BS_Chart_Period==2]
             }
         }
 	}

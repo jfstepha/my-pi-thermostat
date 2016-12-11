@@ -40,18 +40,21 @@ Number Motion_Period "Motion"
 Number Heat_FF_Last_On "Last On: [%.1f]"
 Number Heat_FF_Last_Off "Last Off: [%.1f]"
 Number Heat_FF_Duty_Cycle "Duty Cycle: [%.2f]"
+Number Heat_FF_Duty_Cycle_Simpl "Duty Cycle Simplified: [%.2f]"
 Number Heat_FF_On_Time "On Time (m): [%.2f]"
 Number Heat_FF_Cycle_Time "Cycle time: [%.2f]"
 
 Number Heat_AS_Last_On "Last On: [%.1f]"
 Number Heat_AS_Last_Off "Last Off: [%.1f]"
 Number Heat_AS_Duty_Cycle "Duty Cycle: [%.4f]"
+Number Heat_AS_Duty_Cycle_Simpl "Duty Cycle Simplified: [%.2f]"
 Number Heat_AS_On_Time "On Time (m): [%.2f]"
 Number Heat_AS_Cycle_Time "Cycle time: [%.2f]"
 
 Number Heat_SF_Last_On "Last On: [%.1f]"
 Number Heat_SF_Last_Off "Last Off: [%.1f]"
 Number Heat_SF_Duty_Cycle "Duty Cycle: [%.4f]"
+Number Heat_SF_Duty_Cycle_Simpl "Duty Cycle Simplified: [%.4f]"
 Number Heat_SF_On_Time "On Time (m): [%.2f]"
 Number Heat_SF_Cycle_Time "Cycle time: [%.2f]"
 
@@ -83,7 +86,7 @@ Group:Number:AVG 				Temperature	"Avg. Room Temperature [%.1f °C]" 	<temperatur
 /* Living Room */
 
 /* TV */
-Switch        mute    <video>       {samsungtv="ON:livingroom:KEY_MUTE, OFF:Livingroom:KEY_MUTE"}
+Switch        mute    <video>       {samsungtv="ON:livingroom:KEY_MUTE, OFF:livingroom:KEY_MUTE"}
 Dimmer volume   "Volume"  <video>    {samsungtv="INCREASE:livingroom:KEY_VOLUP, DECREASE:livingroom:KEY_VOLDOWN"}
 Switch tvInput  "ChangeInput" <video>  {samsungtv="ON:livingroom:KEY_HDMI,OFF:livingroom:KEY_HDMI"}
 Switch       tvOnOff "TV On/Off"    <video>       {samsungtv="ON:livingroom:KEY_POWERON, OFF:livingroom:KEY_POWEROFF"}
@@ -102,8 +105,8 @@ String Cool_FF_Living "LR Cool [%s]" <temperature> (Temperature, FF_Living) {htt
 String Heat_FF_Living "LR Heat [%s]" <heating> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> heat (.*?) </p>.*)]"}
 String Daemon_FF_Living "LR Daemon [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveDaemonStatus:30000:REGEX(.*?> Daemon is (.*?) </p>.*)]"}
 Number Fan_FF_Living_Scaled "LR Fan scaled [%.1f]" <temperature> (Temperature, FF_Living)
-Number Cool_FF_Living_Scaled "LR Cool scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
-Number Heat_FF_Living_Scaled "LR Heat scaled [%.1f]" <temperature> (Temperature, FF_Living)
+Number Cool_FF_Living_Scaled "LR Cool scaled [%.1f]" <temperature> (Temperature, FF_Living)
+Number Heat_FF_Living_Scaled "LR Heat scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
 
 Number TempSet_FF_Living "LR Thermostat target [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, Temp_FF_Chart) {http="<[http://lr-thermo/_liveTargetTemp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
 Number TempSet_FF_Living_Day "LR Thermostat Daytime target [%.1f]" <temperature> (Temperature, FF_Living) 
@@ -147,7 +150,7 @@ String Heat_SF_Hall "Second Floor Heat [%s]" <temperature> (Temperature, SF_Hall
 String Daemon_SF_Hall "Second Floor Daemon [%s]" <temperature> (Temperature, SF_Hall) {http="<[http://sf-thermo/_liveDaemonStatus:60000:REGEX(.*?> Daemon is (.*?) </p>.*)]"}
 Number Fan_SF_Hall_Scaled "Second Floor Fan scaled [%.1f]" <temperature> (Temperature, SF_Hall)
 Number Cool_SF_Hall_Scaled "Second Floor Cool scaled [%.1f]" <temperature> (Temperature, SF_Hall, Temp_SF_Chart)
-Number Heat_SF_Hall_Scaled "Second Floor Heat scaled [%.1f]" <temperature> (Temperature, SF_Hall)
+Number Heat_SF_Hall_Scaled "Second Floor Heat scaled [%.1f]" <temperature> (Temperature, SF_Hall, Temp_SF_Chart)
 Number Lastmotion_SF_Hall "Second Floor last motion [%d]" <clock> (SF_Hall, All_Motion_Chart) {http="<[http://sf-thermo/_liveMotion:30000:REGEX((.*?))]"}
 
 
@@ -171,12 +174,23 @@ Number Attic_Uptime   "Attic uptime [%d]" <temperature> { http="<[https://api.pa
 Number Attic_lsp   "Attic loops since ping [%d]" <temperature> { exec="<[curl https://api.particle.io/v1/devices/normal_dentist/ping -d access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:REGEX(.*?return_value.*([0-9]+).*)]" } 
 Number Attic_wifi_strength   "Attic wifi strength [%d]" <temperature> { http="<[https://api.particle.io/v1/devices/normal_dentist/sigstr?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
 Number Attic_pings_rec   "Attic Pings Received [%d]" <temperature> { http="<[https://api.particle.io/v1/devices/normal_dentist/pings_rec?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
+Switch Attic_relay1 "Attic outlet1"    <heating>     {  exec=">[ON:curl https://api.particle.io/v1/devices/normal_dentist/relay1_on -d access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad -d params=1] >[OFF:curl https://api.particle.io/v1/devices/normal_dentist/relay1_off -d access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad -d params=1]" }
+Switch Attic_relay2 "Attic outlet2"    <heating>     {  exec=">[ON:curl https://api.particle.io/v1/devices/normal_dentist/relay2_on -d access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad -d params=1] >[OFF:curl https://api.particle.io/v1/devices/normal_dentist/relay2_off -d access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad -d params=1]" }
+Number Attic_relay1_state "Attic outlet1 status [%d]" <heating>  {  http="<[https://api.particle.io/v1/devices/normal_dentist/relay1_state?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
+Number Attic_relay2_state "Attic outlet2 status [%d]" <heating>  {  http="<[https://api.particle.io/v1/devices/normal_dentist/relay2_state?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
+
 Number Basement_Uptime   "Basement uptime [%d]" <temperature> { http="<[https://api.particle.io/v1/devices/ninja_mutant/uptime?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
 Number Basement_Temperature   "Basement temperature [%.1f F]" <temperature> { http="<[https://api.particle.io/v1/devices/ninja_mutant/temperature?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
-Number FrontDoor_Temperature   "Front Door temperature [%.1f F]" <temperature> (All_Temp_Chart) { http="<[https://api.particle.io/v1/devices/ninja_mutant/temperature2?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
+Number FrontDoor_Temperature   "Front Door temperature [%.1f F]" <temperature> (All_Temp_Chart,Weather_Chart) { http="<[https://api.particle.io/v1/devices/ninja_mutant/temperature2?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
 Number Basement_lsdoor1  "Loops since kitchen doorbell [%d]" <temperature> (Basement_doorbells) { http="<[https://api.particle.io/v1/devices/ninja_mutant/lsd1?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:5000:JS(getValue.js)]" }
 Number Basement_lsdoor2  "Loops since front doorbell [%d]" <temperature> (Basement_doorbells) { http="<[https://api.particle.io/v1/devices/ninja_mutant/lsd2?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:5000:JS(getValue.js)]" }
 Number Basement_lsp   "Basement loops since ping [%d]" <temperature> { exec="<[curl https://api.particle.io/v1/devices/ninja_mutant/ping -d access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:REGEX(.*?return_value.*([0-9]+).*)]" } 
 Number Basement_wifi_strength   "Basement wifi strength [%d]" <temperature> { http="<[https://api.particle.io/v1/devices/ninja_mutant/sigstr?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
 Number Basement_pings_rec   "Basement Pings Received [%d]" <temperature> { http="<[https://api.particle.io/v1/devices/ninja_mutant/pings_rec?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
+Switch Basement_relay1 "Outside Xmas Lights"    <heating>     {  exec=">[ON:curl https://api.particle.io/v1/devices/ninja_mutant/relay1_on -d access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad -d params=1] >[OFF:curl https://api.particle.io/v1/devices/ninja_mutant/relay1_off -d access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad -d params=1]" }
+Switch Basement_relay2 "Eve heater"    <heating>     {  exec=">[ON:curl https://api.particle.io/v1/devices/ninja_mutant/relay2_on -d access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad -d params=1] >[OFF:curl https://api.particle.io/v1/devices/ninja_mutant/relay2_off -d access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad -d params=1]" }
+Number Basement_relay1_state "Outside Xmas Lights status [%d]" <heating>  {  http="<[https://api.particle.io/v1/devices/ninja_mutant/relay1_state?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
+Number Basement_relay2_state "Eve heater status [%d]" <heating>  {  http="<[https://api.particle.io/v1/devices/ninja_mutant/relay2_state?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
+Number Basement_current1 "Outside Xmas Lights current [%.1f]" <light>  {  http="<[https://api.particle.io/v1/devices/ninja_mutant/cur1_sd?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
+Number Basement_current2 "Outside Eve heater current [%.1f]" <light>  {  http="<[https://api.particle.io/v1/devices/ninja_mutant/cur2_sd?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
 Number email_test "Send an email on 0 [%d]" <temperature> 

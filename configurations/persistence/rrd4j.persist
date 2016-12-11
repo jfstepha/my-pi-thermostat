@@ -22,8 +22,10 @@ Items {
 	Lastmotion_FF_MBR : strategy = everyMinute, restoreOnStartup
 	Lastmotion_SF_Hall : strategy = everyMinute, restoreOnStartup
 	Heat_AS_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+	Heat_AS_Duty_Cycle_Simpl : strategy = everyMinute, restoreOnStartup
 	Heat_FF_Duty_Cycle : strategy = everyMinute, restoreOnStartup
 	Heat_SF_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+	Heat_SF_Duty_Cycle_Simpl : strategy = everyMinute, restoreOnStartup
 	Heat_FF_Last_On : strategy = everyChange, restoreOnStartup
 	Heat_FF_Last_Off : strategy = everyChange, restoreOnStartup
 	Heat_SF_Last_On : strategy = everyChange, restoreOnStartup
@@ -53,4 +55,11 @@ Items {
 	Basement_wifi_strength : strategy = everyMinute, restoreOnStartup
 	Basement_pings_rec : strategy = everyMinute, restoreOnStartup
 	Temperature_AT_Finished : strategy = everyChange, restoreOnStartup
+	FrontDoor_Temperature : strategy = everyChange, restoreOnStartup
+    Basement_relay1_state : strategy = everyChange, restorOnStartup
+    Basement_relay2_state : strategy = everyChange, restorOnStartup
+    Basement_current1 : strategy = everyChange, restorOnStartup
+    Basement_current2 : strategy = everyChange, restorOnStartup
+    Attic_relay1_state : strategy = everyChange, restorOnStartup
+    Attic_relay2_state : strategy = everyChange, restorOnStartup
 }
