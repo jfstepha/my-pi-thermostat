@@ -37,46 +37,12 @@ Number Uptime_Period "Uptime"
 Number Motion_Period "Motion"
 
 /* For calculating duty cycle */
-Number Heat_FF_Last_On "Last On: [%.1f]"
-Number Heat_FF_Last_Off "Last Off: [%.1f]"
 Number Heat_FF_Duty_Cycle "Duty Cycle: [%.2f]"
-Number Heat_FF_Duty_Cycle_Simpl "Duty Cycle Simplified: [%.2f]"
-Number Heat_FF_On_Time "On Time (m): [%.2f]"
-Number Heat_FF_Cycle_Time "Cycle time: [%.2f]"
-
-Number Heat_AS_Last_On "Last On: [%.1f]"
-Number Heat_AS_Last_Off "Last Off: [%.1f]"
 Number Heat_AS_Duty_Cycle "Duty Cycle: [%.4f]"
-Number Heat_AS_Duty_Cycle_Simpl "Duty Cycle Simplified: [%.2f]"
-Number Heat_AS_On_Time "On Time (m): [%.2f]"
-Number Heat_AS_Cycle_Time "Cycle time: [%.2f]"
-
-Number Heat_SF_Last_On "Last On: [%.1f]"
-Number Heat_SF_Last_Off "Last Off: [%.1f]"
 Number Heat_SF_Duty_Cycle "Duty Cycle: [%.4f]"
-Number Heat_SF_Duty_Cycle_Simpl "Duty Cycle Simplified: [%.4f]"
-Number Heat_SF_On_Time "On Time (m): [%.2f]"
-Number Heat_SF_Cycle_Time "Cycle time: [%.2f]"
-
-/* cool duty cycles */
-Number Cool_FF_Last_On "Last On: [%.1f]"
-Number Cool_FF_Last_Off "Last Off: [%.1f]"
 Number Cool_FF_Duty_Cycle "Duty Cycle: [%.2f]"
-Number Cool_FF_On_Time "On Time (m): [%.2f]"
-Number Cool_FF_Cycle_Time "Cycle time: [%.2f]"
-
-Number Cool_AS_Last_On "Last On: [%.1f]"
-Number Cool_AS_Last_Off "Last Off: [%.1f]"
 Number Cool_AS_Duty_Cycle "Duty Cycle: [%.4f]"
-Number Cool_AS_On_Time "On Time (m): [%.2f]"
-Number Cool_AS_Cycle_Time "Cycle time: [%.2f]"
-
-Number Cool_SF_Last_On "Last On: [%.1f]"
-Number Cool_SF_Last_Off "Last Off: [%.1f]"
 Number Cool_SF_Duty_Cycle "Duty Cycle: [%.4f]"
-Number Cool_SF_On_Time "On Time (m): [%.2f]"
-Number Cool_SF_Cycle_Time "Cycle time: [%.2f]"
-
 
 /* active groups */
 Group:Number:AVG 				Temperature	"Avg. Room Temperature [%.1f °C]" 	<temperature>	(Status)

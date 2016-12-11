@@ -73,11 +73,6 @@ sitemap whf label="Main Menu"
 						Chart item=Heat_SF_Duty_Cycle period=D refresh=300000 visibility=[Temp_SF_Chart_Period==1]
 						Chart item=Heat_SF_Duty_Cycle period=W refresh=1200000 visibility=[Temp_SF_Chart_Period==2]
 					}
-					Frame label="Heat Duty Cycle Simplified summary"  {
-						Chart item=Heat_SF_Duty_Cycle_Simpl period=h refresh=60000 visibility=[Temp_SF_Chart_Period==0, Temp_SF_Chart_Period=="Uninitialized"]
-						Chart item=Heat_SF_Duty_Cycle_Simpl period=D refresh=300000 visibility=[Temp_SF_Chart_Period==1]
-						Chart item=Heat_SF_Duty_Cycle_Simpl period=W refresh=1200000 visibility=[Temp_SF_Chart_Period==2]
-					}
 					Frame label="Thermo state" {
 						Text item=Fan_SF_Hall_Scaled
 						Text item=Cool_SF_Hall_Scaled
@@ -87,14 +82,6 @@ sitemap whf label="Main Menu"
 						Chart item=Humidity_SF_Chart period=h refresh=60000 visibility=[Temp_SF_Chart_Period==0, Temp_SF_Chart_Period=="Uninitialized"]
 						Chart item=Humidity_SF_Chart period=D refresh=300000 visibility=[Temp_SF_Chart_Period==1]
 						Chart item=Humidity_SF_Chart period=W refresh=1200000 visibility=[Temp_SF_Chart_Period==2]
-					}
-					Frame label="Cool Duty Cycle" {
-						Text item=Heat_SF_Last_On
-						Text item=Heat_SF_Last_Off
-						Text item=Heat_SF_Duty_Cycle
-						Text item=Heat_SF_Duty_Cycle_Simpl
-						Text item=Heat_SF_On_Time
-						Text item=Heat_SF_Cycle_Time
 					}
 				}
 			}
@@ -145,20 +132,6 @@ sitemap whf label="Main Menu"
 						Chart item=Cool_FF_Duty_Cycle period=h refresh=60000 visibility=[Temp_LR_Chart_Period==0, Temp_LR_Chart_Period=="Uninitialized"]
 						Chart item=Cool_FF_Duty_Cycle period=D refresh=300000 visibility=[Temp_LR_Chart_Period==1]
 						Chart item=Cool_FF_Duty_Cycle period=W refresh=1200000 visibility=[Temp_LR_Chart_Period==2]
-					}
-					Frame label="Heat Duty Cycle" {
-						Text item=Heat_FF_Last_On
-						Text item=Heat_FF_Last_Off
-						Text item=Heat_FF_Duty_Cycle
-						Text item=Heat_FF_On_Time
-						Text item=Heat_FF_Cycle_Time
-					}
-					Frame label="Cool Duty Cycle" {
-						Text item=Cool_FF_Last_On
-						Text item=Cool_FF_Last_Off
-						Text item=Cool_FF_Duty_Cycle
-						Text item=Cool_FF_On_Time
-						Text item=Cool_FF_Cycle_Time
 					}
 					Frame label="Thermo state"{
 						Text item=Fan_FF_Living_Scaled
@@ -223,11 +196,6 @@ sitemap whf label="Main Menu"
 						Chart item=Heat_AS_Duty_Cycle period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
 						Chart item=Heat_AS_Duty_Cycle period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
 					}
-					Frame label="Duty Cycle Simplified summary" {
-						Chart item=Heat_AS_Duty_Cycle_Simpl period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
-						Chart item=Heat_AS_Duty_Cycle_Simpl period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
-						Chart item=Heat_AS_Duty_Cycle_Simpl period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
-					}
 					Frame label="Humidity summary" {
 						Chart item=Humidity_AS_Studio_Thermo period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
 						Chart item=Humidity_AS_Studio_Thermo period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
@@ -237,14 +205,6 @@ sitemap whf label="Main Menu"
 						Text item=Fan_AS_Studio_Scaled
 						Text item=Cool_AS_Studio_Scaled
 						Text item=Heat_AS_Studio_Scaled
-					}
-					Frame label="Duty Cycle" {
-						Text item=Heat_AS_Duty_Cycle_Simpl
-						Text item=Heat_AS_Last_On
-						Text item=Heat_AS_Last_Off
-						Text item=Heat_AS_Duty_Cycle
-						Text item=Heat_AS_On_Time
-						Text item=Heat_AS_Cycle_Time
 					}
 				}
 			}

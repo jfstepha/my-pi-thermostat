@@ -5,8 +5,45 @@ import org.openhab.model.script.actions.*
 import java.util.List
 import java.util.ArrayList
 
-val List<Integer> ASArray = newArrayList(0)
-val List<Integer> SFArray = newArrayList(0)
+
+val org.eclipse.xtext.xbase.lib.Functions$Function1 calcMean = [ List<Integer> theArray |
+//	logInfo("FILE", "  * Calc Mean");
+//	logInfo("FILE", "    # array = " + theArray);
+	var sum = 0.0 
+	for( int v: theArray) { 
+		sum = sum + v * 1.0;
+	}
+	var retval = sum / theArray.size() * 100.0;
+	logInfo("FILE", "    # returning: " + retval);
+	retval
+]
+
+val org.eclipse.xtext.xbase.lib.Functions$Function2 pushItem = [ theItem, List<Integer> theArray |
+//	logInfo("FILE", "  * Pushing item " + theItem);
+//	logInfo("FILE", "    * array = " + theArray);
+	if( theItem == "ON" ) { 
+//	    logInfo("FILE", "    * pushing 1");
+		theArray.add(1)
+	} else { 
+//		logInfo("FILE", "    * pushing 0");
+		theArray.add(0)
+	}
+	if( theArray.size() > 240) { 
+//		logInfo("FILE", "    * dropping the 1st item");
+		theArray.remove(0)
+	}
+	logInfo("FILE", "    * newary= " + theArray);
+	theArray;
+]
+
+/* for duty cycles */
+
+val List<Integer> aryHeatFF = newArrayList(0,0,1,1)
+val List<Integer> aryHeatSF = newArrayList(0,0,1,1)
+val List<Integer> aryHeatAS = newArrayList(0,0,1,1)
+val List<Integer> aryCoolFF = newArrayList(0,0,1,1)
+val List<Integer> aryCoolSF = newArrayList(0,0,1,1)
+
 
 rule "Set temp 50"
 when
@@ -15,177 +52,45 @@ then
 	sendHttpGetRequest("http://pi/_setTarget/77.0")
 end
 
+
 rule "Duty Cycle Adjust"
+// when Time cron "0 * * * * ?" then
 when Time cron "0 * * * * ?" then
+
 	logInfo("FILE", "********************************************** ")
 	logInfo("FILE", "****** Executing simplified DC cron job ****** ")
-
-    if( Heat_AS_Duty_Cycle_Simpl.state == Uninitialized ) { postUpdate( Heat_AS_Duty_Cycle_Simpl, 0) } 
-    if( Heat_SF_Duty_Cycle_Simpl.state == Uninitialized ) { postUpdate( Heat_SF_Duty_Cycle_Simpl, 0) } 
-
-    logInfo("FILE", " ** Art Studio heat ** State=" + Heat_AS_Studio.state + " DC=" + Heat_AS_Duty_Cycle_Simpl.state.format("%.7f"))
-    logInfo("FILE", " ** Second Floor heat ** State=" + Heat_SF_Hall.state + " DC = " + Heat_SF_Duty_Cycle_Simpl.state.format("%.7f"))
 	
-	if( Heat_AS_Studio.state == "ON" ) { ASArray.add(1) } else { ASArray.add(0) }
-	if( Heat_SF_Hall.state == "ON" ) { SFArray.add(1) } else { SFArray.add(0) }
+	if( Heat_FF_Duty_Cycle.state == Uninitialized) { postUpdate( Heat_FF_Duty_Cycle, 0 )}
+	if( Heat_SF_Duty_Cycle.state == Uninitialized) { postUpdate( Heat_SF_Duty_Cycle, 0 )}
+	if( Heat_AS_Duty_Cycle.state == Uninitialized) { postUpdate( Heat_AS_Duty_Cycle, 0 )}
+	if( Cool_FF_Duty_Cycle.state == Uninitialized) { postUpdate( Cool_FF_Duty_Cycle, 0 )}
+	if( Cool_SF_Duty_Cycle.state == Uninitialized) { postUpdate( Cool_SF_Duty_Cycle, 0 )}
 
-	if( ASArray.size() > 240) { ASArray.remove(0) }
-	if( SFArray.size() > 240) { SFArray.remove(0) }
+    logInfo("FILE", " ** First Floor heat ** State=" + Heat_FF_Living.state + " DC = " + Heat_FF_Duty_Cycle.state.format("%.7f"))
+    aryHeatFF = pushItem.apply( Heat_FF_Living.state, aryHeatFF )
+    postUpdate( Heat_FF_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryHeatFF) ) ) )
 
-	var sum = 0.0 
-	for( int v: ASArray) { sum = sum + v * 1.0; }
+    logInfo("FILE", " ** Second Floor heat ** State=" + Heat_SF_Hall.state + " DC = " + Heat_SF_Duty_Cycle.state.format("%.7f"))
+    aryHeatSF = pushItem.apply( Heat_SF_Hall.state, aryHeatSF )
+    postUpdate( Heat_SF_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryHeatSF) ) ) )
 
-	logInfo("FILE", "AS array:" + ASArray )    
-	logInfo("FILE", "AS array mean:" + sum / ASArray.size() )    
-    
-    postUpdate( Heat_AS_Duty_Cycle_Simpl, String::format("%.7f", ( sum/ASArray.size() * 100.0 ) ) )
+    logInfo("FILE", " ** Art Studio heat ** State=" + Heat_AS_Studio.state + " DC = " + Heat_AS_Duty_Cycle.state.format("%.7f"))
+    aryHeatAS = pushItem.apply( Heat_AS_Studio.state, aryHeatAS )
+    postUpdate( Heat_AS_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryHeatAS) ) ) )
 
-    sum = 0.0
-	for( int v: SFArray) { sum = sum + v * 1.0; }
+    logInfo("FILE", " ** First Floor cool ** State=" + Cool_FF_Living.state + " DC = " + Cool_FF_Duty_Cycle.state.format("%.7f"))
+    aryCoolFF = pushItem.apply( Cool_FF_Living.state, aryCoolFF )
+    postUpdate( Cool_FF_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryCoolFF) ) ) )
 
-	logInfo("FILE", "SF array:" + SFArray )    
-	logInfo("FILE", "SF array mean:" + sum / ASArray.size())    
-    
-    postUpdate( Heat_SF_Duty_Cycle_Simpl, String::format("%.7f", (sum/SFArray.size() * 100.0 ) ) )
-
-    logInfo( "FILE", "   * New SF DC = " + Heat_SF_Duty_Cycle_Simpl.state.format("%.7f") ) 
-
-
-    /*********************** the old way *****************************************************/
-	logInfo("FILE", "** Executing cron job every minute ** ")
-
-    logInfo("FILE", "Checking FF values")
-    if( Heat_FF_Last_On.state == Uninitialized || Heat_FF_Last_Off.state == Uninitialized || Heat_FF_On_Time.state == Uninitialized
-        || Heat_FF_Cycle_Time.state == Uninitialized) {
-		logInfo("FILE","Heat_FF_Last_On was not initialized, setting to now")
-		postUpdate( Heat_FF_Last_On, now.millis - 100000)
-		postUpdate( Heat_FF_Last_Off, now.millis - 99000)
-		postUpdate( Heat_FF_On_Time, 1)
-		postUpdate( Heat_FF_Cycle_Time, 100)  
-	}
-    logInfo("FILE", "Checking SF values")
-    if( Heat_SF_Last_On.state == Uninitialized || Heat_SF_Last_Off.state == Uninitialized || Heat_SF_On_Time.state == Uninitialized 
-        || Heat_SF_Cycle_Time.state == Uninitialized) {
-		logInfo("FILE","Heat_SF_Last_On was not initialized, setting to now")
-		postUpdate( Heat_SF_Last_On, now.millis - 100000)
-		postUpdate( Heat_SF_Last_Off, now.millis - 99000)
-		postUpdate( Heat_SF_On_Time, 1)
-		postUpdate( Heat_SF_Cycle_Time, 100)  
-	}
-
-	logInfo("FILE", "Checking FF heat duty cycle")
-	
-	if (Heat_FF_Living.state == "ON" && Heat_FF_Last_On.state as DecimalType > Heat_FF_Last_Off.state as DecimalType ){ /* second clause is for when this gets executed before the  scaling rule */
-		postUpdate( Heat_FF_On_Time, ( ( now.millis  - (Heat_FF_Last_On.state as DecimalType) ) / 60000.0 ) ) 
-		postUpdate(Heat_FF_Cycle_Time, ((now.millis - (Heat_FF_Last_Off.state as DecimalType)) / 60000.0 ) )
-		var dc = (Heat_FF_On_Time.state as DecimalType) / ( ( Heat_FF_Cycle_Time.state as DecimalType ) + 0.0001) * 100 
-		logInfo("FILE", "   on time="+Heat_FF_On_Time.state + " cycle time=" + Heat_FF_Cycle_Time.state)
-		logInfo("FILE", "   dc=" + dc + " Heat_FF_Duty_Cycle="+Heat_FF_Duty_Cycle)
-		if (dc > Heat_FF_Duty_Cycle.state as DecimalType) {
-				logInfo("FILE", "Updating duty cycle: dc > duty cycle when on")
-			postUpdate( Heat_FF_Duty_Cycle, dc )
-		}
-	} else if (Heat_FF_Last_Off.state as DecimalType > Heat_FF_Last_On.state as DecimalType)  { /* Heat_FF_Living is off */
-		postUpdate(Heat_FF_Cycle_Time, ((now.millis - (Heat_FF_Last_On.state as DecimalType)) / 60000.0 ) )
-		var dc = (Heat_FF_On_Time.state as DecimalType) / ( ( Heat_FF_Cycle_Time.state as DecimalType ) + 0.0001) * 100 
-		logInfo("FILE", "   on time="+Heat_FF_On_Time.state + " cycle time=" + Heat_FF_Cycle_Time.state)
-		logInfo("FILE", "   dc=" + dc + " Heat_FF_Duty_Cycle="+Heat_FF_Duty_Cycle.state)
-		if (dc < Heat_FF_Duty_Cycle.state as DecimalType ) {
-			logInfo("FILE", "Updating duty cycle: dc < duty cycle when off")
-			postUpdate( Heat_FF_Duty_Cycle, dc)
-		}
-	}
-
-	logInfo("FILE", "Checking SF heat duty cycle")
-
-	if (Heat_SF_Hall.state == "ON"){
-		postUpdate(Heat_SF_On_Time, ( (now.millis - (Heat_SF_Last_On.state as DecimalType) ) / 60000.0 ) ) 
-		postUpdate(Heat_SF_Cycle_Time, ((now.millis - (Heat_SF_Last_Off.state as DecimalType)) / 60000.0 ) )
-		var dc = (Heat_SF_On_Time.state as DecimalType) / ( ( Heat_SF_Cycle_Time.state as DecimalType ) + 0.0001) * 100 
-		logInfo("FILE", "   on time="+Heat_SF_On_Time.state + " cycle time=" + Heat_SF_Cycle_Time.state)
-		logInfo("FILE", "   dc=" + dc + " Heat_SF_Duty_Cycle="+Heat_SF_Duty_Cycle.state)
-		if (dc > Heat_SF_Duty_Cycle.state as DecimalType) {
-				logInfo("FILE", "Updating SF duty cycle: dc > duty cycle when on")
-			postUpdate( Heat_SF_Duty_Cycle, dc )
-		}
-	} else { /* Heat_SF_Hall is off */
-		postUpdate(Heat_SF_Cycle_Time, ((now.millis - (Heat_SF_Last_On.state as DecimalType)) / 60000.0 ) )
-		var dc = (Heat_SF_On_Time.state as DecimalType) / ( ( Heat_SF_Cycle_Time.state as DecimalType ) + 0.0001) * 100 
-		logInfo("FILE", "   on time="+Heat_SF_On_Time.state + " cycle time=" + Heat_SF_Cycle_Time.state)
-		logInfo("FILE", "   dc=" + dc + " Heat_SF_Duty_Cycle="+Heat_SF_Duty_Cycle.state)
-		if (dc < Heat_SF_Duty_Cycle.state as DecimalType ) {
-			logInfo("FILE", "Updating duty cycle: dc < duty cycle when off")
-			postUpdate( Heat_SF_Duty_Cycle, dc)
-		}
-	}
-
-    logInfo("FILE", "Checking FF cool values")
-    if( Cool_FF_Last_On.state == Uninitialized || Cool_FF_Last_Off.state == Uninitialized || Cool_FF_On_Time.state == Uninitialized
-        || Cool_FF_Cycle_Time.state == Uninitialized) {
-		logInfo("FILE","Cool_FF_Last_On was not initialized, setting to now")
-		postUpdate( Cool_FF_Last_On, now.millis - 100000)
-		postUpdate( Cool_FF_Last_Off, now.millis - 99000)
-		postUpdate( Cool_FF_On_Time, 1)
-		postUpdate( Cool_FF_Cycle_Time, 100)  
-	}
-    logInfo("FILE", "Checking SF cool values")
-    if( Cool_SF_Last_On.state == Uninitialized || Cool_SF_Last_Off.state == Uninitialized || Cool_SF_On_Time.state == Uninitialized 
-        || Cool_SF_Cycle_Time.state == Uninitialized) {
-		logInfo("FILE","Cool_SF_Last_On was not initialized, setting to now")
-		postUpdate( Cool_SF_Last_On, now.millis - 100000)
-		postUpdate( Cool_SF_Last_Off, now.millis - 99000)
-		postUpdate( Cool_SF_On_Time, 1)
-		postUpdate( Cool_SF_Cycle_Time, 100)  
-	}
-
-	logInfo("FILE", "Checking FF cool duty cycle")
-	
-	if (Cool_FF_Living.state == "ON" && Cool_FF_Last_On.state as DecimalType > Cool_FF_Last_Off.state as DecimalType ){ /* second clause is for when this gets executed before the  scaling rule */
-		postUpdate( Cool_FF_On_Time, ( ( now.millis  - (Cool_FF_Last_On.state as DecimalType) ) / 60000.0 ) ) 
-		postUpdate(Cool_FF_Cycle_Time, ((now.millis - (Cool_FF_Last_Off.state as DecimalType)) / 60000.0 ) )
-		var dc = (Cool_FF_On_Time.state as DecimalType) / ( ( Cool_FF_Cycle_Time.state as DecimalType ) + 0.0001) * 100 
-		logInfo("FILE", "   on time="+Cool_FF_On_Time.state + " cycle time=" + Cool_FF_Cycle_Time.state)
-		logInfo("FILE", "   dc=" + dc + " Cool_FF_Duty_Cycle="+Cool_FF_Duty_Cycle)
-		if (dc > Cool_FF_Duty_Cycle.state as DecimalType) {
-				logInfo("FILE", "Updating duty cycle: dc > duty cycle when on")
-			postUpdate( Cool_FF_Duty_Cycle, dc )
-		}
-	} else if (Cool_FF_Last_Off.state as DecimalType > Cool_FF_Last_On.state as DecimalType)  { /* Cool_FF_Living is off */
-		postUpdate(Cool_FF_Cycle_Time, ((now.millis - (Cool_FF_Last_On.state as DecimalType)) / 60000.0 ) )
-		var dc = (Cool_FF_On_Time.state as DecimalType) / ( ( Cool_FF_Cycle_Time.state as DecimalType ) + 0.0001) * 100 
-		logInfo("FILE", "   on time="+Cool_FF_On_Time.state + " cycle time=" + Cool_FF_Cycle_Time.state)
-		logInfo("FILE", "   dc=" + dc + " Cool_FF_Duty_Cycle="+Cool_FF_Duty_Cycle.state)
-		if (dc < Cool_FF_Duty_Cycle.state as DecimalType ) {
-			logInfo("FILE", "Updating duty cycle: dc < duty cycle when off")
-			postUpdate( Cool_FF_Duty_Cycle, dc)
-		}
-	}
-
-	logInfo("FILE", "Checking SF cool duty cycle")
-
-	if (Heat_SF_Hall.state == "ON"){
-		postUpdate(Cool_SF_On_Time, ( (now.millis - (Cool_SF_Last_On.state as DecimalType) ) / 60000.0 ) ) 
-		postUpdate(Cool_SF_Cycle_Time, ((now.millis - (Cool_SF_Last_Off.state as DecimalType)) / 60000.0 ) )
-		var dc = (Cool_SF_On_Time.state as DecimalType) / ( ( Cool_SF_Cycle_Time.state as DecimalType ) + 0.0001) * 100 
-		logInfo("FILE", "   on time="+Cool_SF_On_Time.state + " cycle time=" + Cool_SF_Cycle_Time.state)
-		logInfo("FILE", "   dc=" + dc + " Cool_SF_Duty_Cycle="+Cool_SF_Duty_Cycle.state)
-		if (dc > Cool_SF_Duty_Cycle.state as DecimalType) {
-				logInfo("FILE", "Updating SF duty cycle: dc > duty cycle when on")
-			postUpdate( Cool_SF_Duty_Cycle, dc )
-		}
-	} else { /* Heat_SF_Hall is off */
-		postUpdate(Cool_SF_Cycle_Time, ((now.millis - (Cool_SF_Last_On.state as DecimalType)) / 60000.0 ) )
-		var dc = (Cool_SF_On_Time.state as DecimalType) / ( ( Cool_SF_Cycle_Time.state as DecimalType ) + 0.0001) * 100 
-		logInfo("FILE", "   on time="+Cool_SF_On_Time.state + " cycle time=" + Cool_SF_Cycle_Time.state)
-		logInfo("FILE", "   dc=" + dc + " Cool_SF_Duty_Cycle="+Cool_SF_Duty_Cycle.state)
-		if (dc < Cool_SF_Duty_Cycle.state as DecimalType ) {
-			logInfo("FILE", "Updating duty cycle: dc < duty cycle when off")
-			postUpdate( Cool_SF_Duty_Cycle, dc)
-		}
-	}
+  
+    logInfo("FILE", " ** Second Floor cool ** State=" + Cool_SF_Hall.state + " DC = " + Cool_SF_Duty_Cycle.state.format("%.7f"))
+    aryCoolSF = pushItem.apply( Cool_SF_Hall.state, aryCoolSF )
+    postUpdate( Cool_SF_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryCoolSF) ) ) )
 
 
-	logInfo("FILE", "** Cron job done **")
+
+
+	logInfo("FILE", "** Duty cycle Cron job done **")
 end
 
 /********************************/
@@ -217,31 +122,7 @@ rule "Cool scaling"
 when
         Item Cool_FF_Living changed to ON
 then
-    logInfo("FILE", "Executing rule FF Cool Scaling on")
         postUpdate(Cool_FF_Living_Scaled, 69)
-
-    logInfo("FILE", "Cool_FF_Last_On=" + Cool_FF_Last_On.state + " Cool_FF_Last_Off=" + Cool_FF_Last_Off.state)
-    if( Cool_FF_Last_On.state == Uninitialized) {
-         logInfo("FILE", "Cool_FF_Last_On was not init, setting to now")
-         postUpdate( Cool_FF_Last_On, now.millis)
-    }
-    if( Cool_FF_Last_Off.state == Uninitialized) {
-         logInfo("FILE", "Cool_FF_Last_Off was not init, setting to now")
-         postUpdate( Cool_FF_Last_Off, now.millis)
-    }
-	logInfo("FILE", "Setting Cool_FF_On_Time")
-	postUpdate(Cool_FF_On_Time, ( ( (Cool_FF_Last_Off.state as DecimalType)  - (Cool_FF_Last_On.state as DecimalType) ) / 60000.0 ) ) 
-
-	logInfo("FILE", "Setting Cool_FF_Cycle_Time")
-	postUpdate(Cool_FF_Cycle_Time,( (now.millis - (Cool_FF_Last_On.state as DecimalType ) ) / 60000.0 ) )
-
-	logInfo("FILE", "Setting Cool_FF_Duty_Cycle")
-	postUpdate(Cool_FF_Duty_Cycle, ( (Cool_FF_On_Time.state as DecimalType) / ( (Cool_FF_Cycle_Time.state as DecimalType) + 0.0001) * 100 ) ) 
-
-	logInfo("FILE", "Setting Cool_FF_Last_on")
-	postUpdate(Cool_FF_Last_On, now.millis)
-	logInfo("FILE", "New DC=" + Cool_FF_Duty_Cycle.state+" OnTime="+Cool_FF_On_Time.state+" CycleTime="+Cool_FF_Cycle_Time.state)
-	logInfo("FILE", "Done with rule FF Cool Scaling on")
 end
 
 rule "Cool scaling2"
@@ -249,94 +130,21 @@ when
         Item Cool_FF_Living changed to OFF
 then
     postUpdate(Cool_FF_Living_Scaled, 68)
-    if( Cool_FF_Last_On.state == Uninitialized) {
-		logInfo("FILE","Cool_FF_Last_On was not initalized, setting to now")
-		postUpdate( Cool_FF_Last_On, now.millis)
-	}
-        if( Cool_FF_Last_Off.state == Uninitialized) {
-		logInfo("FILE","Cool_FF_Last_Off was not initialized, setting to now")
-		postUpdate( Cool_FF_Last_Off, now.millis)
-	}
-
-	logInfo("FILE","Executing rule FF Cool Scaling off")
-
-	logInfo("FILE", "Setting ffCoolOnTime");
-	postUpdate(Cool_FF_On_Time, ((now.millis - (Cool_FF_Last_On.state as DecimalType) ) / 60000.0 ) )
-
-	logInfo("FILE", "Setting ffCoolCycleTime");
-	postUpdate(Cool_FF_Cycle_Time, ((now.millis - (Cool_FF_Last_Off.state as DecimalType)) / 60000.0 ) )
-
-	logInfo("FILE", "Setting ffCoolDutyCycle");
-	postUpdate(Cool_FF_Duty_Cycle, ((Cool_FF_On_Time.state as DecimalType) / ((Cool_FF_Cycle_Time.state as DecimalType) + 0.0001) * 100.0 ) )
-
-	logInfo("FILE", "Setting ffCoolLastOff");
-	postUpdate(Cool_FF_Last_Off, now.millis)
-	logInfo("FILE", "New DC=" + Cool_FF_Duty_Cycle.state+" OnTime="+Cool_FF_On_Time.state+" CycleTime="+Cool_FF_Cycle_Time.state)
-	logInfo("FILE", "Rule FF Cool Scaling off finished")
 end
 
 rule "Heat FF scaling on"
 when
         Item Heat_FF_Living changed to ON
 then
-	logInfo("FILE", "Executing rule FF Heat Scaling on")
         postUpdate(Heat_FF_Living_Scaled, 67)
 
-	logInfo("FILE", "Heat_FF_Last_On=" + Heat_FF_Last_On.state + " Heat_FF_Last_Off=" + Heat_FF_Last_Off.state)
-
-        if( Heat_FF_Last_On.state == Uninitialized) {
-		logInfo("FILE","Heat_FF_Last_On was not init, setting to now")
-		postUpdate( Heat_FF_Last_On, now.millis)
-	}
-        if( Heat_FF_Last_Off.state == Uninitialized) {
-		logInfo("FILE","Heat_FF_Last_Off was null, setting to now")
-		postUpdate( Heat_FF_Last_Off, now.millis)
-	}
-		
-	logInfo("FILE", "Setting Heat_FF_On_Time")
-	postUpdate(Heat_FF_On_Time, ( ( (Heat_FF_Last_Off.state as DecimalType)  - (Heat_FF_Last_On.state as DecimalType) ) / 60000.0 ) ) 
-
-	logInfo("FILE", "Setting Heat_FF_Cycle_Time")
-	postUpdate(Heat_FF_Cycle_Time,( (now.millis - (Heat_FF_Last_On.state as DecimalType ) ) / 60000.0 ) )
-
-	logInfo("FILE", "Setting Heat_FF_Duty_Cycle")
-	postUpdate(Heat_FF_Duty_Cycle, ( (Heat_FF_On_Time.state as DecimalType) / ( (Heat_FF_Cycle_Time.state as DecimalType) + 0.0001) * 100 ) ) 
-
-	logInfo("FILE", "Setting Heat_FF_Last_on")
-	postUpdate(Heat_FF_Last_On, now.millis)
-	logInfo("FILE", "New DC=" + Heat_FF_Duty_Cycle.state+" OnTime="+Heat_FF_On_Time.state+" CycleTime="+Heat_FF_Cycle_Time.state)
-	logInfo("FILE", "Done with rule FF Heat Scaling on")
 end
 
 rule "Heat FF scaling off"
 when
         Item Heat_FF_Living changed to OFF
 then
-    if( Heat_FF_Last_On.state == Uninitialized) {
-		logInfo("FILE","Heat_FF_Last_On was not initalized, setting to now")
-		postUpdate( Heat_FF_Last_On, now.millis)
-	}
-        if( Heat_FF_Last_Off.state == Uninitialized) {
-		logInfo("FILE","Heat_FF_Last_Off was not initialized, setting to now")
-		postUpdate( Heat_FF_Last_Off, now.millis)
-	}
-
-	logInfo("FILE","Executing rule FF Heat Scaling off")
 	postUpdate(Heat_FF_Living_Scaled, 66)
-
-	logInfo("FILE", "Setting ffHeatOnTime");
-	postUpdate(Heat_FF_On_Time, ((now.millis - (Heat_FF_Last_On.state as DecimalType) ) / 60000.0 ) )
-
-	logInfo("FILE", "Setting ffHeatCycleTime");
-	postUpdate(Heat_FF_Cycle_Time, ((now.millis - (Heat_FF_Last_Off.state as DecimalType)) / 60000.0 ) )
-
-	logInfo("FILE", "Setting ffHeatDutyCycle");
-	postUpdate(Heat_FF_Duty_Cycle, ((Heat_FF_On_Time.state as DecimalType) / ((Heat_FF_Cycle_Time.state as DecimalType) + 0.0001) * 100.0 ) )
-
-	logInfo("FILE", "Setting ffHeatLastOff");
-	postUpdate(Heat_FF_Last_Off, now.millis)
-	logInfo("FILE", "New DC=" + Heat_FF_Duty_Cycle.state+" OnTime="+Heat_FF_On_Time.state+" CycleTime="+Heat_FF_Cycle_Time.state)
-	logInfo("FILE", "Rule FF Heat Scaling off finished")
 end
 
 rule "Heat index LR"
@@ -396,30 +204,7 @@ rule "Heat scaling AS on"
 when
         Item Heat_AS_Studio changed to ON
 then
-	logInfo("FILE", "Executing rule AS Heat Scaling on")
         postUpdate(Heat_AS_Studio_Scaled, 67)
-
-        if( Heat_AS_Last_On.state == Uninitialized) {
-		logInfo("FILE","Heat_AS_Last_On was not initialized, setting to now")
-		postUpdate( Heat_AS_Last_On, now.millis)
-	}
-        if( Heat_AS_Last_Off.state == Uninitialized) {
-		logInfo("FILE","Heat_AS_Last_Off was not initialized, setting to now")
-		postUpdate( Heat_AS_Last_Off, now.millis)
-	}
-
-	logInfo("FILE", "Setting Heat_AS_On_Time")
-	postUpdate(Heat_AS_On_Time, ( ( (Heat_AS_Last_Off.state as DecimalType)  - (Heat_AS_Last_On.state as DecimalType) ) / 60000.0 ) ) 
-
-	logInfo("FILE", "Setting Heat_AS_Cycle_Time")
-	postUpdate(Heat_AS_Cycle_Time,( (now.millis - (Heat_AS_Last_On.state as DecimalType ) ) / 60000.0 ) )
-
-	logInfo("FILE", "Setting Heat_AS_Duty_Cycle")
-	postUpdate(Heat_AS_Duty_Cycle, ( (Heat_AS_On_Time.state as DecimalType) / ( (Heat_AS_Cycle_Time.state as DecimalType) + 0.0001) * 100) )
-
-	logInfo("FILE", "Setting Heat_AS_Last_on")
-	postUpdate(Heat_AS_Last_On, now.millis)
-	logInfo("FILE", "Done with rule AS Heat Scaling on")
 
 end
 
@@ -427,31 +212,8 @@ rule "Heat scaling off AS"
 when
         Item Heat_AS_Studio changed to OFF
 then
-	logInfo("FILE","Executing rule AS Heat Scaling off")
-
-        if( Heat_AS_Last_On.state == Uninitialized) {
-		logInfo("FILE","Heat_AS_Last_On was not initialized, setting to now")
-		postUpdate( Heat_AS_Last_On, now.millis)
-	}
-        if( Heat_AS_Last_Off.state == Uninitialized) {
-		logInfo("FILE","Heat_AS_Last_Off was not initialized, setting to now")
-		postUpdate( Heat_AS_Last_Off, now.millis)
-	}
         postUpdate(Heat_AS_Studio_Scaled, 66)
 
-	logInfo("FILE", "Setting asHeatOnTime");
-	postUpdate(Heat_AS_On_Time, ((now.millis - (Heat_AS_Last_On.state as DecimalType) ) / 60000.0 ) )
-
-	logInfo("FILE", "Setting asHeatCycleTime");
-	postUpdate(Heat_AS_Cycle_Time, ((now.millis - (Heat_AS_Last_Off.state as DecimalType)) / 60000.0 ) )
-
-	logInfo("FILE", "Setting asHeatDutyCycle");
-	postUpdate(Heat_AS_Duty_Cycle, ((Heat_AS_On_Time.state as DecimalType) / ((Heat_AS_Cycle_Time.state as DecimalType) + 0.0001) * 100.0 ) )
-
-	logInfo("FILE", "Setting asHeatLastOff");
-	postUpdate(Heat_AS_Last_Off, now.millis)
-
-	logInfo("FILE", "Rule AS Heat Scaling off finished")
 end
 
 /*********************************/
@@ -497,66 +259,16 @@ rule "Heat SF scaling on"
 when
         Item Heat_SF_Hall changed to ON
 then
-	logInfo("FILE", "Executing rule SF Heat Scaling on")
         postUpdate(Heat_SF_Hall_Scaled, 67)
 
-	logInfo("FILE", "Heat_SF_Last_On=" + Heat_SF_Last_On.state + " Heat_SF_Last_Off=" + Heat_SF_Last_Off.state)
-
-        if( Heat_SF_Last_On.state == Uninitialized) {
-		logInfo("FILE","Heat_SF_Last_On was not initialized, setting to now")
-		postUpdate( Heat_SF_Last_On, now.millis)
-	}
-        if( Heat_SF_Last_Off.state == Uninitialized) {
-		logInfo("FILE","Heat_SF_Last_Off was not initialized, setting to now")
-		postUpdate( Heat_SF_Last_Off, now.millis)
-	}
-		
-	logInfo("FILE", "Setting Heat_SF_On_Time")
-	postUpdate(Heat_SF_On_Time, ( ( (Heat_SF_Last_Off.state as DecimalType)  - (Heat_SF_Last_On.state as DecimalType) ) / 60000.0 ) ) 
-
-	logInfo("FILE", "Setting Heat_SF_Cycle_Time")
-	postUpdate(Heat_SF_Cycle_Time,( (now.millis - (Heat_SF_Last_On.state as DecimalType ) ) / 60000.0 ) )
-
-	logInfo("FILE", "Setting Heat_SF_Duty_Cycle")
-	postUpdate(Heat_SF_Duty_Cycle, ( (Heat_SF_On_Time.state as DecimalType) / ( (Heat_SF_Cycle_Time.state as DecimalType) + 0.0001) * 100) )
-
-	logInfo("FILE", "Setting Heat_SF_Last_on")
-	postUpdate(Heat_SF_Last_On, now.millis)
-
-	logInfo("FILE", "New DC=" + Heat_SF_Duty_Cycle.state+" OnTime"+Heat_SF_On_Time.state+" CycleTime="+Heat_SF_Cycle_Time.state)
-	logInfo("FILE", "Done with rule SF Heat Scaling on")
 end
 
 rule "Heat SF scaling off"
 when
         Item Heat_SF_Hall changed to OFF
 then
-        if( Heat_SF_Last_On.state == Uninitialized) {
-		logInfo("FILE","Heat_SF_Last_On was not initalized, setting to now")
-		postUpdate( Heat_SF_Last_On, now.millis)
-	}
-        if( Heat_SF_Last_Off.state == Uninitialized) {
-		logInfo("FILE","Heat_SF_Last_Off was not initialized, setting to now")
-		postUpdate( Heat_SF_Last_Off, now.millis)
-	}
-
-	logInfo("FILE","Executing rule SF Heat Scaling off")
         postUpdate(Heat_SF_Hall_Scaled, 66)
 
-	logInfo("FILE", "Setting sfHeatOnTime");
-	postUpdate(Heat_SF_On_Time, ((now.millis - (Heat_SF_Last_On.state as DecimalType) ) / 60000.0 ) )
-
-	logInfo("FILE", "Setting sfHeatCycleTime");
-	postUpdate(Heat_SF_Cycle_Time, ((now.millis - (Heat_SF_Last_Off.state as DecimalType)) / 60000.0 ) )
-
-	logInfo("FILE", "Setting sfHeatDutyCycle");
-	postUpdate(Heat_SF_Duty_Cycle, ((Heat_SF_On_Time.state as DecimalType) / ((Heat_SF_Cycle_Time.state as DecimalType) + 0.0001) * 100.0 ) )
-
-	logInfo("FILE", "Setting sfHeatLastOff");
-	postUpdate(Heat_SF_Last_Off, now.millis)
-	logInfo("FILE", "New DC=" + Heat_SF_Duty_Cycle.state+" OnTime"+Heat_SF_On_Time.state+" CycleTime="+Heat_SF_Cycle_Time.state)
-
-	logInfo("FILE", "Rule SF Heat Scaling off finished")
 end
 
 rule "Heat index SF"
