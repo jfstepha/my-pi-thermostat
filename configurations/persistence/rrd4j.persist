@@ -48,4 +48,5 @@ Items {
     Basement_current2 : strategy = everyChange, restoreOnStartup
     Attic_relay1_state : strategy = everyChange, restoreOnStartup
     Attic_relay2_state : strategy = everyChange, restoreOnStartup
+    SmartThermo_AS_Mode : strategy = everyChange, restoreOnStartup
 }
