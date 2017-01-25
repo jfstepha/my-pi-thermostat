@@ -544,10 +544,13 @@ class MainFrame(wx.Frame):
     def UpdateCurrentTemp(self):
     #################################################################### 
        temp = self.GetCurrentTemp()
+       targ = self.GetTargetTemp()
+
        self.pnStat.updateCurrent( temp )
        self.pnJon.lCurTmp.SetLabel("Current: %d" % temp)
        self.pnGretch.lCurTmp.SetLabel("Current: %d" % temp)
-       self.pnScrenSaver.lblTemp.SetLabel("%0.1f\nT: %0.1f" % (temp, self.setpt))
+#       self.pnScrenSaver.lblTemp.SetLabel("%0.1f\nT: %0.1f" % (temp, self.setpt))
+       self.pnScrenSaver.lblTemp.SetLabel("%0.1f\nT: %0.1f" % (temp, targ))
 
 
     #################################################################### 
