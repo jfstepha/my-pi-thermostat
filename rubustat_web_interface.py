@@ -3,6 +3,10 @@ import os
 import subprocess
 import re
 import ConfigParser
+import Queue
+import sys
+import fcntl
+
 
 
 from getIndoorTemp import getIndoorTemp
@@ -11,8 +15,12 @@ from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash, jsonify
 
 from sensor_server import loopThread 
+from smart_thermo import smartLoopThread
+
+pending_state = Queue.Queue()
 
 loopThread= loopThread()
+smartLoopThread = smartLoopThread( pending_state )
 
 
 app = Flask(__name__)
@@ -34,6 +42,8 @@ weatherEnabled = config.getboolean('weather','enabled')
 hubname = config.get('sensorhub','name')
 hubdomain = config.get('sensorhub','domain')
 hubishub = int(config.get('sensorhub', 'ishub'))
+
+# to pass state change requests into the smartThermo
 
 #start the daemon in the background
 #subprocess.Popen("/usr/bin/python rubustat_daemon.py start", shell=True)
@@ -212,12 +222,19 @@ def getMode():
 @app.route('/_liveMotion', methods= ['GET'])
 def getMotion():
     try:
-        file = open("/dev/shm/motion", "r")
-        motion = int(file.readline())
-        file.close()
+        f = open("/dev/shm/motion", "r")
+        # make it a non-blocking read:
+        fd = f.fileno()
+        flag = fcntl.fcntl(fd, fcntl.F_GETFL)
+        fcntl.fcntl(fd, fcntl.F_SETFL, flag | os.O_NONBLOCK)
+        motion = int(f.readline())
+        f.close()
         return str(motion)
     except IOError:
-        return "error"
+        return "IOerror"
+    except:
+        return "error: %s" % str( sys.exec_info()[0] )
+
 
 @app.route('/_liveSensor/<sensorname>', methods= ['GET'])
 def getSensorAll(sensorname):
@@ -233,6 +250,82 @@ def getSensor(sensorname, paramname):
     except IOError:
         return "error"
 
+@app.route('/_liveSmartState', methods= ['GET'])
+def getSmartState():
+    try:
+        return str(smartLoopThread.smartStateInt())
+    except IOError:
+        return "error"
+
+@app.route('/_liveSmartStateString', methods= ['GET'])
+def getSmartStateString():
+    try:
+        return str(smartLoopThread.smartStateStr())
+    except IOError:
+        return "error"
+
+@app.route('/_liveTargetDayActive', methods= ['GET'])
+def getTargetDayActive():
+    try:
+        return str(smartLoopThread.set_day_active)
+    except IOError:
+        return "error"
+
+@app.route('/_liveTargetDayIdle', methods= ['GET'])
+def getTargetDayIdle():
+    try:
+        return str(smartLoopThread.set_day_idle)
+    except IOError:
+        return "error"
+
+@app.route('/_liveTargetNightActive', methods= ['GET'])
+def getTargetNightActive():
+    try:
+        return str(smartLoopThread.set_night_active)
+    except IOError:
+        return "error"
+
+@app.route('/_liveTargetNightIdle', methods= ['GET'])
+def getTargetNightIdle():
+    try:
+        return str(smartLoopThread.set_night_idle)
+    except IOError:
+        return "error"
+
+@app.route('/_liveOverrideRemaining', methods= ['GET'])
+def getOverrideRemaining():
+    try:
+        return str(smartLoopThread.override_remaining)
+    except IOError:
+        return "error"
+
+@app.route("/_setTargetDayActive/<float:target>", methods=['GET'])
+def setTargetDayActive(target):
+    smartLoopThread.set_day_active = float(target)
+    return "success" 
+
+@app.route("/_setTargetDayIdle/<float:target>", methods=['GET'])
+def setTargetDayIdle(target):
+    smartLoopThread.set_day_idle = float(target)
+    return "success" 
+
+@app.route("/_setTargetNightActive/<float:target>", methods=['GET'])
+def setTargetNightActive(target):
+    smartLoopThread.set_night_active = float(target)
+    return "success" 
+
+@app.route("/_setTargetNightIdle/<float:target>", methods=['GET'])
+def setTargetNightIdle(target):
+    smartLoopThread.set_night_idle = float(target)
+    return "success" 
+
+@app.route("/_setSmartState/<mode>", methods=['GET'])
+def setSmartState(mode):
+    print("Setting smart state to %d" % int(mode))
+    pending_state.put( int( mode ) )
+    #smartLoopThread.pending_state.append(int(mode))
+    return "success" 
+
 @app.route('/_dumpSensors/', methods= ['GET'])
 def dumpSensors():
     try:
@@ -243,7 +336,24 @@ def dumpSensors():
     except IOError:
         return "error"
 
+@app.route('/_dumpSmartThermo/', methods= ['GET'])
+def dumpSmartThermo():
+    try:
+        s = ""
+        s = s + str( smartLoopThread.smart_state[1] ) + "<br>" 
+        s = s + str( smartLoopThread.set_day_active ) + "<br>" 
+        s = s + str( smartLoopThread.set_day_idle ) + "<br>" 
+        s = s + str( smartLoopThread.set_night_active ) + "<br>" 
+        s = s + str( smartLoopThread.set_night_idle ) + "<br>" 
+        s = s + str( smartLoopThread.loops_since_motion ) + "<br>" 
+        s = s + str( smartLoopThread.override_remaining ) + "<br>" 
+        return s
+    except IOError:
+        return "error"
+
 if __name__ == "__main__":
     loopThread.setDaemon(True)
     loopThread.start() 
+    smartLoopThread.setDaemon(True)
+    smartLoopThread.start()
     app.run("0.0.0.0", port=80)

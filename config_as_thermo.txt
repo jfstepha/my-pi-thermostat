@@ -42,3 +42,7 @@ ZIP = 01748
 name = thermo_AS
 domain = AS
 ishub = 0
+
+[motion]
+hasmotion = True
+url = http://localhost/_liveMotion
