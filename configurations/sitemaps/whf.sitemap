@@ -1,5 +1,14 @@
 sitemap whf label="Main Menu"
 {
+	Frame label="Summary" {
+        Text item=Weather_Temperature
+        Text item=Weather_Temp_Min
+        Text item=Weather_Temp_Max		
+		Text item=Temperature_FF_Living_Thermo
+		Text item=Temperature_FF_AVG
+		Text item=Temperature_SF_Hall_Thermo		
+		Text item=Temperature_AS_Studio_Thermo	
+		}
 	Frame label="Floors" {
 		Text label="Attic" icon="attic" {
 		    Text item=Temperature_AT_Finished
@@ -12,7 +21,7 @@ sitemap whf label="Main Menu"
             Text item=Attic_relay1_state
             Switch item=Attic_relay2 mappings=["ON"="ON", "OFF"="OFF"]
             Text item=Attic_relay2_state
-			Frame label="Temp summary" {
+			Text label="Temp summary" {
 				Switch item=Temp_AT_Chart_Period label="Attic" mappings=[0="Hour", 1="Day", 2="Week"]
 				Chart item=Temperature_AT_Finished period=h refresh=60000 visibility=[Temp_AT_Chart_Period==0, Temp_AT_Chart_Period=="Uninitialized"]
 				Chart item=Temperature_AT_Finished period=D refresh=300000 visibility=[Temp_AT_Chart_Period==1]
@@ -50,12 +59,13 @@ sitemap whf label="Main Menu"
 						Text item=Temperature_SF_Hall_Thermo
 						Setpoint item=TempSet_SF_Hall step=0.5 minValue=40 maxValue=120
 						Text item=Humidity_SF_Hall_Thermo
-						Text item=HeatIndex_FF_Living_Thermo
+						Text item=HeatIndex_SF_Hall_Thermo
 						Text item=Fan_SF_Hall
 						Text item=Cool_SF_Hall
 						Text item=Heat_SF_Hall 
 						Text item=Daemon_SF_Hall
                         Text item=Lastmotion_SF_Hall
+                        Text item=Heat_SF_Duty_Cycle
 					} 
 					Frame label="Temp summary" {
 						Switch item=Temp_SF_Chart_Period label="Second Floor" mappings=[0="Hour", 1="Day", 2="Week"]
@@ -115,7 +125,6 @@ sitemap whf label="Main Menu"
 						Text item=Heat_FF_Living
 						Text item=Daemon_FF_Living
 						Text item=Heat_FF_Duty_Cycle
-						Text item=Cool_FF_Duty_Cycle
 					}
 					Frame label="Temp summary" {
 						Switch item=Temp_LR_Chart_Period label="Living Room" mappings=[0="Hour", 1="Day", 2="Week"]
@@ -128,10 +137,10 @@ sitemap whf label="Main Menu"
 						Chart item=Humidity_FF_Living_Thermo period=D refresh=300000 visibility=[Temp_LR_Chart_Period==1]
 						Chart item=Humidity_FF_Living_Thermo period=W refresh=1200000 visibility=[Temp_LR_Chart_Period==2]
 					}
-					Frame label="Cool Duty Cycle summary" {
-						Chart item=Cool_FF_Duty_Cycle period=h refresh=60000 visibility=[Temp_LR_Chart_Period==0, Temp_LR_Chart_Period=="Uninitialized"]
-						Chart item=Cool_FF_Duty_Cycle period=D refresh=300000 visibility=[Temp_LR_Chart_Period==1]
-						Chart item=Cool_FF_Duty_Cycle period=W refresh=1200000 visibility=[Temp_LR_Chart_Period==2]
+					Frame label="Heat Duty Cycle summary" {
+						Chart item=Heat_FF_Duty_Cycle period=h refresh=60000 visibility=[Temp_LR_Chart_Period==0, Temp_LR_Chart_Period=="Uninitialized"]
+						Chart item=Heat_FF_Duty_Cycle period=D refresh=300000 visibility=[Temp_LR_Chart_Period==1]
+						Chart item=Heat_FF_Duty_Cycle period=W refresh=1200000 visibility=[Temp_LR_Chart_Period==2]
 					}
 					Frame label="Thermo state"{
 						Text item=Fan_FF_Living_Scaled
@@ -168,17 +177,20 @@ sitemap whf label="Main Menu"
 					Frame label="Thermostat" {
 						Text item=Temperature_AS_Studio_Thermo
 						Setpoint item=TempSet_AS_Studio step=0.5 minValue=40 maxValue=120
-						Switch item=SmartThermo_AS_Mode label="Smart Thermo Mode" mappings=[0="Disabled", 1="Away", 2="Night", 3="Day"]
-						Setpoint item=TempSet_AS_Studio_Day step=0.5 minValue=40 maxValue=120
-						Setpoint item=TempSet_AS_Studio_Night step=0.5 minValue=40 maxValue=120
-						Setpoint item=TempSet_AS_Studio_Away step=0.5 minValue=40 maxValue=120
-						Text item=SmartThermo_AS_Mode_String label="Smart Thermo Mode [%s]"
+						Frame label="Smart thermostat" {
+    						Switch item=SmartThermo_AS_Mode label="Smart Thermo Mode" mappings=[0="Disabled", 1="Away", 2="Night", 3="Day", 4="Night idle", 5="Day idle"]
+	    					Setpoint item=TempSet_AS_Studio_Day step=0.5 minValue=40 maxValue=120
+		    				Setpoint item=TempSet_AS_Studio_Night step=0.5 minValue=40 maxValue=120
+			    			Setpoint item=TempSet_AS_Studio_Away step=0.5 minValue=40 maxValue=120
+				    		Text item=SmartThermo_AS_Mode_String label="Smart Thermo Mode [%s]"
+						}
 						Text item=Humidity_AS_Studio_Thermo
 						Text item=Fan_AS_Studio
 						Text item=Cool_AS_Studio
 						Text item=Heat_AS_Studio 
 						Text item=Daemon_AS_Studio
 						Text item=Lastmotion_AS_Studio
+						Text item=Heat_SF_Duty_Cycle
 					} 
 					Frame label="Temp summary" {
 						Switch item=Temp_AS_Chart_Period label="Art Studio" mappings=[0="Hour", 1="Day", 2="Week"]
@@ -201,6 +213,11 @@ sitemap whf label="Main Menu"
 						Chart item=Humidity_AS_Studio_Thermo period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
 						Chart item=Humidity_AS_Studio_Thermo period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
 					}
+					Frame label="Smart thermo summary" {
+						Chart item=SmartThermo_AS_Mode period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
+						Chart item=SmartThermo_AS_Mode period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
+						Chart item=SmartThermo_AS_Mode period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
+					}
 					Frame label="Thermo state" {
 						Text item=Fan_AS_Studio_Scaled
 						Text item=Cool_AS_Studio_Scaled
@@ -221,7 +238,6 @@ sitemap whf label="Main Menu"
 			}
 		}	
 		Text label="Basement" icon="attic" {
-			Setpoint item=email_test step=1 minValue=0 maxValue=10
 		    Text item=Basement_Temperature
 		    Text item=Basement_Uptime
 		    Text item=Basement_lsp
