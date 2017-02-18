@@ -6,10 +6,23 @@ import requests
 import re
 import datetime
 import random
+import time
+import inspect
 
 url = "http://localhost:80"
 MAX_TEMP_SET = 99
 MIN_TEMP_SET = 1
+
+# these are just the integer part
+STATE_NO_SENSOR =    0
+STATE_DAY_IDLE =     1
+STATE_DAY_MOTION =   2
+STATE_DAY_AWAY =     3
+STATE_DAY_ACTIVE =   4
+STATE_NIGHT_IDLE =   5
+STATE_NIGHT_MOTION = 6
+STATE_NIGHT_AWAY =   7
+STATE_NIGHT_ACTIVE = 8
 
 ####################################################################################
 ####################################################################################
@@ -26,24 +39,31 @@ class PanelScreenSaver(wx.Panel):
         self.temp_x = 20
         self.temp_y = 20
         self.temp_xmax = 200
-        self.temp_ymax = 150
+        self.temp_ymax = 100
         self.minspeed = 0.1
-        self.maxspeed = 10
+        self.maxspeed = 1
         self.temp_xdir = self.GetRandDir()
         self.temp_ydir = self.GetRandDir()
         self.bgr = 240
         self.bgg = 0
         self.bgb = 0
-        self.colorstep = 10
+        self.colorstep = 1
 
         self.lblTemp = wx.StaticText(self,label="Starting...", pos=(20,20))
         font = wx.Font( 30, wx.DEFAULT, wx.NORMAL, wx.NORMAL)
         self.lblTemp.SetFont( font )
 
+        self.lblStatus = wx.StaticText(self,label="Starting...", pos=(20,90))
+        font = wx.Font( 10, wx.DEFAULT, wx.NORMAL, wx.NORMAL)
+        self.lblStatus.SetFont( font )
 
-        self.Bind(wx.EVT_LEFT_DOWN, self.OnClick)
+
         self.SetBackgroundColour( (self.bgr, self.bgg, self.bgb))
         self.lblTemp.SetForegroundColour( "#FFFFFF")
+        self.lblStatus.SetForegroundColour( "#FFFFFF")
+        self.Bind(wx.EVT_LEFT_DOWN, self.OnClick)
+        self.lblTemp.Bind(wx.EVT_LEFT_DOWN, self.OnClick)
+        self.lblStatus.Bind(wx.EVT_LEFT_DOWN, self.OnClick)
         
         self.temp = 0
    #################################################################### 
@@ -83,6 +103,7 @@ class PanelScreenSaver(wx.Panel):
             self.temp_ydir = self.GetRandDir()
         
         self.lblTemp.SetPosition((self.temp_x, self.temp_y))
+        self.lblStatus.SetPosition((self.temp_x+10, self.temp_y+90))
         print "position: %d, %d" % (self.temp_x, self.temp_y)
         self.bgr += self.colorstep
         if self.bgr > 255:
@@ -95,8 +116,10 @@ class PanelScreenSaver(wx.Panel):
             self.bgb = 0
         if (self.bgr + self.bgg + self.bgb) > 1024:
             self.lblTemp.SetForegroundColour( "#000000")
+            self.lblStatus.SetForegroundColour( "#000000")
         else:
             self.lblTemp.SetForegroundColour( "#FFFFFF")
+            self.lblStatus.SetForegroundColour( "#FFFFFF")
         self.SetBackgroundColour( (self.bgr, self.bgg, self.bgb))
         if self.IsShown():
             self.Refresh()
@@ -151,10 +174,6 @@ class PanelUser(wx.Panel):
         self.bnDown = wx.Button(self, -1, "Down", (150,150))
         self.bnBack = wx.Button(self, -1, "Back", (150,150))
 
-        self.sizerJonVL = wx.BoxSizer(wx.VERTICAL)
-        self.sizerJonVL.Add(self.bnUp, 1, wx.EXPAND )
-        self.sizerJonVL.Add(self.bnDown, 1, wx.EXPAND)
-
         self.bnUp.SetFont(wx.Font(25, wx.DEFAULT, wx.BOLD, wx.NORMAL))
         self.bnDown.SetFont(wx.Font(25, wx.DEFAULT, wx.BOLD, wx.NORMAL))
         self.bnBack.SetFont(wx.Font(25, wx.DEFAULT, wx.BOLD, wx.NORMAL))
@@ -168,6 +187,8 @@ class PanelUser(wx.Panel):
         self.bnModeCool = wx.ToggleButton( self, -1, "Cool" )
         self.bnModeOff = wx.ToggleButton( self, -1, "Off" )
         self.bnModeAway = wx.ToggleButton( self, -1, "Away" )
+        self.bnModeInUse = wx.ToggleButton( self, -1, "InUse" )
+        self.bnModeSmart = wx.ToggleButton( self, -1, "Smart" )
         
         self.bnModeHeat.SetBackgroundColour( "#FFDDDD" )
         self.bnModeCool.SetBackgroundColour( "#DDDDFF" )
@@ -176,23 +197,35 @@ class PanelUser(wx.Panel):
         self.Bind(wx.EVT_TOGGLEBUTTON, parent.OnModeCool, self.bnModeCool)
         self.Bind(wx.EVT_TOGGLEBUTTON, parent.OnModeOff, self.bnModeOff)
         self.Bind(wx.EVT_TOGGLEBUTTON, parent.OnModeAway, self.bnModeAway)
+        self.Bind(wx.EVT_TOGGLEBUTTON, parent.OnModeInUse, self.bnModeInUse)
+        self.Bind(wx.EVT_TOGGLEBUTTON, parent.OnModeSmart, self.bnModeSmart)
 
         self.sizerModeV = wx.BoxSizer( wx.VERTICAL )
         self.sizerModeHT = wx.BoxSizer( wx.HORIZONTAL)
         self.sizerModeHB = wx.BoxSizer( wx.HORIZONTAL )
+        self.sizerModeHC = wx.BoxSizer( wx.HORIZONTAL )
        
         self.sizerModeHT.Add( self.bnModeHeat, 1, wx.EXPAND )
         self.sizerModeHT.Add( self.bnModeCool, 1, wx.EXPAND )
-        self.sizerModeHB.Add( self.bnModeOff, 1, wx.EXPAND )
+        self.sizerModeHC.Add( self.bnModeSmart, 1, wx.EXPAND )
+        self.sizerModeHC.Add( self.bnModeOff, 1, wx.EXPAND )
         self.sizerModeHB.Add( self.bnModeAway, 1, wx.EXPAND )
+        self.sizerModeHB.Add( self.bnModeInUse, 1, wx.EXPAND )
         self.sizerModeV.Add( self.sizerModeHT, 1, wx.EXPAND)
-        self.sizerModeV.Add( self.sizerModeHB, 1, wx.EXPAND)
+        self.sizerModeV.Add( self.sizerModeHC, 1, wx.EXPAND)
+        #self.sizerModeV.Add( self.sizerModeHB, 1, wx.EXPAND)
+
+        self.sizerJonVL = wx.BoxSizer(wx.VERTICAL)
+        self.sizerJonVL.Add(self.bnUp, 1, wx.EXPAND )
+        self.sizerJonVL.Add(self.bnDown, 1, wx.EXPAND)
+        self.sizerJonVL.Add(self.sizerModeHB, 1, wx.EXPAND)
 
         self.sizerJonVR = wx.BoxSizer(wx.VERTICAL)
         self.sizerJonVR.Add(self.lTargTmp, 1, wx.EXPAND)
         self.sizerJonVR.Add(self.lCurTmp, 1, wx.EXPAND)
         self.sizerJonVR.Add(self.sizerModeHT, 1, wx.EXPAND)
-        self.sizerJonVR.Add(self.sizerModeHB, 1, wx.EXPAND)
+        #self.sizerJonVR.Add(self.sizerModeHB, 1, wx.EXPAND)
+        self.sizerJonVR.Add(self.sizerModeHC, 1, wx.EXPAND)
         self.sizerJonVR.Add(self.bnBack, 1, wx.EXPAND)
         
         self.sizerJonH.Add(self.sizerJonVL, 1, wx.EXPAND)
@@ -220,11 +253,6 @@ class PanelUser(wx.Panel):
             self.bnModeCool.SetValue( False )
             self.bnModeOff.SetValue( True )
             self.bnModeAway.SetValue( False )
-        elif mode == "away":
-            self.bnModeHeat.SetValue( False)
-            self.bnModeCool.SetValue( False )
-            self.bnModeOff.SetValue( False )
-            self.bnModeAway.SetValue( True )
             
 
 ####################################################################################
@@ -272,12 +300,27 @@ class PanelStatus(wx.Panel):
         self.lblHOn = wx.StaticText(self, -1, "H:xxxxx")
         self.lblCOn = wx.StaticText(self, -1, "C:xxxxx")
         self.lblFOn = wx.StaticText(self, -1, "F:xxxxx")
+        self.lblLSM = wx.StaticText(self, -1, "M:xxxxx")
+        self.lblSMStr = wx.StaticText(self, -1, "xxxxx")
+        
+        font = wx.Font( 8, wx.DEFAULT, wx.NORMAL, wx.NORMAL)
+        self.lblCurrent.SetFont( font )
+        self.lblTarg.SetFont(font)
+        self.lblMode.SetFont(font)
+        self.lblHOn.SetFont(font)
+        self.lblCOn.SetFont(font)
+        self.lblFOn.SetFont(font)
+        self.lblLSM.SetFont(font)
+        self.lblSMStr.SetFont(font)
+
         self.sizerH.Add(self.lblCurrent)
         self.sizerH.Add(self.lblTarg)
         self.sizerH.Add(self.lblMode)
         self.sizerH.Add(self.lblHOn)
         self.sizerH.Add(self.lblCOn)
         self.sizerH.Add(self.lblFOn)
+        self.sizerH.Add(self.lblLSM)
+        self.sizerH.Add(self.lblSMStr)
         self.SetSizer(self.sizerH)
         self.sizerH.Fit(self)
 
@@ -298,12 +341,14 @@ class PanelStatus(wx.Panel):
         self.lblMode.SetLabel("M:%s " % mode)
    
    #################################################################### 
-   def updateWhatsOn(self, heat, cool, fan):
+   def updateWhatsOn(self, heat, cool, fan, lsm, smartmodestring):
    #################################################################### 
         #self.lblWhatsOn.SetLabel("H:%s C:%s F:%s " % (heat, cool, fan))
         self.lblHOn.SetLabel("H:%s " % heat)
         self.lblCOn.SetLabel("C:%s " % cool)
         self.lblFOn.SetLabel("F:%s " % fan)
+        self.lblLSM.SetLabel("M:%s " % lsm)
+        self.lblSMStr.SetLabel("%s" % smartmodestring)
 
         if heat == "ON":
             self.lblHOn.SetForegroundColour("#FF0000")
@@ -356,7 +401,7 @@ class MainFrame(wx.Frame):
         wx.Frame.__init__(self, None, wx.ID_ANY, title='Main') 
         self.timer = wx.Timer(self, wx.ID_ANY)
         self.Bind(wx.EVT_TIMER, self.on_timer, self.timer)
-        self.timer.Start(5000)
+        self.timer.Start(3000)
 
         ### Common controls ####
         self.sizerH = wx.BoxSizer(wx.HORIZONTAL)
@@ -396,40 +441,58 @@ class MainFrame(wx.Frame):
         self.UpdateTargetTemp()
         self.UpdateMode()
         self.UpdateWhatsOn()
+        self.UpdateSmartButtons()
         self.pnScrenSaver.Update()
         self.ticks_since_interaction += 1
-        if self.ticks_since_interaction > 20:
+        if self.ticks_since_interaction > 80:
             self.ShowScreenSaver()
 
         
     #################################################################### 
     def OnModeHeat(self, evt):
     #################################################################### 
-        print "OnModeHeat"
+        print "[%s] OnModeHeat" % (datetime.datetime.now())
         self.SubmitMode("heat")
         self.reset_timeout()
 
     #################################################################### 
     def OnModeCool(self, evt):
     #################################################################### 
+        print "[%s] OnModeCool" % (datetime.datetime.now())
         self.SubmitMode("cool")
         self.reset_timeout()
     
     #################################################################### 
     def OnModeOff(self, evt):
     #################################################################### 
-        self.SubmitMode("off")
+        print "[%s] OnModeOff" % (datetime.datetime.now())
         self.reset_timeout()
 
     #################################################################### 
     def OnModeAway(self, evt):
     #################################################################### 
-        self.SubmitMode("away")
+        print "[%s] OnModeAway" % (datetime.datetime.now())
+        self.SubmitSmartMode("away")
+        self.reset_timeout()
+
+    #################################################################### 
+    def OnModeSmart(self, evt):
+    #################################################################### 
+        print "[%s] OnModeSmart" % (datetime.datetime.now())
+        self.SubmitSmartMode("smart")
+        self.reset_timeout()
+
+    #################################################################### 
+    def OnModeInUse(self, evt):
+    #################################################################### 
+        print "[%s] OnModeInUse" % (datetime.datetime.now())
+        self.SubmitSmartMode("inuse")
         self.reset_timeout()
 
     #################################################################### 
     def OnBnJon(self, evt):
     #################################################################### 
+        print "[%s] OnModeBnJon" % (datetime.datetime.now())
         self.pnMain.Hide()
         self.pnJon.Show()
         self.Layout()
@@ -438,6 +501,7 @@ class MainFrame(wx.Frame):
     #################################################################### 
     def OnBnGretch(self, evt):
     #################################################################### 
+        print "[%s] OnModeBnGretch" % (datetime.datetime.now())
         self.pnMain.Hide()
         self.pnGretch.Show()
         self.Layout()
@@ -446,6 +510,7 @@ class MainFrame(wx.Frame):
     #################################################################### 
     def OnBnBack(self, evt):
     #################################################################### 
+        print "[%s] OnModeBnBack" % (datetime.datetime.now())
         self.ShowMain()
 
     #################################################################### 
@@ -474,33 +539,97 @@ class MainFrame(wx.Frame):
     #################################################################### 
     def OnBnUp(self, evt):
     #################################################################### 
-       self.setpt += 1
-       if self.setpt > MAX_TEMP_SET:
-           self.setpt = MAX_TEMP_SET
-       self.UpdateSetpoint()
-       self.reset_timeout()
+        print "[%s] OnModeBnUp current sp %d" % (datetime.datetime.now(), self.setpt)
+        self.UpdateTargetTemp()
+        self.UserChangeSetptSmart() # force us into motion mode
+        print("Current setpt: %0.2f" % self.setpt)
+        self.setpt += 1
+        if self.setpt > MAX_TEMP_SET:
+            self.setpt = MAX_TEMP_SET
+        self.UpdateSetpoint()
+        self.reset_timeout()
 
     #################################################################### 
     def OnBnDown(self, evt):
     #################################################################### 
-       self.setpt -= 1
-       if self.setpt < MIN_TEMP_SET:
-            self.setpt = MIN_TEMP_SET
-       self.UpdateSetpoint()
-       self.reset_timeout()
+        print "[%s] OBnDown current sp %d" % (datetime.datetime.now(), self.setpt)
+        self.UpdateTargetTemp()
+        self.UserChangeSetptSmart() # force us into motion mode
+        print "[%s] OBnDown after UserChangeSetpt: %d" % (datetime.datetime.now(), self.setpt)
+        self.setpt -= 1
+        print "[%s] OBnDown after decreasing sp: %d" % (datetime.datetime.now(), self.setpt)
+        if self.setpt < MIN_TEMP_SET:
+             self.setpt = MIN_TEMP_SET
+        self.UpdateSetpoint()
+        self.reset_timeout()
+    
+    #################################################################### 
+    def UserChangeSetptSmart(self):
+        ''' Get out of any override or idle states when a user clicks 
+            a temperature change button '''
+    #################################################################### 
+        mode = self.GetSmartState()
+        print("UserChangeSetptSmart current mode: %d" % mode)
+        if mode in [STATE_DAY_AWAY, STATE_DAY_IDLE, STATE_NIGHT_AWAY, STATE_NIGHT_ACTIVE]:
+            print("UserChangeSetptSmart overriding motion and setting mode")
+            self.MotionOverride()
+            self.SubmitSmartMode( "smart" )
+            a = self.GetActiveTargetTemp()  # need to refresh setpt as the smart setpt
+            print("got active temp of %0.1f"%a)
+            self.setpt = a
+        
+    #################################################################### 
+    def MotionOverride(self):
+        ''' Trick the system into thinking motion has occurred through the motionoverride file'''
+    #################################################################### 
+        f = open('/dev/shm/motionoverride','w')
+        f.write("\n" )
+        f.close()
+        
 
     #################################################################### 
     def UpdateSetpoint(self):
     #################################################################### 
+       print "[%s] UpdateSetpoint" % (datetime.datetime.now())
+       curframe = inspect.currentframe()
+       calframe = inspect.getouterframes(curframe, 2)
+       print "[%s]   caller: %s" % (datetime.datetime.now(), calframe[1][3])
+       # self.UpdateTargetTemp()  this was getting the current temp from the web server again, overwriting
+       self.UserChangeSetptSmart() # force us into motion mode
+       print("Current setpt: %0.2f" % self.setpt)
+
        self.pnJon.lTargTmp.SetLabel("Target: %d" % self.setpt)
        self.pnGretch.lTargTmp.SetLabel("Target: %d" % self.setpt)
        self.SubmitTemp(self.setpt)
+       self.SubmitActiveTemp(self.setpt)
        self.pnStat.updateTarg(self.setpt)
+
+    #################################################################### 
+    def SubmitActiveTemp(self, setTmp):
+    #################################################################### 
+        print "SubmitActiveTemp"
+        try:
+            current_mode = self.GetSmartState()
+            if current_mode > 4:
+                r = requests.get(url + "/_setTargetNightActive/%0.1f" % float(setTmp))
+            else:
+                r = requests.get(url + "/_setTargetDayActive/%0.1f" % float(setTmp))
+        except KeyboardInterrupt:
+            print "Keyboard interrupt"
+            exit()
+        except:
+            print "submit temp failed"
+            return -1
+
+        return (r)
 
     #################################################################### 
     def SubmitTemp(self, setTmp):
     #################################################################### 
-        print "SubmitTemp"
+        print "[%s] SubmitTemp %d" % (datetime.datetime.now(), setTmp)
+        curframe = inspect.currentframe()
+        calframe = inspect.getouterframes(curframe, 2)
+        print "[%s]   caller: %s" % (datetime.datetime.now(), calframe[1][3])
         try:
             r = requests.get(url + "/_setTarget/%0.1f" % float(setTmp))
         except KeyboardInterrupt:
@@ -510,6 +639,38 @@ class MainFrame(wx.Frame):
             print "submit temp failed"
             return -1
 
+        return (r)
+
+    #################################################################### 
+    def SubmitSmartMode(self, mode):
+    #################################################################### 
+        print "SubmitSmartMode"
+        current_mode = self.GetSmartState()
+        if mode == "away":
+            if current_mode < 5: # if it's day
+                state = STATE_DAY_AWAY
+            else:
+                state = STATE_NIGHT_AWAY
+        elif mode == "inuse":
+            if current_mode < 5:
+                state = STATE_DAY_ACTIVE
+            else:
+                state = STATE_DAY_ACTIVE
+        elif mode == "smart":  
+            if current_mode < 5:
+                state = STATE_DAY_MOTION
+            else:
+                state = STATE_NIGHT_MOTION
+        else:
+            print "ERROR: mode %s not valid" % mode
+        try:
+            r = requests.get(url + "/_setSmartState/%s" % state)
+        except KeyboardInterrupt:
+            print "Keyboard interrupt"
+            exit()
+        except:
+            print "submit mode failed"
+            return -1
         return (r)
 
     #################################################################### 
@@ -545,13 +706,65 @@ class MainFrame(wx.Frame):
     #################################################################### 
        temp = self.GetCurrentTemp()
        targ = self.GetTargetTemp()
+       statestr = self.GetSmartStateString()
+       orr = self.GetOverrideRemaining()
+       whatson = self.GetWhatsOn()
+       lsm = self.GetLSM()
 
        self.pnStat.updateCurrent( temp )
        self.pnJon.lCurTmp.SetLabel("Current: %d" % temp)
        self.pnGretch.lCurTmp.SetLabel("Current: %d" % temp)
 #       self.pnScrenSaver.lblTemp.SetLabel("%0.1f\nT: %0.1f" % (temp, self.setpt))
+       now = datetime.datetime.now()
+       if now.hour > 11:
+           ampm = "pm"
+       else:
+           ampm = "am"
+       if now.hour > 12:
+           h = now.hour - 12
+       else:
+           h = now.hour
+       if orr == 0:
+           orstr = ""
+       else:
+           orstr = ":%0.2f min override" % orr
+       t = "%d:%02d%s %d/%d/%d" % (h, now.minute, ampm, now.month, now.day, now.year)
        self.pnScrenSaver.lblTemp.SetLabel("%0.1f\nT: %0.1f" % (temp, targ))
+       self.pnScrenSaver.lblStatus.SetLabel("%s\n%s%s\nheat:%s cool:%s fan:%s\nlast motion %ds ago" % (t, statestr,orstr, whatson[0], whatson[1],whatson[2],lsm))
 
+    #################################################################### 
+    def GetOverrideRemaining(self):
+    #################################################################### 
+       try:
+           r = requests.get(url + "/_liveOverrideRemaining")
+       except KeyboardInterrupt:
+            print "Keyboard interrupt"
+            exit()
+       except:
+           print "live override remaining request failed"
+           return -1
+
+       return float(r.content)
+
+
+    #################################################################### 
+    def GetActiveTargetTemp(self):
+    #################################################################### 
+       try:
+           mode = self.GetSmartState()
+           print("GetActiveTargetTemp got mode %d"  % mode)
+           if mode > 4: # night
+               r = requests.get(url + "/_liveTargetNightActive")
+           else:
+               r = requests.get(url + "/_liveTargetDayActive")
+       except KeyboardInterrupt:
+            print "Keyboard interrupt"
+            exit()
+       except:
+           print "live target temp request failed"
+           return -1
+
+       return float(r.content)
 
     #################################################################### 
     def GetTargetTemp(self):
@@ -565,6 +778,7 @@ class MainFrame(wx.Frame):
            print "live target temp request failed"
            return -1
 
+       print("GetTargetTemp got %0.2f" % float(r.content))
        return float(r.content)
 
     #################################################################### 
@@ -574,6 +788,86 @@ class MainFrame(wx.Frame):
        self.pnStat.updateTarg( temp )
        self.pnJon.lTargTmp.SetLabel("Target: %d" % temp)
        self.pnGretch.lTargTmp.SetLabel("Target: %d" % temp)
+       self.setpt = temp
+
+    #################################################################### 
+    def UpdateSmartButtons(self):
+    #################################################################### 
+       #print("Updating smart buttons")
+       orrem = self.GetOverrideRemaining()
+       h = int( orrem / 60 )
+       m = int( orrem % 60 )
+       s = int( orrem * 60 ) % 60
+       smartmode = self.GetSmartState()
+       smartstr = self.GetSmartStateString()
+       #print("orrem=%0.3f" % orrem)
+       #print("smartmode=%d" % smartmode)
+       fontsmall = wx.Font( 9, wx.DEFAULT, wx.NORMAL, wx.NORMAL)
+       fontlarge = wx.Font( 12, wx.DEFAULT, wx.NORMAL, wx.NORMAL)
+       if smartmode == STATE_DAY_AWAY or smartmode == STATE_NIGHT_AWAY: # away
+           self.pnJon.bnModeAway.SetLabel( "Away %d:%02d" % (h, m))
+           self.pnGretch.bnModeAway.SetLabel( "Away %d:%02d" % (h, m))
+           self.pnJon.bnModeInUse.SetLabel( "In Use" )
+           self.pnGretch.bnModeInUse.SetLabel( "In Use" )
+           self.pnJon.bnModeSmart.SetLabel( "Smart(%s)" % smartstr )
+           self.pnGretch.bnModeSmart.SetLabel( "Smart" )
+
+           self.pnJon.bnModeAway.SetValue( True )
+           self.pnJon.bnModeInUse.SetValue( False )
+           self.pnJon.bnModeSmart.SetValue( False )
+           self.pnGretch.bnModeAway.SetValue( True )
+           self.pnGretch.bnModeInUse.SetValue( False )
+           self.pnGretch.bnModeSmart.SetValue( False )
+
+           self.pnJon.bnModeAway.SetFont(fontsmall)
+           self.pnGretch.bnModeAway.SetFont(fontsmall)
+           self.pnJon.bnModeInUse.SetFont(fontlarge)
+           self.pnGretch.bnModeInUse.SetFont(fontlarge)
+           self.pnJon.bnModeSmart.SetFont(fontsmall)
+           self.pnGretch.bnModeSmart.SetFont(fontlarge)
+
+       elif smartmode == STATE_DAY_ACTIVE or smartmode == STATE_DAY_ACTIVE: 
+           self.pnJon.bnModeAway.SetLabel( "Away" )
+           self.pnGretch.bnModeAway.SetLabel( "Away" )
+           self.pnJon.bnModeInUse.SetLabel( "IU %d:%02d" % (h,m))
+           self.pnGretch.bnModeInUse.SetLabel( "IU %d:%02d" % (h,m))
+           self.pnJon.bnModeSmart.SetLabel( "Smt (%s)" % smartstr )
+           self.pnGretch.bnModeSmart.SetLabel( "Smart" )
+           self.pnJon.bnModeAway.SetValue( False)
+           self.pnJon.bnModeInUse.SetValue( True )
+           self.pnJon.bnModeSmart.SetValue( False )
+           self.pnGretch.bnModeAway.SetValue( False )
+           self.pnGretch.bnModeInUse.SetValue( True )
+           self.pnGretch.bnModeSmart.SetValue( False )
+
+           self.pnJon.bnModeAway.SetFont(fontlarge)
+           self.pnGretch.bnModeAway.SetFont(fontlarge)
+           self.pnJon.bnModeInUse.SetFont(fontsmall)
+           self.pnGretch.bnModeInUse.SetFont(fontsmall)
+           self.pnJon.bnModeSmart.SetFont(fontsmall)
+           self.pnGretch.bnModeSmart.SetFont(fontlarge)
+
+       else: # smart mode
+           self.pnJon.bnModeAway.SetLabel( "Away" )
+           self.pnGretch.bnModeAway.SetLabel( "Away" )
+           self.pnJon.bnModeInUse.SetLabel( "InUse" )
+           self.pnGretch.bnModeInUse.SetLabel( "InUse" )
+           self.pnJon.bnModeSmart.SetLabel( "Smt(%s)" % smartstr )
+           self.pnGretch.bnModeSmart.SetLabel( "Smart" )
+
+           self.pnJon.bnModeAway.SetValue( False)
+           self.pnJon.bnModeInUse.SetValue( False )
+           self.pnJon.bnModeSmart.SetValue( True )
+           self.pnGretch.bnModeAway.SetValue( False )
+           self.pnGretch.bnModeInUse.SetValue( False )
+           self.pnGretch.bnModeSmart.SetValue( True )
+
+           self.pnJon.bnModeAway.SetFont(fontlarge)
+           self.pnGretch.bnModeAway.SetFont(fontlarge)
+           self.pnJon.bnModeInUse.SetFont(fontlarge)
+           self.pnGretch.bnModeInUse.SetFont(fontlarge)
+           self.pnJon.bnModeSmart.SetFont(fontsmall)
+           self.pnGretch.bnModeSmart.SetFont(fontlarge)
 
     #################################################################### 
     def GetMode(self):
@@ -585,17 +879,47 @@ class MainFrame(wx.Frame):
             print "Keyboard interrupt"
             exit()
        except:
-           print "live mode request failed r:%s" %str(r)
+           print "GetMode live mode request failed r:%s" %str(r)
            return -1
 
        return r.content
+
+    #################################################################### 
+    def GetSmartStateString(self):
+    #################################################################### 
+       r = ""
+       try:
+           r = requests.get(url + "/_liveSmartStateString")
+       except KeyboardInterrupt:
+            print "Keyboard interrupt"
+            exit()
+       except:
+           print "GetSmartStateString live mode request failed r:%s" %str(r)
+           return -1
+
+       return r.content
+
+    #################################################################### 
+    def GetSmartState(self):
+    #################################################################### 
+       r = ""
+       try:
+           r = requests.get(url + "/_liveSmartState")
+       except KeyboardInterrupt:
+            print "Keyboard interrupt"
+            exit()
+       except:
+           print "GetSmartState live mode request failed r:%s" %str(r)
+           return -1
+
+       return int(r.content)
 
     #################################################################### 
     def UpdateMode(self, mode=None):
     #################################################################### 
         if mode == None:
            mode = self.GetMode()
-        print "update mode: %s " % str(mode)
+        #print "update mode: %s " % str(mode)
 
         if mode == "cool":
             self.pnStat.lblMode.SetForegroundColour( "#0000FF" )
@@ -608,6 +932,18 @@ class MainFrame(wx.Frame):
         self.pnJon.updateMode( mode )
         self.pnGretch.updateMode( mode )
 
+    #################################################################### 
+    def GetLSM(self):
+    #################################################################### 
+       try:
+           r = requests.get(url + "/_liveMotion")
+       except KeyboardInterrupt:
+            print "Keyboard interrupt"
+            exit()
+       except:
+           print "GetLSM live mode request failed"
+           return -1
+       return int(r.content)
 
     #################################################################### 
     def GetWhatsOn(self):
@@ -618,7 +954,7 @@ class MainFrame(wx.Frame):
             print "Keyboard interrupt"
             exit()
        except:
-           print "live mode request failed"
+           print "GetWhatsOn live mode request failed"
            return -1
        heat = re.findall("heat (\w+)", r.content)[0]
        cool = re.findall("cool (\w+)", r.content)[0]
@@ -630,12 +966,14 @@ class MainFrame(wx.Frame):
     #################################################################### 
        try:
            heat, cool, fan = self.GetWhatsOn()
-           self.pnStat.updateWhatsOn( heat=heat, cool=cool, fan=fan)
+           lsm = self.GetLSM()
+           smartmodestring= self.GetSmartStateString()
+           self.pnStat.updateWhatsOn( heat=heat, cool=cool, fan=fan, lsm=lsm, smartmodestring=smartmodestring)
        except KeyboardInterrupt:
             print "Keyboard interrupt"
             exit()
        except:
-           print "live mode request failed"
+           print "UpdateWhatsOn live mode request failed"
            return -1
        
 ####################################################################################
