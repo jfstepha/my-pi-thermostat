@@ -46,3 +46,4 @@ ishub = 0
 [motion]
 hasmotion = True
 url = http://localhost/_liveMotion
+idle_threshold = 100
