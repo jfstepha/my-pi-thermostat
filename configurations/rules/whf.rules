@@ -60,11 +60,11 @@ when Time cron "0 * * * * ?" then
 	logInfo("FILE", "********************************************** ")
 	logInfo("FILE", "****** Executing simplified DC cron job ****** ")
 	
-	if( Heat_FF_Duty_Cycle.state == Uninitialized) { postUpdate( Heat_FF_Duty_Cycle, 0 )}
-	if( Heat_SF_Duty_Cycle.state == Uninitialized) { postUpdate( Heat_SF_Duty_Cycle, 0 )}
-	if( Heat_AS_Duty_Cycle.state == Uninitialized) { postUpdate( Heat_AS_Duty_Cycle, 0 )}
-	if( Cool_FF_Duty_Cycle.state == Uninitialized) { postUpdate( Cool_FF_Duty_Cycle, 0 )}
-	if( Cool_SF_Duty_Cycle.state == Uninitialized) { postUpdate( Cool_SF_Duty_Cycle, 0 )}
+	if( Heat_FF_Duty_Cycle.state == NULL) { postUpdate( Heat_FF_Duty_Cycle, 0 )}
+	if( Heat_SF_Duty_Cycle.state == NULL) { postUpdate( Heat_SF_Duty_Cycle, 0 )}
+	if( Heat_AS_Duty_Cycle.state == NULL) { postUpdate( Heat_AS_Duty_Cycle, 0 )}
+	if( Cool_FF_Duty_Cycle.state == NULL) { postUpdate( Cool_FF_Duty_Cycle, 0 )}
+	if( Cool_SF_Duty_Cycle.state == NULL) { postUpdate( Cool_SF_Duty_Cycle, 0 )}
 
     logInfo("FILE", " ** First Floor heat ** State=" + Heat_FF_Living.state + " DC = " + Heat_FF_Duty_Cycle.state.format("%.7f"))
     aryHeatFF = pushItem.apply( Heat_FF_Living.state, aryHeatFF )
@@ -97,9 +97,120 @@ end
 /* Living room thermostat rules */
 /*********************************/
 
-rule "Set thermo temp"
+
+rule "Change LR temp Up"
 when
-	Item TempSet_FF_Living changed
+   Item TempSet_FF_Living_Change received command UP
+then
+   logInfo("FILE", String::format("Changing LR temp to %.3f", (TempSet_FF_Living.state as DecimalType) + 0.5 ) )
+   sendHttpGetRequest(String::format("http://lr-thermo/_setTarget/%.3f", (TempSet_FF_Living.state as DecimalType) + 0.5 ) )
+   postUpdate(TempSet_FF_Living, (TempSet_FF_Living.state as DecimalType) + 0.5 ) 
+end
+
+rule "Change LR temp Down"
+when
+   Item TempSet_FF_Living_Change received command DOWN
+then
+   logInfo("FILE", String::format("Changing LR temp to %.3f", (TempSet_FF_Living.state as DecimalType) - 0.5 ) )
+   sendHttpGetRequest(String::format("http://lr-thermo/_setTarget/%.3f", (TempSet_FF_Living.state as DecimalType) - 0.5 ) )
+   postUpdate(TempSet_FF_Living, (TempSet_FF_Living.state as DecimalType) - 0.5 )
+end
+
+rule "Change AS temp Up"
+when
+   Item TempSet_AS_Studio_Change received command UP
+then
+   logInfo("FILE", String::format("Changing AS temp to %.3f", (TempSet_AS_Studio.state as DecimalType) + 0.5 ) )
+   sendHttpGetRequest(String::format("http://as-thermo/_setTarget/%.3f", (TempSet_AS_Studio.state as DecimalType) + 0.5 ) )
+   postUpdate(TempSet_AS_Studio, (TempSet_AS_Studio.state as DecimalType) + 0.5 ) 
+end
+
+rule "Change AS temp Down"
+when
+   Item TempSet_AS_Studio_Change received command Down
+then
+   logInfo("FILE", String::format("Changing AS temp to %.3f", (TempSet_AS_Studio.state as DecimalType) - 0.5 ) )
+   sendHttpGetRequest(String::format("http://as-thermo/_setTarget/%.3f", (TempSet_AS_Studio.state as DecimalType) - 0.5 ) )
+   postUpdate(TempSet_AS_Studio, (TempSet_AS_Studio.state as DecimalType) - 0.5 ) 
+end
+
+rule "Change AS Day temp Up"
+when
+   Item TempSet_AS_Studio_Day_Change received command UP
+then
+   logInfo("FILE", String::format("Changing AS Day temp to %.3f", (TempSet_AS_Studio_Day.state as DecimalType) + 0.5 ) )
+   sendHttpGetRequest(String::format("http://as-thermo/_setTargetDayActive/%.3f", (TempSet_AS_Studio_Day.state as DecimalType) + 0.5 ) )
+   postUpdate(TempSet_AS_Studio_Day, (TempSet_AS_Studio_Day.state as DecimalType) + 0.5 ) 
+end
+
+rule "Change AS Day temp Down"
+when
+   Item TempSet_AS_Studio_Day_Change received command DOWN
+then
+   logInfo("FILE", String::format("Changing AS Day temp to %.3f", (TempSet_AS_Studio_Day.state as DecimalType) - 0.5 ) )
+   sendHttpGetRequest(String::format("http://as-thermo/_setTargetDayActive/%.3f", (TempSet_AS_Studio_Day.state as DecimalType) - 0.5 ) )
+   postUpdate(TempSet_AS_Studio_Day, (TempSet_AS_Studio_Day.state as DecimalType) - 0.5 ) 
+end
+
+rule "Change AS Day Away temp Up"
+when
+   Item TempSet_AS_Studio_Day_Away_Change received command UP
+then
+   logInfo("FILE", String::format("Changing AS Day Away temp to %.3f", (TempSet_AS_Studio_Day_Away.state as DecimalType) + 0.5 ) )
+   sendHttpGetRequest(String::format("http://as-thermo/_setTargetDayIdle/%.3f", (TempSet_AS_Studio_Day_Away.state as DecimalType) + 0.5 ) )
+   postUpdate(TempSet_AS_Studio_Day, (TempSet_AS_Studio_Day_Away.state as DecimalType) + 0.5 ) 
+end
+
+rule "Change AS Day Away temp Down"
+when
+   Item TempSet_AS_Studio_Day_Away_Change received command DOWN
+then
+   logInfo("FILE", String::format("Changing AS Day Away temp to %.3f", (TempSet_AS_Studio_Day_Away.state as DecimalType) - 0.5 ) )
+   sendHttpGetRequest(String::format("http://as-thermo/_setTargetDayIdle/%.3f", (TempSet_AS_Studio_Day_Away.state as DecimalType) - 0.5 ) )
+   postUpdate(TempSet_AS_Studio_Day_Away, (TempSet_AS_Studio_Day_Away.state as DecimalType) - 0.5 ) 
+end
+
+
+rule "Change AS Night temp Up"
+when
+   Item TempSet_AS_Studio_Night_Change received command UP
+then
+   logInfo("FILE", String::format("Changing AS Night temp to %.3f", (TempSet_AS_Studio_Night.state as DecimalType) + 0.5 ) )
+   sendHttpGetRequest(String::format("http://as-thermo/_setTargetNightActive/%.3f", (TempSet_AS_Studio_Night.state as DecimalType) + 0.5 ) )
+   postUpdate(TempSet_AS_Studio_Night, (TempSet_AS_Studio_Night.state as DecimalType) + 0.5 ) 
+end
+
+rule "Change AS Night temp Down"
+when
+   Item TempSet_AS_Studio_Night_Change received command Down
+then
+   logInfo("FILE", String::format("Changing AS Night temp to %.3f", (TempSet_AS_Studio_Night.state as DecimalType) - 0.5 ) )
+   sendHttpGetRequest(String::format("http://as-thermo/_setTargetNightActive/%.3f", (TempSet_AS_Studio_Night.state as DecimalType) - 0.5 ) )
+   postUpdate(TempSet_AS_Studio_Night, (TempSet_AS_Studio_Night.state as DecimalType) - 0.5 ) 
+end
+
+rule "Change AS Night Away temp Up"
+when
+   Item TempSet_AS_Studio_Night_Away_Change received command UP
+then
+   logInfo("FILE", String::format("Changing AS Night Away temp to %.3f", (TempSet_AS_Studio_Night_Away.state as DecimalType) + 0.5 ) )
+   sendHttpGetRequest(String::format("http://as-thermo/_setTargetNightIdle/%.3f", (TempSet_AS_Studio_Night_Away.state as DecimalType) + 0.5 ) )
+   postUpdate(TempSet_AS_Studio_Night_Away, (TempSet_AS_Studio_Night_Away.state as DecimalType) + 0.5 ) 
+end
+
+rule "Change AS Night Away temp Down"
+when
+   Item TempSet_AS_Studio_Night_Away_Change received command DOWN
+then
+   logInfo("FILE", String::format("Changing AS Night Away temp to %.3f", (TempSet_AS_Studio_Night_Away.state as DecimalType) - 0.5 ) )
+   sendHttpGetRequest(String::format("http://as-thermo/_setTargetNightIdle/%.3f", (TempSet_AS_Studio_Night_Away.state as DecimalType) - 0.5 ) )
+   postUpdate(TempSet_AS_Studio_Night_Away, (TempSet_AS_Studio_Night_Away.state as DecimalType) - 0.5 ) 
+end
+
+
+     
+rule "Set thermo temp" when
+	Item TempSet_FF_Living changed 
 then
 	sendHttpGetRequest("http://lr-thermo/_setTarget/" + TempSet_FF_Living.state)
 end
@@ -147,27 +258,13 @@ then
 	postUpdate(Heat_FF_Living_Scaled, 66)
 end
 
-rule "Heat index LR"
-
-when 
-        Item Temperature_FF_Living_Thermo changed
-then
-        if (Temperature_FF_Living_Thermo.state as DecimalType> 70 ) {
-
-                var T = Temperature_FF_Living_Thermo.state as DecimalType
-                var RH = Humidity_FF_Living_Thermo.state as DecimalType
-                postUpdate(HeatIndex_FF_Living_Thermo, 0.363445176 + 0.988622465 * T + 4.777114035 * RH - 0.114037667 * T * RH - 0.000850208 * T * T -0.020716198 * RH * RH + 0.000687678* T * T * RH + 0.000274954 * T * RH * RH )
-        } else {
-                postUpdate(HeatIndex_FF_Living_Thermo, Temperature_FF_Living_Thermo.state)
-        }
-end
 
 /*******************************/
 /* Art Studio thermostat rules */
 /*******************************/
 rule "Set thermo temp AS"
 when
-	Item TempSet_AS_Studio changed
+	Item TempSet_AS_Studio received command
 then
 	sendHttpGetRequest("http://as-thermo/_setTarget/" + TempSet_AS_Studio.state)
 end
@@ -215,6 +312,49 @@ then
         postUpdate(Heat_AS_Studio_Scaled, 66)
 
 end
+
+/***********************************************/
+/* Smart Thermo Art Studio rules               */
+/***********************************************/
+
+rule "Set smartthermo day active temp AS"
+when
+	Item TempSet_AS_Studio_Day received command
+then
+	sendHttpGetRequest("http://as-thermo/_setTargetDayActive/" + TempSet_AS_Studio_Day.state)
+end
+
+rule "Set smartthermo day idle temp AS"
+when
+	Item TempSet_AS_Studio_Day_Away received command
+then
+	sendHttpGetRequest("http://as-thermo/_setTargetDayIdle/" + TempSet_AS_Studio_Day_Away.state)
+end
+
+rule "Set smartthermo Night active temp AS"
+when
+	Item TempSet_AS_Studio_Night received command
+then
+	sendHttpGetRequest("http://as-thermo/_setTargetNightActive/" + TempSet_AS_Studio_Night.state)
+end
+
+rule "Set smartthermo night idle temp AS"
+when
+	Item TempSet_AS_Studio_Night_Away received command
+then
+	sendHttpGetRequest("http://as-thermo/_setTargetNightIdle/" + TempSet_AS_Studio_Night_Away.state)
+end
+
+
+rule "Set smartthermo state AS"
+when
+    Item SmartThermo_AS_Mode received command
+then
+	sendHttpGetRequest("http://as-thermo/_setSmartState/" + SmartThermo_AS_Mode.state)
+
+end
+
+
 
 /*********************************/
 /* Second floor thermostat rules */
@@ -271,19 +411,4 @@ then
 
 end
 
-rule "Heat index SF"
-
-when 
-        Item Temperature_SF_Hall_Thermo changed
-then
-        if (Temperature_SF_Hall_Thermo.state as DecimalType> 70) {
-
-                var T = Temperature_SF_Hall_Thermo.state as DecimalType
-                var RH = Humidity_SF_Hall_Thermo.state as DecimalType 
-                postUpdate(HeatIndex_SF_Hall, 0.363445176 + 0.988622465 * T + 4.777114035 * RH - 0.114037667 * T * RH - 0.000850208 * T * T -0.020716198 * RH * RH + 0.000687678* T * T * RH + 0.000274954 * T * RH * RH )
-        /*        postUpdate(HeatIndex_SF_Hall, -42.379 + 2.04901523 * T + 10.14333127 * RH - 0.22475541 * T * RH - 6.83783e-3 * T * T -5.481717e-2 * RH * RH + 1.22874e-3* T * T * RH + 8.5282e-4 * T * RH * RH -1.99e-6 * T * T * RH * RH) */
-        } else {
-                postUpdate(HeatIndex_SF_Hall, Temperature_SF_Hall_Thermo.state)
-        }
-end
 

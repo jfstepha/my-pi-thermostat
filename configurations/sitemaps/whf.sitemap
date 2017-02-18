@@ -11,17 +11,19 @@ sitemap whf label="Main Menu"
 		}
 	Frame label="Floors" {
 		Text label="Attic" icon="attic" {
-		    Text item=Temperature_AT_Finished
-		    Text item=Humidity_AT_Finished
-		    Text item=Attic_Uptime
-		    Text item=Attic_lsp
-		    Text item=Attic_wifi_strength
-            Text item=Attic_pings_rec
-            Switch item=Attic_relay1 mappings=["ON"="ON", "OFF"="OFF"]
-            Text item=Attic_relay1_state
-            Switch item=Attic_relay2 mappings=["ON"="ON", "OFF"="OFF"]
-            Text item=Attic_relay2_state
-			Text label="Temp summary" {
+		    Frame label="sum" {
+		    	Text item=Temperature_AT_Finished
+          	    Text item=Humidity_AT_Finished
+		        Text item=Attic_Uptime
+		        Text item=Attic_lsp
+		        Text item=Attic_wifi_strength
+                Text item=Attic_pings_rec
+                Switch item=Attic_relay1 mappings=["ON"="ON", "OFF"="OFF"]
+                Text item=Attic_relay1_state
+                Switch item=Attic_relay2 mappings=["ON"="ON", "OFF"="OFF"]
+                Text item=Attic_relay2_state
+            
+            } Frame label="Temp summary" {
 				Switch item=Temp_AT_Chart_Period label="Attic" mappings=[0="Hour", 1="Day", 2="Week"]
 				Chart item=Temperature_AT_Finished period=h refresh=60000 visibility=[Temp_AT_Chart_Period==0, Temp_AT_Chart_Period=="Uninitialized"]
 				Chart item=Temperature_AT_Finished period=D refresh=300000 visibility=[Temp_AT_Chart_Period==1]
@@ -59,7 +61,6 @@ sitemap whf label="Main Menu"
 						Text item=Temperature_SF_Hall_Thermo
 						Setpoint item=TempSet_SF_Hall step=0.5 minValue=40 maxValue=120
 						Text item=Humidity_SF_Hall_Thermo
-						Text item=HeatIndex_SF_Hall_Thermo
 						Text item=Fan_SF_Hall
 						Text item=Cool_SF_Hall
 						Text item=Heat_SF_Hall 
@@ -119,7 +120,6 @@ sitemap whf label="Main Menu"
 						Setpoint item=TempSet_FF_Living_Away step=0.5 minValue=40 maxValue=120
 						Text item=SmartThermo_FF_Mode_String
 						Text item=Humidity_FF_Living_Thermo
-						Text item=HeatIndex_FF_Living_Thermo
 						Text item=Fan_FF_Living
 						Text item=Cool_FF_Living
 						Text item=Heat_FF_Living
@@ -178,11 +178,15 @@ sitemap whf label="Main Menu"
 						Text item=Temperature_AS_Studio_Thermo
 						Setpoint item=TempSet_AS_Studio step=0.5 minValue=40 maxValue=120
 						Frame label="Smart thermostat" {
-    						Switch item=SmartThermo_AS_Mode label="Smart Thermo Mode" mappings=[0="Disabled", 1="Away", 2="Night", 3="Day", 4="Night idle", 5="Day idle"]
+    						Switch item=SmartThermo_AS_Mode label="Smart Thermo Mode" mappings=[0="No Sensor", 1="DayIdl", 2="DayMotion", 3="DayAway", 4="DayActive", 5="NgtIdl", 6="NgtMotion",7="NightAway",8="NightActive"]
+    					}
+    					Frame {
+				    		Text item=SmartThermo_AS_Mode_String label="Smart Thermo Mode [%s]"
+                            Text item=SmartThermo_AS_Override_Remaining
 	    					Setpoint item=TempSet_AS_Studio_Day step=0.5 minValue=40 maxValue=120
 		    				Setpoint item=TempSet_AS_Studio_Night step=0.5 minValue=40 maxValue=120
-			    			Setpoint item=TempSet_AS_Studio_Away step=0.5 minValue=40 maxValue=120
-				    		Text item=SmartThermo_AS_Mode_String label="Smart Thermo Mode [%s]"
+			    			Setpoint item=TempSet_AS_Studio_Day_Away step=0.5 minValue=40 maxValue=120
+			    			Setpoint item=TempSet_AS_Studio_Night_Away step=0.5 minValue=40 maxValue=120
 						}
 						Text item=Humidity_AS_Studio_Thermo
 						Text item=Fan_AS_Studio
@@ -197,23 +201,23 @@ sitemap whf label="Main Menu"
 						Chart item=Temp_AS_Chart period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
 						Chart item=Temp_AS_Chart period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
 						Chart item=Temp_AS_Chart period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
-					}
-					Frame label="Motion" {
+//					}
+//					Frame label="Motion" {
 					    Chart item=Lastmotion_AS_Studio period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
 					    Chart item=Lastmotion_AS_Studio period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
 					    Chart item=Lastmotion_AS_Studio period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
-                    }
-					Frame label="Duty Cycle summary" {
+//                    }
+//					Frame label="Duty Cycle summary" {
 						Chart item=Heat_AS_Duty_Cycle period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
 						Chart item=Heat_AS_Duty_Cycle period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
 						Chart item=Heat_AS_Duty_Cycle period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
-					}
-					Frame label="Humidity summary" {
+//					}
+//					Frame label="Humidity summary" {
 						Chart item=Humidity_AS_Studio_Thermo period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
 						Chart item=Humidity_AS_Studio_Thermo period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
 						Chart item=Humidity_AS_Studio_Thermo period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
-					}
-					Frame label="Smart thermo summary" {
+//					}
+//					Frame label="Smart thermo summary" {
 						Chart item=SmartThermo_AS_Mode period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
 						Chart item=SmartThermo_AS_Mode period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
 						Chart item=SmartThermo_AS_Mode period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]

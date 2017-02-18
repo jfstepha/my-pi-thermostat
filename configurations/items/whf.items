@@ -22,27 +22,28 @@ Group All_Motion_Chart
 Group Basement_doorbells
 
 
-Number Temp_AT_Chart_Period "Attic sensors"
-Number Temp_BS_Chart_Period "Basement sensors"
-Number Temp_LR_Chart_Period "Living Room Thermostat"
-Number Temp_FF_Chart_Period "First Floor Temps"
-Number Humidity_FF_Chart_Period "First Floor Humidities"
-Number Humidity_FF_Living_Chart_Period "Humidity"
-Number Temp_AS_Chart_Period "Art Studio Thermostat"
-Number Temp_SF_Chart_Period "Second Floor Thermostat"
-Number All_Temp_Chart_Period "All Temperatures"
+
+Number Temp_AT_Chart_Period "Attic sensors" <line>
+Number Temp_BS_Chart_Period "Basement sensors" <line>
+Number Temp_LR_Chart_Period "Living Room Thermostat" <line>
+Number Temp_FF_Chart_Period "First Floor Temps" <line>
+Number Humidity_FF_Chart_Period "First Floor Humidities" <line>
+Number Humidity_FF_Living_Chart_Period "Humidity" <line>
+Number Temp_AS_Chart_Period "Art Studio Thermostat" <line>
+Number Temp_SF_Chart_Period "Second Floor Thermostat" <line>
+Number All_Temp_Chart_Period "All Temperatures" <temperature>
 
 /* Other numbers */
-Number Uptime_Period "Uptime"
-Number Motion_Period "Motion"
+Number Uptime_Period "Uptime" <line>
+Number Motion_Period "Motion" <line>
 
 /* For calculating duty cycle */
-Number Heat_FF_Duty_Cycle "Duty Cycle: [%.2f]"
-Number Heat_AS_Duty_Cycle "Duty Cycle: [%.4f]"
-Number Heat_SF_Duty_Cycle "Duty Cycle: [%.4f]"
-Number Cool_FF_Duty_Cycle "Duty Cycle: [%.2f]"
-Number Cool_AS_Duty_Cycle "Duty Cycle: [%.4f]"
-Number Cool_SF_Duty_Cycle "Duty Cycle: [%.4f]"
+Number Heat_FF_Duty_Cycle "Duty Cycle: [%.2f]" <heating>
+Number Heat_AS_Duty_Cycle "Duty Cycle: [%.4f]" <heating>
+Number Heat_SF_Duty_Cycle "Duty Cycle: [%.4f]" <heating>
+Number Cool_FF_Duty_Cycle "Duty Cycle: [%.2f]" <heating>
+Number Cool_AS_Duty_Cycle "Duty Cycle: [%.4f]" <heating>
+Number Cool_SF_Duty_Cycle "Duty Cycle: [%.4f]" <heating>
 
 /* active groups */
 Group:Number:AVG 				Temperature	"Avg. Room Temperature [%.1f °C]" 	<temperature>	(Status)
@@ -59,13 +60,12 @@ Switch       tvOnOff "TV On/Off"    <video>       {samsungtv="ON:livingroom:KEY_
 
 
 /* Thermostat */
-Number Temperature_FF_Living_Thermo "LR Thermostat temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, Temp_FF_Chart, All_Temp_Chart) {http="<[http://lr-thermo/_liveSensorValue/thermo_LR/temp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
-Number Humidity_FF_Living_Thermo "Living Room RH [%.1f]" (FF_Living, Humidity_FF_Chart, All_Humidity_Chart) {http="<[http://lr-thermo/_liveSensorValue/thermo_LR/rh:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
-Number Temperature_FF_AVG "Average temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://lr-thermo/_liveSensorValue/sum_LR/temp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
-Number Temperature_FF_MBR "Bedroom temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, Temp_FF_Chart, All_Temp_Chart) {http="<[http://lr-thermo/_liveSensorValue/remote_MBR/temp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
-Number Humidity_FF_MBR "Bedroom RH [%.1f]" (FF_Living, Humidity_FF_Chart, All_Humidity_Chart) {http="<[http://lr-thermo/_liveSensorValue/remote_MBR/rh:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
-Number Lastmotion_FF_MBR "MBR last motion [%d]" <clock> (FF_MBR, All_Motion_Chart) {http="<[http://lr-thermo/_liveSensorValue/remote_MBR/lastmotion:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
-Number HeatIndex_FF_Living_Thermo "Heat Index: [%.2f]" <temperature> (Temperature, FF_Living)
+Number Temperature_FF_Living_Thermo "LR Thermostat temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, Temp_FF_Chart, All_Temp_Chart) {http="<[http://lr-thermo/_liveSensorValue/thermo_LR/temp:5000:REGEX((.*?))]"}
+Number Humidity_FF_Living_Thermo "Living Room RH [%.1f]" <humidity> (FF_Living, Humidity_FF_Chart, All_Humidity_Chart) {http="<[http://lr-thermo/_liveSensorValue/thermo_LR/rh:30000:REGEX((.*?))]"}
+Number Temperature_FF_AVG "Average temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://lr-thermo/_liveSensorValue/sum_LR/temp:30000:REGEX((.*?))]"}
+Number Temperature_FF_MBR "Bedroom temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, Temp_FF_Chart, All_Temp_Chart) {http="<[http://lr-thermo/_liveSensorValue/remote_MBR/temp:30000:REGEX((.*?))]"}
+Number Humidity_FF_MBR "Bedroom RH [%.1f]" <humidity> (FF_Living, Humidity_FF_Chart, All_Humidity_Chart) {http="<[http://lr-thermo/_liveSensorValue/remote_MBR/rh:30000:REGEX((.*?))]"}
+Number Lastmotion_FF_MBR "MBR last motion [%d]" <clock> (FF_MBR, All_Motion_Chart) {http="<[http://lr-thermo/_liveSensorValue/remote_MBR/lastmotion:30000:REGEX((.*?))]"}
 String Fan_FF_Living "LR Fan [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> fan (.*?) </p>.*)]"}
 String Cool_FF_Living "LR Cool [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> cool (.*?) </p>.*)]"}
 String Heat_FF_Living "LR Heat [%s]" <heating> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> heat (.*?) </p>.*)]"}
@@ -74,7 +74,8 @@ Number Fan_FF_Living_Scaled "LR Fan scaled [%.1f]" <temperature> (Temperature, F
 Number Cool_FF_Living_Scaled "LR Cool scaled [%.1f]" <temperature> (Temperature, FF_Living)
 Number Heat_FF_Living_Scaled "LR Heat scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
 
-Number TempSet_FF_Living "LR Thermostat target [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, Temp_FF_Chart) {http="<[http://lr-thermo/_liveTargetTemp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
+Number TempSet_FF_Living "LR Thermostat target [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, Temp_FF_Chart) {http="<[http://lr-thermo/_liveTargetTemp:30000:REGEX((.*?))]"}
+String TempSet_FF_Living_Change
 Number TempSet_FF_Living_Day "LR Thermostat Daytime target [%.1f]" <temperature> (Temperature, FF_Living) 
 Number TempSet_FF_Living_Night "LR Thermostat Night time target [%.1f]" <temperature> (Temperature) 
 Number TempSet_FF_Living_Away "LR Thermostat Away target [%.1f]" <temperature> (Temperature, FF_Living) 
@@ -83,8 +84,8 @@ String SmartThermo_FF_Mode_String "Smart State [%s]" <temperature>
 
 /* Art studio */
 
-Number Temperature_AS_Studio_Thermo "Studio temp [%.1f]" <temperature> (Temperature, AS_Studio, Temp_AS_Chart, Temp_FF_Chart, All_Temp_Chart) {http="<[http://as-thermo/_liveSensorValue/thermo_AS/temp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
-Number Humidity_AS_Studio_Thermo "Studio RH [%.1f]"  (Temperature, AS_Studio, Humidity_FF_Chart, All_Humidity_Chart ) {http="<[http://as-thermo/_liveSensorValue/thermo_AS/rh:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
+Number Temperature_AS_Studio_Thermo "Studio temp [%.1f]" <temperature> (Temperature, AS_Studio, Temp_AS_Chart, Temp_FF_Chart, All_Temp_Chart) {http="<[http://as-thermo/_liveSensorValue/thermo_AS/temp:30000:REGEX((.*?))]"}
+Number Humidity_AS_Studio_Thermo "Studio RH [%.1f]" <humidity> (Temperature, AS_Studio, Humidity_FF_Chart, All_Humidity_Chart ) {http="<[http://as-thermo/_liveSensorValue/thermo_AS/rh:30000:REGEX((.*?))]"}
 
 String Fan_AS_Studio "Studio Fan [%s]" <temperature> (Temperature, AS_Studio) {http="<[http://as-thermo/_liveWhatsOn:30000:REGEX(.*?> fan (.*?) </p>.*)]"}
 String Cool_AS_Studio "Studio Cool [%s]" <temperature> (Temperature, AS_Studio) {http="<[http://as-thermo/_liveWhatsOn:30000:REGEX(.*?> cool (.*?) </p>.*)]"}
@@ -95,20 +96,29 @@ Number Fan_AS_Studio_Scaled "Studio Fan scaled [%.1f]" <temperature> (Temperatur
 Number Cool_AS_Studio_Scaled "Studio Cool scaled [%.1f]" <temperature> (Temperature, AS_Studio )
 Number Heat_AS_Studio_Scaled "Studio Heat scaled [%.1f]" <temperature> (Temperature, AS_Studio, Temp_AS_Chart)
 
-Number TempSet_AS_Studio "Studio current target [%.1f]" <temperature> (Temperature, AS_Studio, Temp_AS_Chart) {http="<[http://as-thermo/_liveTargetTemp:30000:REGEX(.*?<title>(.*?)</title>.*)]"}
-Number TempSet_AS_Studio_Day "Studio Daytime target [%.1f]" <temperature> (Temperature, AS_Studio) 
-Number TempSet_AS_Studio_Night "Studio Night time target [%.1f]" <temperature> (Temperature, AS_Studio) 
-Number TempSet_AS_Studio_Away "Studio Away target [%.1f]" <temperature> (Temperature, AS_Studio) 
+Number TempSet_AS_Studio "Studio current target [%.1f]" <temperature> (Temperature, AS_Studio, Temp_AS_Chart) {http="<[http://as-thermo/_liveTargetTemp:30000:REGEX((.*?))]"}
+Number TempSet_AS_Studio_Day        "Studio Day target        [%.1f]" <temperature> (Temperature, AS_Studio) {http="<[http://as-thermo/_liveTargetDayActive:30000:REGEX((.*?))]"}
+Number TempSet_AS_Studio_Night      "Studio Night target      [%.1f]" <temperature> (Temperature, AS_Studio) {http="<[http://as-thermo/_liveTargetNightActive:30000:REGEX((.*?))]"}
+Number TempSet_AS_Studio_Day_Away   "Studio Away Day target   [%.1f]" <temperature> (Temperature, AS_Studio) {http="<[http://as-thermo/_liveTargetDayIdle:30000:REGEX((.*?))]"}
+Number TempSet_AS_Studio_Night_Away "Studio Away Night target [%.1f]" <temperature> (Temperature, AS_Studio) {http="<[http://as-thermo/_liveTargetNightIdle:30000:REGEX((.*?))]"}
+String TempSet_AS_Studio_Change
+String TempSet_AS_Studio_Day_Change
+String TempSet_AS_Studio_Night_Change
+String TempSet_AS_Studio_Day_Away_Change
+String TempSet_AS_Studio_Night_Away_Change
+
+
 Number Lastmotion_AS_Studio "Art studio last motion [%d]" <clock> (AS_Studio, All_Motion_Chart) {http="<[http://as-thermo/_liveMotion:30000:REGEX((.*?))]"}
-Number SmartThermo_AS_Mode "Smart State [%d]" <temperature> (FF_Living)
-String SmartThermo_AS_Mode_String "Smart State [%s]" <temperature> 
+Number SmartThermo_AS_Mode "Smart State [%d]" <temperature> (FF_Living) {http="<[http://as-thermo/_liveSmartState:30000:REGEX((.*?))]"}
+String SmartThermo_AS_Mode_String "Smart State [%s]" <temperature> {http="<[http://as-thermo/_liveSmartStateString:30000:REGEX((.*?))]"}
+Number SmartThermo_AS_Override_Remaining "Studio Override Remaining [%.1f]" <clock> (Temperature, AS_Studio) {http="<[http://as-thermo/_liveOverrideRemaining:30000:REGEX((.*?))]"}
 
 /* Second Floor */
 
-Number Temperature_SF_Hall_Thermo "Second Floor temp [%.1f]" <temperature> (Temperature, SF_Hall, Temp_SF_Chart, All_Temp_Chart) {http="<[http://sf-thermo/_liveSensorValue/thermo_SF/temp:60000:REGEX(.*?<title>(.*?)</title>.*)]"}
-Number Humidity_SF_Hall_Thermo "Second Floor RH [%.1f]"  (Temperature, SF_Hall, Humidity_SF_Chart, All_Humidity_Chart ) {http="<[http://sf-thermo/_liveSensorValue/thermo_SF/rh:60000:REGEX(.*?<title>(.*?)</title>.*)]"}
-Number TempSet_SF_Hall "Second Floor target [%.1f]" <temperature> (Temperature, SF_Hall, Temp_SF_Chart) {http="<[http://sf-thermo/_liveTargetTemp:60000:REGEX(.*?<title>(.*?)</title>.*)]"}
-Number HeatIndex_SF_Hall "Second Floor heat index [%1.f]" <temperature> (Temperature, SF_Hall)
+Number Temperature_SF_Hall_Thermo "Second Floor temp [%.1f]" <temperature> (Temperature, SF_Hall, Temp_SF_Chart, All_Temp_Chart) {http="<[http://sf-thermo/_liveSensorValue/thermo_SF/temp:60000:REGEX((.*?))]"}
+Number Humidity_SF_Hall_Thermo "Second Floor RH [%.1f]" <humidity>  (Temperature, SF_Hall, Humidity_SF_Chart, All_Humidity_Chart ) {http="<[http://sf-thermo/_liveSensorValue/thermo_SF/rh:60000:REGEX((.*?))]"}
+Number TempSet_SF_Hall "Second Floor target [%.1f]" <temperature> (Temperature, SF_Hall, Temp_SF_Chart) {http="<[http://sf-thermo/_liveTargetTemp:60000:REGEX((.*?))]"}
+String TempSet_SF_Hall_Change
 String Fan_SF_Hall "Second Floor Fan [%s]" <temperature> (Temperature, SF_Hall) {http="<[http://sf-thermo/_liveWhatsOn:60000:REGEX(.*?> fan (.*?) </p>.*)]"}
 String Cool_SF_Hall "Second Floor Cool [%s]" <temperature> (Temperature, SF_Hall) {http="<[http://sf-thermo/_liveWhatsOn:60000:REGEX(.*?> cool (.*?) </p>.*)]"}
 String Heat_SF_Hall "Second Floor Heat [%s]" <temperature> (Temperature, SF_Hall) {http="<[http://sf-thermo/_liveWhatsOn:60000:REGEX(.*?> heat (.*?) </p>.*)]"}
@@ -127,20 +137,19 @@ Number Weather_Temp_Max             "Todays Maximum [%.1f °F]"	<temperature> (W
 Number Weather_Temp_Min             "Todays Minimum [%.1f °F]"	<temperature> (Weather_Chart) { http="<[http://api.wunderground.com/api/35e37526b02970e3/forecast/q/MA/Hopkinton.json:900000:JSONPATH($.forecast.simpleforecast.forecastday[0].low.fahrenheit)]"}
 /* String Weather_Station              "Weather Station [%s]"	<temperature> { weather="locationId=home, type=station, property=name" } */
 
-Number Weather_Chart_Period		"Chart Period"
+Number Weather_Chart_Period	    "Weather Chart Period" <line>
 DateTime Weather_LastUpdate		"Last Update [%1$ta %1$tR]"	<clock>
 
-/* NTP binding demo item */
-DateTime		Date			"Date [%1$tA, %1$td.%1$tm.%1$tY]"	<calendar>	{ ntp="Europe/Berlin:de_DE" }
 
 /* Attic */
-Number Temperature_AT_Finished   "Attic Finished Temperature [%.1f F]" <temperature> (Temp_AT_Chart, All_Temp_Chart) { http="<[https://api.particle.io/v1/devices/puppy_dozen/temperature?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
-Number Humidity_AT_Finished   "Attic Finished Humidity [%.1f F]" <temperature> { http="<[https://api.particle.io/v1/devices/puppy_dozen/humidity?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
+Number Temperature_AT_Finished "Attic Finished Temperature [%.1f F]" <temperature> (Temp_AT_Chart, All_Temp_Chart) { http="<[https://api.particle.io/v1/devices/puppy_dozen/temperature?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
+Number Humidity_AT_Finished "Attic Finished Humidity [%.1f F]" <humidity> { http="<[https://api.particle.io/v1/devices/puppy_dozen/humidity?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
 Number Attic_Uptime   "Attic uptime [%d]" <temperature> { http="<[https://api.particle.io/v1/devices/puppy_dozen/uptime?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
 Number Attic_lsp   "Attic loops since ping [%d]" <temperature> { exec="<[curl https://api.particle.io/v1/devices/puppy_dozen/ping -d access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:REGEX(.*?return_value.*([0-9]+).*)]" } 
 Number Attic_wifi_strength   "Attic wifi strength [%d]" <temperature> { http="<[https://api.particle.io/v1/devices/puppy_dozen/sigstr?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
 Number Attic_pings_rec   "Attic Pings Received [%d]" <temperature> { http="<[https://api.particle.io/v1/devices/puppy_dozen/pings_rec?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
 Switch Attic_relay1 "Attic outlet1"    <heating>     {  exec=">[ON:curl https://api.particle.io/v1/devices/puppy_dozen/relay1_on -d access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad -d params=1] >[OFF:curl https://api.particle.io/v1/devices/puppy_dozen/relay1_off -d access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad -d params=1]" }
+//Switch Attic_relay2 "Attic outlet2"    <heating>     {  exec=">[ON:echo on > /tmp/relay] >[OFF:echo off > /tmp/relay]" }
 Switch Attic_relay2 "Attic outlet2"    <heating>     {  exec=">[ON:curl https://api.particle.io/v1/devices/puppy_dozen/relay2_on -d access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad -d params=1] >[OFF:curl https://api.particle.io/v1/devices/puppy_dozen/relay2_off -d access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad -d params=1]" }
 Number Attic_relay1_state "Attic outlet1 status [%d]" <heating>  {  http="<[https://api.particle.io/v1/devices/puppy_dozen/relay1_state?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
 Number Attic_relay2_state "Attic outlet2 status [%d]" <heating>  {  http="<[https://api.particle.io/v1/devices/puppy_dozen/relay2_state?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
