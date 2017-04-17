@@ -466,6 +466,7 @@ class MainFrame(wx.Frame):
     def OnModeOff(self, evt):
     #################################################################### 
         print "[%s] OnModeOff" % (datetime.datetime.now())
+        self.SubmitMode("off")
         self.reset_timeout()
 
     #################################################################### 
