@@ -252,6 +252,8 @@ class rubustatDaemon(Daemon):
                 elif hvacState == 1: # it's hot out, why is the heater on?
                         self.debuglog("STATE: Switching to fan_to_idle")
                         hvacState = self.idle()
+            elif mode == "off":
+                self.idle()
             else:
                 self.debuglog("Unknown mode: %s" % mode)
 
