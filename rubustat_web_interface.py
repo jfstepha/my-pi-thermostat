@@ -125,7 +125,7 @@ def my_form():
                                         daemonStatus = daemonStatus, \
                                         whatsOn = whatsOn)
 
-@app.route("/_setTarget/<float:target>", methods=['GET'])
+@app.route("/_setTarget/<target>", methods=['GET'])
 def my_set_form_get(target):
     file = open("status", "r")
     oldTargetTemp = float(file.readline())
@@ -180,12 +180,12 @@ def my_form_post():
 @app.route('/_liveTemp', methods= ['GET'])
 def updateTemp():
 
-    return "%0.1f" % loopThread.sensors['sum_'+hubdomain].temp
+    return "%0.3f" % loopThread.sensors['sum_'+hubdomain].temp
 
 @app.route('/_liveTemp2', methods= ['GET'])
 def updateTemp2():
 
-    return "%0.1f" % loopThread.sensors[hubname].temp
+    return "%0.3f" % loopThread.sensors[hubname].temp
 
 @app.route('/_liveWhatsOn', methods= ['GET'])
 def updateWhatsOn():
@@ -299,22 +299,22 @@ def getOverrideRemaining():
     except IOError:
         return "error"
 
-@app.route("/_setTargetDayActive/<float:target>", methods=['GET'])
+@app.route("/_setTargetDayActive/<target>", methods=['GET'])
 def setTargetDayActive(target):
     smartLoopThread.set_day_active = float(target)
     return "success" 
 
-@app.route("/_setTargetDayIdle/<float:target>", methods=['GET'])
+@app.route("/_setTargetDayIdle/<target>", methods=['GET'])
 def setTargetDayIdle(target):
     smartLoopThread.set_day_idle = float(target)
     return "success" 
 
-@app.route("/_setTargetNightActive/<float:target>", methods=['GET'])
+@app.route("/_setTargetNightActive/<target>", methods=['GET'])
 def setTargetNightActive(target):
     smartLoopThread.set_night_active = float(target)
     return "success" 
 
-@app.route("/_setTargetNightIdle/<float:target>", methods=['GET'])
+@app.route("/_setTargetNightIdle/<target>", methods=['GET'])
 def setTargetNightIdle(target):
     smartLoopThread.set_night_idle = float(target)
     return "success" 

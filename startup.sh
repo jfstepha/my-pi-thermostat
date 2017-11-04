@@ -29,6 +29,9 @@
 #   - make a "status" file that looks like this:
 #71.0
 #heat
+# - sudo crontab -e
+# 0 2 * * * /sbin/shutdown -r +5
+# 0 3 * * * find /home/jfstepha/bin/my-pi-thermostat/logs/ -type f -mtime +7 -exec rm -f {} \;
 
 
 cd /home/jfstepha/bin/my-pi-thermostat

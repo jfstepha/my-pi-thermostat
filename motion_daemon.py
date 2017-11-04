@@ -3,7 +3,6 @@
 import sys, time
 import subprocess
 from daemon import Daemon
-import os
 
 import ConfigParser
 
@@ -34,12 +33,6 @@ class MyDaemon(Daemon):
 				self.time_since_motion = 0
 			else:
 				self.time_since_motion += 1
-			
-			### check if another process wants to override the motion status
-			if os.path.isfile('/dev/shm/motionoverride'):
-				self.time_since_motion = 0
-				os.remove('/dev/shm/motionoverride')
-				
 			time.sleep(1)
 
 			f = open('/dev/shm/motion','w')
