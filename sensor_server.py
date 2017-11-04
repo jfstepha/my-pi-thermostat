@@ -15,15 +15,16 @@ import subprocess
 import os
 import Adafruit_DHT
 import datetime
-import serial
+# import serial
 import ConfigParser
+import requests
 
 
 FNULL = open(os.devnull,'w')
 INIT = 70
 
 SENSOR_READ_PERIOD = 10
-SERIAL_CHECK_PERIOD = 0.1
+SERIAL_CHECK_PERIOD = 10
 # sleep period should be the lowest common denomintor of the above two
 SLEEP_PERIOD = 0.1
 
@@ -42,18 +43,10 @@ class SensorHub():
     ################################################################
     def __init__(self):
     ################################################################
-        try:
-            self.port = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=3.0)
-        except serial.serialutil.SerialException:
-            self.port = serial.Serial("/dev/ttyUSB1", baudrate=57600, timeout=3.0)
-            
-        print "serial port initial status:"
-        for i in range(0,5):
-            rcv = self.port.read(100);
-            print rcv;
         self.sensor_list = {};
         self.lsu = 0
  	self.name = "SensorHub";
+
     ################################################################
     def setSetpoint(self, setpoint, mode):
     ################################################################
@@ -92,7 +85,70 @@ class SensorHub():
             return None
 
     ################################################################
+    def get_web_val(self, url):
+    ################################################################
+        retval = None
+        try:
+            r = requests.get( url, timeout=3 )
+            retval = float(r.content)
+        except:
+            print "[%s] WARNING: live request failed on url: %s" % ( datetime.datetime.now(), url )
+        return retval
+
+    ################################################################
     def update(self):
+    ############################ ####################################
+        #try:
+        baseurl="http://br-thermo/"
+        try:
+            print "[%s] DEBUG: in updating hub" % datetime.datetime.now()
+            self.lsu += 1
+
+            oldTargetTemp, mode = self.getSetpoint()
+            if oldTargetTemp == None:
+                return 0
+                
+            id = 1
+            if id != None and int(id) in self.sensor_list:
+                temp = self.get_web_val( baseurl + "_liveTemp" )
+                print "[%s] DEBUG: temp recieved: %s" % (datetime.datetime.now(), str(temp) )
+                if temp != None: self.sensor_list[id].temp = float( temp )
+
+                rh = self.get_web_val( baseurl + "_liveSensorValue/thermo_BR/rh")
+                print "[%s] DEBUG: RH recieved: %s" % (datetime.datetime.now(), str(rh) )
+                if rh != None: self.sensor_list[id].rh = float( rh )
+                        
+                lsp = self.get_web_val( baseurl + "_liveSensorValue/thermo_BR/lsp")
+                print "[%s] DEBUG: lsp recieved: %s" % (datetime.datetime.now(), str(lsp) )
+                if lsp != None: self.sensor_list[id].lsp = int( lsp )
+
+                lastmotion = self.get_web_val( baseurl + "_liveMotion" )
+                print "[%s] DEBUG: lastmotion recieved: %s" % (datetime.datetime.now(), str(lastmotion) )
+                if lastmotion != None: self.sensor_list[id].lastmotion = int( lastmotion )
+                        
+                uptime = self.get_web_val( baseurl + "_liveSensorValue/thermo_BR/uptime")
+                print "[%s] DEBUG: uptime recieved: %s" % (datetime.datetime.now(), str(uptime) )
+                if uptime != None: 
+                    self.sensor_list[id].uptime = int( uptime )
+                    if self.sensor_list[id].uptime != self.sensor_list[id].prev_uptime:
+                        self.sensor_list[id].prev_uptime = uptime
+                        self.sensor_list[id].lsu = 0
+            print "[%s] hub update: temp=%0.2f, rh=%0.2f, lsp=%d, lastmotion=%d, uptime=%d" % (datetime.datetime.now(), temp, rh, lsp, lastmotion, uptime)
+        except:
+           print "[%s] hub exception during update: %s  " % (datetime.datetime.now() , sys.exc_info() )
+                        
+        try:
+           pass
+        except KeyboardInterrupt:
+           print "Keyboard interrupt"
+           exit()
+        except:
+           print "[%s] hub exception: %s  " % (datetime.datetime.now() , sys.exc_info() )
+        
+        
+
+    ################################################################
+    def update_old(self):
     ############################ ####################################
         #try:
         if True:
@@ -517,20 +573,22 @@ class loopThread(threading.Thread):
     ################################################################
         self.last_update_serial_time = 0
         self.last_check_sensor_time = 0
-        print "DEBUG: in run"
+        print "DEBUG: starting run"
         while 1:
             self.init_sums()
             time.sleep(SLEEP_PERIOD)
             if time.time() - self.last_update_serial_time > SERIAL_CHECK_PERIOD:
-                #print "DEBUG: updating hub"
+                print "DEBUG: updating hub"
                 if serverishub:
                     self.sensorHub.update()
                 self.last_update_serial_time = time.time()
             if time.time() - self.last_check_sensor_time > SENSOR_READ_PERIOD:
-                #print "DEBUG: Reading sensors"
+                print "DEBUG: Reading sensors"
                 self.read_sensors()
+                print "DEBUG: Calculating averages"
                 self.calc_averages()
                 self.last_check_sensor_time = time.time()
+                print "DEBUG: Done"
 
             #f = open('indoortemp','w')
             #f.write("%0.3f" % self.sensors['sum_LR'].temp)

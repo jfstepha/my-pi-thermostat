@@ -29,14 +29,12 @@
 #   - make a "status" file that looks like this:
 #71.0
 #heat
-# - sudo crontab -e
-# 0 2 * * * /sbin/shutdown -r +5
-# 0 3 * * * find /home/jfstepha/bin/my-pi-thermostat/logs/ -type f -mtime +7 -exec rm -f {} \;
 
 
 cd /home/jfstepha/bin/my-pi-thermostat
-DISPLAY=:0.0 ./my_gui.py &
-sudo sh -c './rubustat_daemon.py start > logs/daemonlog_`date +%F`.log 2>&1'
+# DISPLAY=:0.0 ./my_gui.py &
+sudo ./gui_lcd.py &
+#sudo sh -c './rubustat_daemon.py start > logs/daemonlog_`date +%F`.log 2>&1'
 sh -c ./pinger.sh &
 sudo sh -c './motion_daemon.py start > logs/motionlog_`date +%F`.log 2>&1'
 sudo sh -c './rubustat_web_interface.py > logs/log`date +%F`.log 2>&1'
