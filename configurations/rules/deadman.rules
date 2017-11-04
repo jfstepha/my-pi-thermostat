@@ -1,0 +1,177 @@
+import org.openhab.core.library.types.*
+import org.openhab.core.persistence.*
+import org.openhab.model.script.actions.*
+
+import java.util.List
+import java.util.ArrayList
+
+// constants 
+val dmt = 60 * 10  // 60 minutes, cron job runs 4x min
+val email_freq = 120 * 10 
+val doorbell_email_freq = 1 * 4 
+
+val ticks_since_email = 100000
+val ticks_since_doorbell_email = 100000
+
+val FF_LR_temp = 0
+val FF_LR_last_change = 0
+val MBR_temp = 0
+val MBR_last_change = 0
+val AS_temp = 0
+val AS_last_change = 0
+val SF_temp = 0
+val SF_last_change = 0
+
+var NowString = ""
+
+/********************/
+/* Send email test  */
+/********************/
+
+rule "send email test"
+when
+    Item email_test changed to 1
+then
+	logInfo("FILE", "*** sending test email ***")
+    sendMail("jfstepha@gmail.com","Test","This is a test message")
+end
+
+
+/********************/
+/* Deadman          */
+/********************/
+
+rule "Deadman cron"
+when Time cron "*/10 * * * * ?" then
+    ticks_since_doorbell_email += 1 // doesn't really belong here, but didn't want a new cron rule
+    ticks_since_email += 1
+
+    NowString = now.getMonthOfYear + "/" + now.getDayOfMonth + "/" + now.getYear + " " + 
+        now.getHourOfDay + ":" + String::format( "%02d" , now.getMinuteOfHour) + ":" + String::format("%02d",now.getSecondOfMinute)
+	logInfo("FILE", "** deadman cron " + NowString + " ***")
+	logInfo("FILE", "* ticks since email: " + ticks_since_email )
+	logInfo("FILE", "* LR Thermo:" + Temperature_FF_Living_Thermo.state + " Prev: " + FF_LR_temp + " last change: " + FF_LR_last_change )
+	logInfo("FILE", "* MBR Thermo:" + Temperature_FF_MBR.state + " Prev:" + MBR_temp + " last change: " + MBR_last_change)
+	logInfo("FILE", "* AS Thermo:" + Temperature_AS_Studio_Thermo.state + " Prev: " + AS_temp + " last change: " + AS_last_change)
+	logInfo("FILE", "* SF Thermo:" + Temperature_SF_Hall_Thermo.state + " Prev: " + SF_temp + " last change: " + SF_last_change)
+	
+    if Temperature_FF_Living_Thermo.state != FF_LR_temp {
+	    // logInfo("FILE", "* LR Thermo changed")
+	    FF_LR_temp = Temperature_FF_Living_Thermo.state
+	    FF_LR_last_change = 0
+    } else {
+    	FF_LR_last_change += 1
+    	// logInfo("FILE", "* LR Thermo unchanged for " + FF_LR_last_change + " ticks")
+    }
+    
+    if Temperature_FF_MBR.state != MBR_temp {
+	    // logInfo("FILE", "* MBR Thermo changed")
+	    MBR_temp = Temperature_FF_MBR.state
+	    MBR_last_change = 0
+    } else {
+    	MBR_last_change += 1
+    	// logInfo("FILE", "* MBR Thermo unchanged for " + MBR_last_change + " ticks")
+    }
+    
+    if Temperature_AS_Studio_Thermo.state != AS_temp {
+	    // logInfo("FILE", "* Art studio Thermo changed")
+	    AS_temp = Temperature_AS_Studio_Thermo.state
+	    AS_last_change = 0
+    } else {
+    	AS_last_change += 1
+    	// logInfo("FILE", "* Art Studio Thermo unchanged for " + AS_last_change + " ticks")
+    }
+    
+    if Temperature_SF_Hall_Thermo.state != SF_temp {
+	    // logInfo("FILE", "* Second floor Thermo changed")
+	    SF_temp = Temperature_SF_Hall_Thermo.state
+	    SF_last_change = 0
+    } else {
+    	SF_last_change += 1
+    	// logInfo("FILE", "* Second floor Thermo unchanged for " + SF_last_change + " ticks")
+    }
+    
+    if ((FF_LR_last_change > dmt) || (AS_last_change > dmt) || (SF_last_change > dmt) || (MBR_last_change > dmt)) {
+    	logInfo("FILE", "*** Something's stuck! ***")
+    	if ticks_since_email < email_freq {
+    		logInfo("FILE", "* supressing email because we sent one " + ticks_since_email + " ticks ago ***")
+    	} else {
+    		logInfo("FILE", "* sending email")
+        	sendMail("jfstepha@gmail.com","Openhab alert: Temperature stuck!!!","**** Openhab alert: temperature stuck **** \n\n" +
+        		"Some temperature is stuck!\n\n" +
+    	    	"## Living Room: ## " + "\n"+
+    		    "   Temp: " + Temperature_FF_Living_Thermo.state + "\n" +
+    		    "   Prev:" + FF_LR_temp + "\n" +
+    		    "   time since change: " + FF_LR_last_change + "\n" +
+    		    "\n" +
+    		    "## Master bed room: ## \n" +
+    		    "  Temp: " + Temperature_FF_MBR.state + "\n" +
+    		    "  Prev: " + MBR_temp + "\n" +
+    		    "  time since change: " + MBR_last_change + "\n" +
+    		    "\n" +
+    		    "## Art studio: ##\n"+
+    		    "  Temp: " + Temperature_AS_Studio_Thermo.state +"\n" +
+    		    "  Prev: " + AS_temp + "\n" +
+    		    "  time since change:" + AS_last_change + "\n" +
+    		    "\n" +
+    		    "## Second floor: ##\n" +
+    		    " Temp: " + Temperature_SF_Hall_Thermo.state + "\n" +
+    		    " Prev: " + SF_temp + "\n" +
+    		    " time since change:" + SF_last_change + "\n" +
+                "# other info #\n" + 
+                " ticks since email:" + ticks_since_email + "\n"
+    		    )
+            ticks_since_email = 0
+        }
+    }
+	
+end
+
+
+/********************/
+/* Daily email      */
+/********************/
+
+rule "Daily email"
+when 
+    Time cron "0 00 09 * * ?"
+then
+	logInfo("FILE", "*** sending daily email ***")
+    sendMail("jfstepha@gmail.com","Openhab daily email","**** This Openhab daily status email " + NowString + " **** \n\n" + 
+    	  "** temperatures **\n" +
+    	  "Living room temp: " + Temperature_FF_Living_Thermo.state + " setpoint: " + TempSet_FF_Living.state + "\n" +
+    	  "Master Bedroom temp: " + Temperature_FF_MBR.state + "\n" + 
+    	  "Art studio temp: " + Temperature_AS_Studio_Thermo.state + " setpoint: " + TempSet_AS_Studio.state + "\n" +
+    	  "Second floor temp: " + Temperature_SF_Hall_Thermo.state + " setpoint: " + TempSet_SF_Hall.state + "\n" +
+    	  "\n** duty cycles **\n " +
+    	  "First floor heat: " + Heat_FF_Duty_Cycle.state + " First floor cool:" + Cool_FF_Duty_Cycle.state +"\n" +
+    	  "Art studio heat: " + Heat_AS_Duty_Cycle.state + "\n" +
+    	  "Second floor heat: " + Heat_SF_Duty_Cycle.state + " Second floor cool:" + Cool_SF_Duty_Cycle.state + "\n" +
+    	  "\n** deamons **\n" +
+    	  "Living room: " + Daemon_FF_Living.state + "\n" +
+    	  "Art studio: " + Daemon_AS_Studio.state + "\n" +
+    	  "Second floor: " + Daemon_SF_Hall.state + "\n"  
+    )
+end
+
+/********************/
+/* Doorbell email   */
+/********************/
+rule "Doorbell"
+when 
+    Item Basement_lsdoor1 changed
+then
+    logInfo("FILE", "# doorbell rule " + Basement_lsdoor1.state + " ticks since doorbell  #")
+    if Basement_lsdoor1.state < 4 {
+    	logInfo("FILE", "##### doorbell rung " + Basement_lsdoor1.state + " ticks ago  ####")
+    	if ticks_since_doorbell_email < doorbell_email_freq {
+    		logInfo( "FILE", "supressing doorbell email because we sent one " + ticks_since_doorbell_email + "ticks ago")
+    	} else {
+            logInfo("FILE", "*** sending doorbell email ***")
+            sendMail("jfstepha@gmail.com","Openhab *** someone's at the door " + NowString+" ****",
+                "**** Someone's at the door!  **** \n" + NowString + "\n")
+            ticks_since_doorbell_email = 0
+    	}
+    	
+    }
+ end

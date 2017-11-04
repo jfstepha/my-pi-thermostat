@@ -14,7 +14,7 @@ val org.eclipse.xtext.xbase.lib.Functions$Function1 calcMean = [ List<Integer> t
 		sum = sum + v * 1.0;
 	}
 	var retval = sum / theArray.size() * 100.0;
-	logInfo("FILE", "    # returning: " + retval);
+//	logInfo("FILE", "    # returning: " + retval);
 	retval
 ]
 
@@ -32,7 +32,7 @@ val org.eclipse.xtext.xbase.lib.Functions$Function2 pushItem = [ theItem, List<I
 //		logInfo("FILE", "    * dropping the 1st item");
 		theArray.remove(0)
 	}
-	logInfo("FILE", "    * newary= " + theArray);
+//	logInfo("FILE", "    * newary= " + theArray);
 	theArray;
 ]
 
@@ -208,7 +208,6 @@ then
 end
 
 
-     
 rule "Set thermo temp" when
 	Item TempSet_FF_Living changed 
 then
@@ -410,5 +409,3 @@ then
         postUpdate(Heat_SF_Hall_Scaled, 66)
 
 end
-
-

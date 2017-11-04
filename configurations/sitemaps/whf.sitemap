@@ -8,8 +8,30 @@ sitemap whf label="Main Menu"
 		Text item=Temperature_FF_AVG
 		Text item=Temperature_SF_Hall_Thermo		
 		Text item=Temperature_AS_Studio_Thermo	
-		}
+        Switch item=email_test mappings=[0="0", 1="1"]
+        }
 	Frame label="Floors" {
+        Text label="Network" icon="attic" {
+            Frame label="sum" { 
+                Text item=Ping_Router
+                Text item=Ping_Router2
+                Text item=Ping_Verizon
+                Text item=Ping_Google
+                Text item=Ping_Printer
+                Text item=Ping_TV
+                Text item=Ping_Stupid
+                Text item=Speedtest
+            } Frame label="Network graphs" {
+				Switch item=Net_Chart_Period label="Network" mappings=[0="Hour", 1="Day", 2="Week"]
+				Chart item=Pings_All period=h refresh=60000 visibility=[Net_Chart_Period==0, Net_Chart_Period=="Uninitialized"]
+				Chart item=Pings_All period=D refresh=300000 visibility=[Net_Chart_Period==1]
+				Chart item=Pings_All period=W refresh=1200000 visibility=[Net_Chart_Period==2]
+            } Frame label="Speedtest" {
+				Chart item=Speedtest period=h refresh=60000 visibility=[Net_Chart_Period==0, Net_Chart_Period=="Uninitialized"]
+				Chart item=Speedtest period=D refresh=300000 visibility=[Net_Chart_Period==1]
+				Chart item=Speedtest period=W refresh=1200000 visibility=[Net_Chart_Period==2]
+            }
+        }
 		Text label="Attic" icon="attic" {
 		    Frame label="sum" {
 		    	Text item=Temperature_AT_Finished
@@ -66,7 +88,7 @@ sitemap whf label="Main Menu"
 						Text item=Heat_SF_Hall 
 						Text item=Daemon_SF_Hall
                         Text item=Lastmotion_SF_Hall
-                        Text item=Heat_SF_Duty_Cycle
+                        Text item=Cool_SF_Duty_Cycle
 					} 
 					Frame label="Temp summary" {
 						Switch item=Temp_SF_Chart_Period label="Second Floor" mappings=[0="Hour", 1="Day", 2="Week"]
@@ -79,10 +101,10 @@ sitemap whf label="Main Menu"
 					    Chart item=Lastmotion_SF_Hall period=D refresh=300000 visibility=[Temp_SF_Chart_Period==1]
 					    Chart item=Lastmotion_SF_Hall period=W refresh=1200000 visibility=[Temp_SF_Chart_Period==2]
                     }
-					Frame label="Heat Duty Cycle summary"  {
-						Chart item=Heat_SF_Duty_Cycle period=h refresh=60000 visibility=[Temp_SF_Chart_Period==0, Temp_SF_Chart_Period=="Uninitialized"]
-						Chart item=Heat_SF_Duty_Cycle period=D refresh=300000 visibility=[Temp_SF_Chart_Period==1]
-						Chart item=Heat_SF_Duty_Cycle period=W refresh=1200000 visibility=[Temp_SF_Chart_Period==2]
+					Frame label="Cool Duty Cycle summary"  {
+						Chart item=Cool_SF_Duty_Cycle period=h refresh=60000 visibility=[Temp_SF_Chart_Period==0, Temp_SF_Chart_Period=="Uninitialized"]
+						Chart item=Cool_SF_Duty_Cycle period=D refresh=300000 visibility=[Temp_SF_Chart_Period==1]
+						Chart item=Cool_SF_Duty_Cycle period=W refresh=1200000 visibility=[Temp_SF_Chart_Period==2]
 					}
 					Frame label="Thermo state" {
 						Text item=Fan_SF_Hall_Scaled
@@ -124,7 +146,7 @@ sitemap whf label="Main Menu"
 						Text item=Cool_FF_Living
 						Text item=Heat_FF_Living
 						Text item=Daemon_FF_Living
-						Text item=Heat_FF_Duty_Cycle
+						Text item=Cool_FF_Duty_Cycle
 					}
 					Frame label="Temp summary" {
 						Switch item=Temp_LR_Chart_Period label="Living Room" mappings=[0="Hour", 1="Day", 2="Week"]
@@ -137,10 +159,10 @@ sitemap whf label="Main Menu"
 						Chart item=Humidity_FF_Living_Thermo period=D refresh=300000 visibility=[Temp_LR_Chart_Period==1]
 						Chart item=Humidity_FF_Living_Thermo period=W refresh=1200000 visibility=[Temp_LR_Chart_Period==2]
 					}
-					Frame label="Heat Duty Cycle summary" {
-						Chart item=Heat_FF_Duty_Cycle period=h refresh=60000 visibility=[Temp_LR_Chart_Period==0, Temp_LR_Chart_Period=="Uninitialized"]
-						Chart item=Heat_FF_Duty_Cycle period=D refresh=300000 visibility=[Temp_LR_Chart_Period==1]
-						Chart item=Heat_FF_Duty_Cycle period=W refresh=1200000 visibility=[Temp_LR_Chart_Period==2]
+					Frame label="Cool Duty Cycle summary" {
+						Chart item=Cool_FF_Duty_Cycle period=h refresh=60000 visibility=[Temp_LR_Chart_Period==0, Temp_LR_Chart_Period=="Uninitialized"]
+						Chart item=Cool_FF_Duty_Cycle period=D refresh=300000 visibility=[Temp_LR_Chart_Period==1]
+						Chart item=Cool_FF_Duty_Cycle period=W refresh=1200000 visibility=[Temp_LR_Chart_Period==2]
 					}
 					Frame label="Thermo state"{
 						Text item=Fan_FF_Living_Scaled
@@ -194,7 +216,7 @@ sitemap whf label="Main Menu"
 						Text item=Heat_AS_Studio 
 						Text item=Daemon_AS_Studio
 						Text item=Lastmotion_AS_Studio
-						Text item=Heat_SF_Duty_Cycle
+						Text item=Cool_SF_Duty_Cycle
 					} 
 					Frame label="Temp summary" {
 						Switch item=Temp_AS_Chart_Period label="Art Studio" mappings=[0="Hour", 1="Day", 2="Week"]
@@ -208,9 +230,9 @@ sitemap whf label="Main Menu"
 					    Chart item=Lastmotion_AS_Studio period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
 //                    }
 //					Frame label="Duty Cycle summary" {
-						Chart item=Heat_AS_Duty_Cycle period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
-						Chart item=Heat_AS_Duty_Cycle period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
-						Chart item=Heat_AS_Duty_Cycle period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
+						Chart item=Cool_AS_Duty_Cycle period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
+						Chart item=Cool_AS_Duty_Cycle period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
+						Chart item=Cool_AS_Duty_Cycle period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
 //					}
 //					Frame label="Humidity summary" {
 						Chart item=Humidity_AS_Studio_Thermo period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
