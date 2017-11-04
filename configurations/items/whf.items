@@ -20,6 +20,7 @@ Group Humidity_SF_Chart
 Group All_Humidity_Chart
 Group All_Motion_Chart
 Group Basement_doorbells
+Group Pings_All
 
 
 
@@ -32,21 +33,23 @@ Number Humidity_FF_Living_Chart_Period "Humidity" <line>
 Number Temp_AS_Chart_Period "Art Studio Thermostat" <line>
 Number Temp_SF_Chart_Period "Second Floor Thermostat" <line>
 Number All_Temp_Chart_Period "All Temperatures" <temperature>
+Number Net_Chart_Period "Network Temperatures" <line>
 
 /* Other numbers */
 Number Uptime_Period "Uptime" <line>
 Number Motion_Period "Motion" <line>
 
 /* For calculating duty cycle */
-Number Heat_FF_Duty_Cycle "Duty Cycle: [%.2f]" <heating>
-Number Heat_AS_Duty_Cycle "Duty Cycle: [%.4f]" <heating>
-Number Heat_SF_Duty_Cycle "Duty Cycle: [%.4f]" <heating>
-Number Cool_FF_Duty_Cycle "Duty Cycle: [%.2f]" <heating>
-Number Cool_AS_Duty_Cycle "Duty Cycle: [%.4f]" <heating>
-Number Cool_SF_Duty_Cycle "Duty Cycle: [%.4f]" <heating>
+Number Heat_FF_Duty_Cycle "Duty Cycle Heat First Floor: [%.2f]" <heating>
+Number Heat_AS_Duty_Cycle "Duty Cycle Heat Art Studio: [%.4f]" <heating>
+Number Heat_SF_Duty_Cycle "Duty Cycle Heat Second Floor: [%.4f]" <heating>
+Number Cool_FF_Duty_Cycle "Duty Cycle Cool First Floor: [%.2f]" <heating>
+Number Cool_AS_Duty_Cycle "Duty Cycle Cool Art Studio: [%.4f]" <heating>
+Number Cool_SF_Duty_Cycle "Duty Cycle Cool Second Floor: [%.4f]" <heating>
 
 /* active groups */
 Group:Number:AVG 				Temperature	"Avg. Room Temperature [%.1f °C]" 	<temperature>	(Status)
+
 
 /* Indoor Temperatures */
 /* First floor */
@@ -60,27 +63,33 @@ Switch       tvOnOff "TV On/Off"    <video>       {samsungtv="ON:livingroom:KEY_
 
 
 /* Thermostat */
-Number Temperature_FF_Living_Thermo "LR Thermostat temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, Temp_FF_Chart, All_Temp_Chart) {http="<[http://lr-thermo/_liveSensorValue/thermo_LR/temp:5000:REGEX((.*?))]"}
+Number Temperature_FF_Living_Thermo "LR Thermostat temp [%.1f]" <temperature> (Temp_LR_Chart, Temp_FF_Chart, All_Temp_Chart) {http="<[http://lr-thermo/_liveSensorValue/thermo_LR/temp:5000:REGEX((.*?))]"}
 Number Humidity_FF_Living_Thermo "Living Room RH [%.1f]" <humidity> (FF_Living, Humidity_FF_Chart, All_Humidity_Chart) {http="<[http://lr-thermo/_liveSensorValue/thermo_LR/rh:30000:REGEX((.*?))]"}
 Number Temperature_FF_AVG "Average temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://lr-thermo/_liveSensorValue/sum_LR/temp:30000:REGEX((.*?))]"}
-Number Temperature_FF_MBR "Bedroom temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, Temp_FF_Chart, All_Temp_Chart) {http="<[http://lr-thermo/_liveSensorValue/remote_MBR/temp:30000:REGEX((.*?))]"}
-Number Humidity_FF_MBR "Bedroom RH [%.1f]" <humidity> (FF_Living, Humidity_FF_Chart, All_Humidity_Chart) {http="<[http://lr-thermo/_liveSensorValue/remote_MBR/rh:30000:REGEX((.*?))]"}
-Number Lastmotion_FF_MBR "MBR last motion [%d]" <clock> (FF_MBR, All_Motion_Chart) {http="<[http://lr-thermo/_liveSensorValue/remote_MBR/lastmotion:30000:REGEX((.*?))]"}
+Number Temperature_FF_MBR "Bedroom temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, Temp_FF_Chart, All_Temp_Chart) {http="<[http://br-thermo/_liveSensorValue/thermo_BR/temp:30000:REGEX((.*?))]"}
+Number Humidity_FF_MBR "Bedroom RH [%.1f]" <humidity> (FF_Living, Humidity_FF_Chart, All_Humidity_Chart) {http="<[http://br-thermo/_liveSensorValue/thermo_BR/rh:30000:REGEX((.*?))]"}
+Number Lastmotion_FF_MBR "MBR last motion [%d]" <clock> (FF_MBR, All_Motion_Chart) {http="<[http://br-thermo/_liveMotion:30000:REGEX((.*?))]"}
 String Fan_FF_Living "LR Fan [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> fan (.*?) </p>.*)]"}
 String Cool_FF_Living "LR Cool [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> cool (.*?) </p>.*)]"}
 String Heat_FF_Living "LR Heat [%s]" <heating> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> heat (.*?) </p>.*)]"}
 String Daemon_FF_Living "LR Daemon [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveDaemonStatus:30000:REGEX(.*?> Daemon is (.*?) </p>.*)]"}
-Number Fan_FF_Living_Scaled "LR Fan scaled [%.1f]" <temperature> (Temperature, FF_Living)
-Number Cool_FF_Living_Scaled "LR Cool scaled [%.1f]" <temperature> (Temperature, FF_Living)
-Number Heat_FF_Living_Scaled "LR Heat scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
+Number Fan_FF_Living_Scaled "LR Fan scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
+Number Cool_FF_Living_Scaled "LR Cool scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
+Number Heat_FF_Living_Scaled "LR Heat scaled [%.1f]" <temperature> (Temperature, FF_Living)
 
 Number TempSet_FF_Living "LR Thermostat target [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, Temp_FF_Chart) {http="<[http://lr-thermo/_liveTargetTemp:30000:REGEX((.*?))]"}
-String TempSet_FF_Living_Change
 Number TempSet_FF_Living_Day "LR Thermostat Daytime target [%.1f]" <temperature> (Temperature, FF_Living) 
 Number TempSet_FF_Living_Night "LR Thermostat Night time target [%.1f]" <temperature> (Temperature) 
-Number TempSet_FF_Living_Away "LR Thermostat Away target [%.1f]" <temperature> (Temperature, FF_Living) 
-Number SmartThermo_FF_Mode "Smart State [%d]" <temperature>
+Number TempSet_FF_Living_Day_Away "LR Thermostat Away target [%.1f]" <temperature> (Temperature, FF_Living) 
+Number TempSet_FF_Living_Night_Away "LR Thermostat Away target [%.1f]" <temperature> (Temperature, FF_Living) 
+String TempSet_FF_Living_Change
+String TempSet_FF_Living_Day_Change
+String TempSet_FF_Living_Day_Away_Change
+String TempSet_FF_Living_Night_Away_Change
+
+Number SmartThermo_FF_Mode "Smart State [%d]" <temperature> (FF_Living) {http="<[http://as-thermo/_liveSmartState:30000:REGEX((.*?))]"}
 String SmartThermo_FF_Mode_String "Smart State [%s]" <temperature> 
+Number SmartThermo_FF_Override_Remaining "Living Room Override Remaining [%.1f]" <clock> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveOverrideRemaining:30000:REGEX((.*?))]"}
 
 /* Art studio */
 
@@ -109,7 +118,7 @@ String TempSet_AS_Studio_Night_Away_Change
 
 
 Number Lastmotion_AS_Studio "Art studio last motion [%d]" <clock> (AS_Studio, All_Motion_Chart) {http="<[http://as-thermo/_liveMotion:30000:REGEX((.*?))]"}
-Number SmartThermo_AS_Mode "Smart State [%d]" <temperature> (FF_Living) {http="<[http://as-thermo/_liveSmartState:30000:REGEX((.*?))]"}
+Number SmartThermo_AS_Mode "Smart State [%d]" <temperature> (AS_Studio) {http="<[http://as-thermo/_liveSmartState:30000:REGEX((.*?))]"}
 String SmartThermo_AS_Mode_String "Smart State [%s]" <temperature> {http="<[http://as-thermo/_liveSmartStateString:30000:REGEX((.*?))]"}
 Number SmartThermo_AS_Override_Remaining "Studio Override Remaining [%.1f]" <clock> (Temperature, AS_Studio) {http="<[http://as-thermo/_liveOverrideRemaining:30000:REGEX((.*?))]"}
 
@@ -169,3 +178,14 @@ Number Basement_relay2_state "Eve heater status [%d]" <heating>  {  http="<[http
 Number Basement_current1 "Outside Xmas Lights current [%.1f]" <light>  {  http="<[https://api.particle.io/v1/devices/ninja_mutant/cur1_sd?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
 Number Basement_current2 "Outside Eve heater current [%.1f]" <light>  {  http="<[https://api.particle.io/v1/devices/ninja_mutant/cur2_sd?access_token=49781a53a5d3e51d3f980727fdfbfa84ed5962ad:30000:JS(getValue.js)]" }
 Number email_test "Send an email on 0 [%d]" <temperature> 
+
+
+/***** Network stuff ********/
+Number Ping_Router  "Main Router Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh 192.168.2.1:10000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_Router2 "Verizon Router Ping [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh 192.168.1.1:10000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_Stupid  "Not found ping      [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh 192.168.2.254:10000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_Verizon "Verizon Ping        [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh www.verizon.com:10000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_Google  "Google Ping         [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh www.google.com:10000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_Printer "Printer Ping        [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh HP8FAE81.localdomain:10000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_TV      "TV Ping             [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh tv-pc2.localdomain:10000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Speedtest    "Speetest [%.2f Mb/s]" <light> (BW_All) { exec="<[speedtest-cli:4000000:REGEX(.*Download: ([0-9]+.?[0-9]*).*)]" }
