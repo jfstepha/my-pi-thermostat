@@ -138,6 +138,23 @@ Number Cool_SF_Hall_Scaled "Second Floor Cool scaled [%.1f]" <temperature> (Temp
 Number Heat_SF_Hall_Scaled "Second Floor Heat scaled [%.1f]" <temperature> (Temperature, SF_Hall, Temp_SF_Chart)
 Number Lastmotion_SF_Hall "Second Floor last motion [%d]" <clock> (SF_Hall, All_Motion_Chart) {http="<[http://sf-thermo/_liveMotion:30000:REGEX((.*?))]"}
 
+Number TempSet_SF_Hall "Second Floor current target [%.1f]" <temperature> (Temperature, AS_Studio, Temp_AS_Chart) {http="<[http://sf-thermo/_liveTargetTemp:30000:REGEX((.*?))]"}
+Number TempSet_SF_Hall_Day        "Second Floor Day target        [%.1f]" <temperature> (Temperature, AS_Studio) {http="<[http://sf-thermo/_liveTargetDayActive:30000:REGEX((.*?))]"}
+Number TempSet_SF_Hall_Night      "Second Floor Night target      [%.1f]" <temperature> (Temperature, AS_Studio) {http="<[http://sf-thermo/_liveTargetNightActive:30000:REGEX((.*?))]"}
+Number TempSet_SF_Hall_Day_Away   "Second Floor Away Day target   [%.1f]" <temperature> (Temperature, AS_Studio) {http="<[http://sf-thermo/_liveTargetDayIdle:30000:REGEX((.*?))]"}
+Number TempSet_SF_Hall_Night_Away "Second Floor Away Night target [%.1f]" <temperature> (Temperature, AS_Studio) {http="<[http://sf-thermo/_liveTargetNightIdle:30000:REGEX((.*?))]"}
+String TempSet_SF_Hall_Change
+String TempSet_SF_Hall_Day_Change
+String TempSet_SF_Hall_Night_Change
+String TempSet_SF_Hall_Day_Away_Change
+String TempSet_SF_Hall_Night_Away_Change
+
+
+Number Lastmotion_SF_Hall "Second Floor last motion [%d]" <clock> (SF_Hall, All_Motion_Chart) {http="<[http://sf-thermo/_liveMotion:30000:REGEX((.*?))]"}
+Number SmartThermo_SF_Mode "Smart State [%d]" <temperature> (SF_Hall) {http="<[http://sf-thermo/_liveSmartState:30000:REGEX((.*?))]"}
+String SmartThermo_SF_Mode_String "Smart State [%s]" <temperature> {http="<[http://sf-thermo/_liveSmartStateString:30000:REGEX((.*?))]"}
+Number SmartThermo_SF_Override_Remaining "Hall Override Remaining [%.1f]" <clock> (Temperature, SF_Hall) {http="<[http://sf-thermo/_liveOverrideRemaining:30000:REGEX((.*?))]"}
+
 
 /* Outdoor temperatures */
 Group Weather_Chart													(Weather)
