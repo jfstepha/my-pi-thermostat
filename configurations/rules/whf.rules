@@ -409,3 +409,46 @@ then
         postUpdate(Heat_SF_Hall_Scaled, 66)
 
 end
+
+/***********************************************/
+/* Smart Thermo Second floor rules             */
+/***********************************************/
+
+rule "Set smartthermo day active temp SF"
+when
+	Item TempSet_SF_Hall_Day received command
+then
+	sendHttpGetRequest("http://sf-thermo/_setTargetDayActive/" + TempSet_SF_Hall_Day.state)
+end
+
+rule "Set smartthermo day idle temp SF"
+when
+	Item TempSet_SF_Hall_Day_Away received command
+then
+	sendHttpGetRequest("http://sf-thermo/_setTargetDayIdle/" + TempSet_SF_Hall_Day_Away.state)
+end
+
+rule "Set smartthermo Night active temp SF"
+when
+	Item TempSet_SF_Hall_Night received command
+then
+	sendHttpGetRequest("http://sf-thermo/_setTargetNightActive/" + TempSet_SF_Hall_Night.state)
+end
+
+rule "Set smartthermo night idle temp SF"
+when
+	Item TempSet_SF_Hall_Night_Away received command
+then
+	sendHttpGetRequest("http://sf-thermo/_setTargetNightIdle/" + TempSet_SF_Hall_Night_Away.state)
+end
+
+
+rule "Set smartthermo state SF"
+when
+    Item SmartThermo_SF_Mode received command
+then
+	sendHttpGetRequest("http://sf-thermo/_setSmartState/" + SmartThermo_SF_Mode.state)
+
+end
+
+
