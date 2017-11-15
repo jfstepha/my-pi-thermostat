@@ -122,8 +122,8 @@ class smartLoopThread(threading.Thread):
                 self.smart_state = self.STATE_DAY_AWAY
             if self.smart_state == self.STATE_NIGHT_IDLE:
                 self.smart_state = self.STATE_DAY_IDLE
-            if self.smart_state == self.STATE_DAY_MOTION:
-                self.smart_state = self.STATE_NIGHT_MOTION
+            if self.smart_state == self.STATE_NIGHT_MOTION:
+                self.smart_state = self.STATE_DAY_MOTION
         self.printdebug("checking overrides") 
         # check to see if overrides are on and need to be turned off:
         if self.smart_state == self.STATE_NIGHT_ACTIVE or self.smart_state == self.STATE_DAY_ACTIVE or self.smart_state == self.STATE_NIGHT_AWAY  or self.smart_state == self.STATE_DAY_AWAY:
