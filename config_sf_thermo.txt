@@ -42,3 +42,9 @@ ZIP = 01748
 name = thermo_SF
 domain = SF
 ishub = 0
+
+[motion]
+hasmotion = True
+url = http://localhost/_liveMotion
+idle_threshold = 3600
+
