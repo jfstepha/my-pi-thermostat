@@ -87,7 +87,7 @@ sitemap whf label="Main Menu"
 						Text item=Heat_SF_Hall 
 						Text item=Daemon_SF_Hall
                         Text item=Lastmotion_SF_Hall
-                        Text item=Cool_SF_Duty_Cycle
+                        Text item=Heat_SF_Duty_Cycle
 
 						Frame label="Smart thermostat" {
     						Switch item=SmartThermo_SF_Mode label="Smart Thermo Mode" mappings=[0="No Sensor", 1="DayIdl", 2="DayMotion", 3="DayAway", 4="DayActive", 5="NgtIdl", 6="NgtMotion",7="NightAway",8="NightActive"]
@@ -146,6 +146,7 @@ sitemap whf label="Main Menu"
 					}
 					Frame label="Thermostat" {
 						Text item=Temperature_FF_Living_Thermo
+						Text item=Temperature_FF_Stove
 						Text item=Temperature_FF_AVG
 						Setpoint item=TempSet_FF_Living step=0.5 minValue=40 maxValue=120 
 						Switch item=SmartThermo_FF_Mode label="Smart Thermo Mode" mappings=[0="Disabled", 1="Away", 2="Night", 3="Day"]
@@ -160,6 +161,8 @@ sitemap whf label="Main Menu"
 						Text item=Daemon_FF_Living
 						Text item=Cool_FF_Duty_Cycle
 						Text item=Heat_FF_Duty_Cycle
+						Text item=Lastmotion_FF_Stove
+                        Text item=Temperature_Diff_Stove
 					}
 					Frame label="Temp summary" {
 						Switch item=Temp_LR_Chart_Period label="Living Room" mappings=[0="Hour", 1="Day", 2="Week"]

@@ -10,14 +10,13 @@ DEBUG = 1
 #the indoor temp to reach 76 before turning cooling back on.
 
 #adjust them to the particulars of your system / personal preference
-# lr is 0.5 for AC, 0.2 for heat
 
-active_hysteresis = 0.2
-inactive_hysteresis = 0.2
+active_hysteresis = 1
+inactive_hysteresis = 1
 
-HEATER_PIN = 2
-AC_PIN = 3
-FAN_PIN = 4
+HEATER_PIN = 27
+AC_PIN = 4
+FAN_PIN = 23
 MOTION_PIN = 22
 
 #mail notifications to alert to potential hardware problems
@@ -40,11 +39,12 @@ enabled = False
 ZIP = 01748
 
 [sensorhub]
-name = thermo_LR
-domain = LR
-ishub = 1
+name = thermo_SF
+domain = SF
+ishub = 0
 
 [motion]
-hasmotion = False
+hasmotion = True
 url = http://localhost/_liveMotion
-idle_threshold = 100
+idle_threshold = 3600
+
