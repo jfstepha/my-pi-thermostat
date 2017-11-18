@@ -112,7 +112,7 @@ class SensorHub():
             if id != None and int(id) in self.sensor_list:
                 temp = self.get_web_val( baseurl + "_liveTemp" )
                 print "[%s] DEBUG: temp recieved: %s" % (datetime.datetime.now(), str(temp) )
-                if temp != None: self.sensor_list[id].temp = float( temp )
+                if temp != None and temp > 30 and temp < 100 : self.sensor_list[id].temp = float( temp )
 
                 rh = self.get_web_val( baseurl + "_liveSensorValue/thermo_BR/rh")
                 print "[%s] DEBUG: RH recieved: %s" % (datetime.datetime.now(), str(rh) )
