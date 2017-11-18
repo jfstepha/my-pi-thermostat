@@ -63,12 +63,16 @@ Switch       tvOnOff "TV On/Off"    <video>       {samsungtv="ON:livingroom:KEY_
 
 
 /* Thermostat */
-Number Temperature_FF_Living_Thermo "LR Thermostat temp [%.1f]" <temperature> (Temp_LR_Chart, Temp_FF_Chart, All_Temp_Chart) {http="<[http://lr-thermo/_liveSensorValue/thermo_LR/temp:5000:REGEX((.*?))]"}
+Number Temperature_FF_Living_Thermo "LR Thermostat temp [%.1f]" <temperature> (Temp_LR_Chart, Temp_FF_Chart, All_Temp_Chart) {http="<[http://lr-thermo.localdomain/_liveSensorValue/thermo_LR/temp:5000:REGEX((.*?))]"}
 Number Humidity_FF_Living_Thermo "Living Room RH [%.1f]" <humidity> (FF_Living, Humidity_FF_Chart, All_Humidity_Chart) {http="<[http://lr-thermo/_liveSensorValue/thermo_LR/rh:30000:REGEX((.*?))]"}
 Number Temperature_FF_AVG "Average temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) {http="<[http://lr-thermo/_liveSensorValue/sum_LR/temp:30000:REGEX((.*?))]"}
-Number Temperature_FF_MBR "Bedroom temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, Temp_FF_Chart, All_Temp_Chart) {http="<[http://br-thermo/_liveSensorValue/thermo_BR/temp:30000:REGEX((.*?))]"}
-Number Humidity_FF_MBR "Bedroom RH [%.1f]" <humidity> (FF_Living, Humidity_FF_Chart, All_Humidity_Chart) {http="<[http://br-thermo/_liveSensorValue/thermo_BR/rh:30000:REGEX((.*?))]"}
-Number Lastmotion_FF_MBR "MBR last motion [%d]" <clock> (FF_MBR, All_Motion_Chart) {http="<[http://br-thermo/_liveMotion:30000:REGEX((.*?))]"}
+Number Temperature_FF_MBR "Bedroom temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, Temp_FF_Chart, All_Temp_Chart) {http="<[http://br-thermo.localdomain/_liveSensorValue/thermo_BR/temp:30000:REGEX((.*?))]"}
+Number Temperature_FF_Stove "Stove temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, Temp_FF_Chart, All_Temp_Chart) {http="<[http://stove-thermo.localdomain/_liveSensorValue/thermo_ST/temp:30000:REGEX((.*?))]"}
+Number Temperature_Diff_Stove "Stove temp delta over LR thermo[%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, Temp_FF_Chart, All_Temp_Chart)
+Number Humidity_FF_MBR "Bedroom RH [%.1f]" <humidity> (FF_Living, Humidity_FF_Chart, All_Humidity_Chart) {http="<[http://br-thermo.localdomain/_liveSensorValue/thermo_BR/rh:30000:REGEX((.*?))]"}
+Number Humidity_FF_Stove "Stove RH [%.1f]" <humidity> (FF_Living, Humidity_FF_Chart, All_Humidity_Chart) {http="<[http://stove-thermo.localdomain/_liveSensorValue/thermo_ST/rh:30000:REGEX((.*?))]"}
+Number Lastmotion_FF_MBR "MBR last motion [%d]" <clock> (FF_MBR, All_Motion_Chart) {http="<[http://br-thermo.localdomain/_liveMotion:30000:REGEX((.*?))]"}
+Number Lastmotion_FF_Stove "Stove last motion [%d]" <clock> (FF_Living, All_Motion_Chart) {http="<[http://stove-thermo.localdomain/_liveMotion:30000:REGEX((.*?))]"}
 String Fan_FF_Living "LR Fan [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> fan (.*?) </p>.*)]"}
 String Cool_FF_Living "LR Cool [%s]" <temperature> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> cool (.*?) </p>.*)]"}
 String Heat_FF_Living "LR Heat [%s]" <heating> (Temperature, FF_Living) {http="<[http://lr-thermo/_liveWhatsOn:30000:REGEX(.*?> heat (.*?) </p>.*)]"}
@@ -126,8 +130,6 @@ Number SmartThermo_AS_Override_Remaining "Studio Override Remaining [%.1f]" <clo
 
 Number Temperature_SF_Hall_Thermo "Second Floor temp [%.1f]" <temperature> (Temperature, SF_Hall, Temp_SF_Chart, All_Temp_Chart) {http="<[http://sf-thermo/_liveSensorValue/thermo_SF/temp:60000:REGEX((.*?))]"}
 Number Humidity_SF_Hall_Thermo "Second Floor RH [%.1f]" <humidity>  (Temperature, SF_Hall, Humidity_SF_Chart, All_Humidity_Chart ) {http="<[http://sf-thermo/_liveSensorValue/thermo_SF/rh:60000:REGEX((.*?))]"}
-Number TempSet_SF_Hall "Second Floor target [%.1f]" <temperature> (Temperature, SF_Hall, Temp_SF_Chart) {http="<[http://sf-thermo/_liveTargetTemp:60000:REGEX((.*?))]"}
-String TempSet_SF_Hall_Change
 String Fan_SF_Hall "Second Floor Fan [%s]" <temperature> (Temperature, SF_Hall) {http="<[http://sf-thermo/_liveWhatsOn:60000:REGEX(.*?> fan (.*?) </p>.*)]"}
 String Cool_SF_Hall "Second Floor Cool [%s]" <temperature> (Temperature, SF_Hall) {http="<[http://sf-thermo/_liveWhatsOn:60000:REGEX(.*?> cool (.*?) </p>.*)]"}
 String Heat_SF_Hall "Second Floor Heat [%s]" <temperature> (Temperature, SF_Hall) {http="<[http://sf-thermo/_liveWhatsOn:60000:REGEX(.*?> heat (.*?) </p>.*)]"}
@@ -136,13 +138,12 @@ String Daemon_SF_Hall "Second Floor Daemon [%s]" <temperature> (Temperature, SF_
 Number Fan_SF_Hall_Scaled "Second Floor Fan scaled [%.1f]" <temperature> (Temperature, SF_Hall)
 Number Cool_SF_Hall_Scaled "Second Floor Cool scaled [%.1f]" <temperature> (Temperature, SF_Hall, Temp_SF_Chart)
 Number Heat_SF_Hall_Scaled "Second Floor Heat scaled [%.1f]" <temperature> (Temperature, SF_Hall, Temp_SF_Chart)
-Number Lastmotion_SF_Hall "Second Floor last motion [%d]" <clock> (SF_Hall, All_Motion_Chart) {http="<[http://sf-thermo/_liveMotion:30000:REGEX((.*?))]"}
 
-Number TempSet_SF_Hall "Second Floor current target [%.1f]" <temperature> (Temperature, AS_Studio, Temp_AS_Chart) {http="<[http://sf-thermo/_liveTargetTemp:30000:REGEX((.*?))]"}
-Number TempSet_SF_Hall_Day        "Second Floor Day target        [%.1f]" <temperature> (Temperature, AS_Studio) {http="<[http://sf-thermo/_liveTargetDayActive:30000:REGEX((.*?))]"}
-Number TempSet_SF_Hall_Night      "Second Floor Night target      [%.1f]" <temperature> (Temperature, AS_Studio) {http="<[http://sf-thermo/_liveTargetNightActive:30000:REGEX((.*?))]"}
-Number TempSet_SF_Hall_Day_Away   "Second Floor Away Day target   [%.1f]" <temperature> (Temperature, AS_Studio) {http="<[http://sf-thermo/_liveTargetDayIdle:30000:REGEX((.*?))]"}
-Number TempSet_SF_Hall_Night_Away "Second Floor Away Night target [%.1f]" <temperature> (Temperature, AS_Studio) {http="<[http://sf-thermo/_liveTargetNightIdle:30000:REGEX((.*?))]"}
+Number TempSet_SF_Hall "Second Floor current target [%.1f]" <temperature> (Temperature, SF_Hall, Temp_SF_Chart) {http="<[http://sf-thermo/_liveTargetTemp:30000:REGEX((.*?))]"}
+Number TempSet_SF_Hall_Day        "Second Floor Day target        [%.1f]" <temperature> (Temperature, SF_Hall) {http="<[http://sf-thermo/_liveTargetDayActive:30000:REGEX((.*?))]"}
+Number TempSet_SF_Hall_Night      "Second Floor Night target      [%.1f]" <temperature> (Temperature, SF_Hall) {http="<[http://sf-thermo/_liveTargetNightActive:30000:REGEX((.*?))]"}
+Number TempSet_SF_Hall_Day_Away   "Second Floor Away Day target   [%.1f]" <temperature> (Temperature, SF_Hall) {http="<[http://sf-thermo/_liveTargetDayIdle:30000:REGEX((.*?))]"}
+Number TempSet_SF_Hall_Night_Away "Second Floor Away Night target [%.1f]" <temperature> (Temperature, SF_Hall) {http="<[http://sf-thermo/_liveTargetNightIdle:30000:REGEX((.*?))]"}
 String TempSet_SF_Hall_Change
 String TempSet_SF_Hall_Day_Change
 String TempSet_SF_Hall_Night_Change

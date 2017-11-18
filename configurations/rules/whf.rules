@@ -1,4 +1,4 @@
-import org.openhab.core.library.types.*
+Temperature_FF_Living_Thermo changedimport org.openhab.core.library.types.*
 import org.openhab.core.persistence.*
 import org.openhab.model.script.actions.*
 
@@ -450,5 +450,3 @@ then
 	sendHttpGetRequest("http://sf-thermo/_setSmartState/" + SmartThermo_SF_Mode.state)
 
 end
-
-

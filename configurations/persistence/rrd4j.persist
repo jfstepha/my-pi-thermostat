@@ -16,10 +16,12 @@ Items {
 	Weather_Chart* : strategy = everyMinute, restoreOnStartup
 	Humidity* : strategy = everyMinute, restoreOnStartup
 	Humidity_FF_MBR : strategy = everyMinute, restoreOnStartup
+	Humidity_FF_Stove : strategy = everyMinute, restoreOnStartup
 	Humidity_FF_Living_Thermo : strategy = everyMinute, restoreOnStartup
 	Humidity_SF_Hall_Thermo : strategy = everyMinute, restoreOnStartup
 	Humidity_AS_Studio_Thermo : strategy = everyMinute, restoreOnStartup
 	Lastmotion_FF_MBR : strategy = everyMinute, restoreOnStartup
+	Lastmotion_FF_Stove : strategy = everyMinute, restoreOnStartup
 	Lastmotion_SF_Hall : strategy = everyMinute, restoreOnStartup
 	Heat_AS_Duty_Cycle : strategy = everyMinute, restoreOnStartup
 	Heat_FF_Duty_Cycle : strategy = everyMinute, restoreOnStartup
@@ -41,6 +43,7 @@ Items {
 	Basement_wifi_strength : strategy = everyMinute, restoreOnStartup
 	Basement_pings_rec : strategy = everyMinute, restoreOnStartup
 	Temperature_AT_Finished : strategy = everyChange, restoreOnStartup
+	Temperature_Diff_Stove : strategy = everyChange, restoreOnStartup
 	FrontDoor_Temperature : strategy = everyChange, restoreOnStartup
     Basement_relay1_state : strategy = everyChange, restoreOnStartup
     Basement_relay2_state : strategy = everyChange, restoreOnStartup

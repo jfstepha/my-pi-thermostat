@@ -21,6 +21,8 @@ val AS_temp = 0
 val AS_last_change = 0
 val SF_temp = 0
 val SF_last_change = 0
+val ST_temp = 0
+val ST_last_change = 0
 
 var NowString = ""
 
@@ -54,6 +56,7 @@ when Time cron "*/10 * * * * ?" then
 	logInfo("FILE", "* MBR Thermo:" + Temperature_FF_MBR.state + " Prev:" + MBR_temp + " last change: " + MBR_last_change)
 	logInfo("FILE", "* AS Thermo:" + Temperature_AS_Studio_Thermo.state + " Prev: " + AS_temp + " last change: " + AS_last_change)
 	logInfo("FILE", "* SF Thermo:" + Temperature_SF_Hall_Thermo.state + " Prev: " + SF_temp + " last change: " + SF_last_change)
+	logInfo("FILE", "* Stove Thermo:" + Temperature_FF_Stove.state + " Prev: " + ST_temp + " last change: " + ST_last_change)
 	
     if Temperature_FF_Living_Thermo.state != FF_LR_temp {
 	    // logInfo("FILE", "* LR Thermo changed")
@@ -90,8 +93,19 @@ when Time cron "*/10 * * * * ?" then
     	SF_last_change += 1
     	// logInfo("FILE", "* Second floor Thermo unchanged for " + SF_last_change + " ticks")
     }
+
+    if Temperature_FF_Stove.state != ST_temp {
+	    // logInfo("FILE", "* Stove temp changed")
+	    ST_temp = Temperature_FF_Stove.state
+	    ST_last_change = 0
+        postUpdate(Temperature_Diff_Stove, (Temperature_FF_Stove.state as DecimalType) - (Temperature_FF_Living_Thermo.state as DecimalType) )
+        logInfo("FILE", "Changing Stove diff to " + Temperature_Diff_Stove.state as DecimalType )
+    } else {
+    	ST_last_change += 1
+    	// logInfo("FILE", "* Stove temp unchanged for " + ST_last_change + " ticks")
+    }
     
-    if ((FF_LR_last_change > dmt) || (AS_last_change > dmt) || (SF_last_change > dmt) || (MBR_last_change > dmt)) {
+    if ((FF_LR_last_change > dmt) || (AS_last_change > dmt) || (SF_last_change > dmt) || (MBR_last_change > dmt) || (ST_last_change > dmt) ) {
     	logInfo("FILE", "*** Something's stuck! ***")
     	if ticks_since_email < email_freq {
     		logInfo("FILE", "* supressing email because we sent one " + ticks_since_email + " ticks ago ***")
@@ -118,6 +132,10 @@ when Time cron "*/10 * * * * ?" then
     		    " Temp: " + Temperature_SF_Hall_Thermo.state + "\n" +
     		    " Prev: " + SF_temp + "\n" +
     		    " time since change:" + SF_last_change + "\n" +
+    		    "## Stove : ##\n" +
+    		    " Temp: " + Temperature_FF_Stove.state + "\n" +
+    		    " Prev: " + ST_temp + "\n" +
+    		    " time since change:" + ST_last_change + "\n" +
                 "# other info #\n" + 
                 " ticks since email:" + ticks_since_email + "\n"
     		    )
@@ -140,6 +158,7 @@ then
     sendMail("jfstepha@gmail.com","Openhab daily email","**** This Openhab daily status email " + NowString + " **** \n\n" + 
     	  "** temperatures **\n" +
     	  "Living room temp: " + Temperature_FF_Living_Thermo.state + " setpoint: " + TempSet_FF_Living.state + "\n" +
+    	  "Stove temp: " + Temperature_FF_Stove.state + "\n" +
     	  "Master Bedroom temp: " + Temperature_FF_MBR.state + "\n" + 
     	  "Art studio temp: " + Temperature_AS_Studio_Thermo.state + " setpoint: " + TempSet_AS_Studio.state + "\n" +
     	  "Second floor temp: " + Temperature_SF_Hall_Thermo.state + " setpoint: " + TempSet_SF_Hall.state + "\n" +
