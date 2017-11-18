@@ -10,9 +10,10 @@ DEBUG = 1
 #the indoor temp to reach 76 before turning cooling back on.
 
 #adjust them to the particulars of your system / personal preference
+# lr is 0.5 for AC, 0.2 for heat
 
-active_hysteresis = 1
-inactive_hysteresis = 1
+active_hysteresis = 0.2
+inactive_hysteresis = 0.2
 
 HEATER_PIN = 2
 AC_PIN = 3
@@ -42,3 +43,8 @@ ZIP = 01748
 name = thermo_LR
 domain = LR
 ishub = 1
+
+[motion]
+hasmotion = False
+url = http://localhost/_liveMotion
+idle_threshold = 100
