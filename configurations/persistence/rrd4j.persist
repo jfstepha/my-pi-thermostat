@@ -49,6 +49,7 @@ Items {
     Attic_relay1_state : strategy = everyChange, restoreOnStartup
     Attic_relay2_state : strategy = everyChange, restoreOnStartup
     SmartThermo_AS_Mode : strategy = everyChange, restoreOnStartup
+    SmartThermo_SF_Mode : strategy = everyChange, restoreOnStartup
     Temperature_FF_Living_Thermo : strategy = everyMinute, restoreOnStartup
     Ping_Router : strategy = everyMinute, restoreOnStartup
     Ping_Stupid : strategy = everyMinute, restoreOnStartup
