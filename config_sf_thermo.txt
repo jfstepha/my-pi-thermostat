@@ -14,10 +14,10 @@ DEBUG = 1
 active_hysteresis = 1
 inactive_hysteresis = 1
 
-HEATER_PIN = 13
-AC_PIN = 16
-FAN_PIN = 5
-MOTION_PIN = 19
+HEATER_PIN = 27
+AC_PIN = 4
+FAN_PIN = 23
+MOTION_PIN = 22
 
 #mail notifications to alert to potential hardware problems
 [mail]
@@ -39,11 +39,12 @@ enabled = False
 ZIP = 01748
 
 [sensorhub]
-name = thermo_BR
-domain = FF
+name = thermo_SF
+domain = SF
 ishub = 0
 
 [motion]
 hasmotion = True
 url = http://localhost/_liveMotion
-idle_threshold = 100
+idle_threshold = 3600
+
