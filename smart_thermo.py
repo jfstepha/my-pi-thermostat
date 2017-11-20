@@ -116,7 +116,7 @@ class smartLoopThread(threading.Thread):
             if self.smart_state == self.STATE_DAY_MOTION:
                 self.smart_state = self.STATE_NIGHT_MOTION
             self.setTemperatureFromState()
-        elif now.hour >= HOUR_DAY_START and self.smart_state[0] > 4:
+        elif (now.hour >= HOUR_DAY_START and now.hour < HOUR_NIGHT_START) and self.smart_state[0] > 4:
             if self.smart_state == self.STATE_NIGHT_ACTIVE:
                 self.smart_state = self.STATE_DAY_ACTIVE
             if self.smart_state == self.STATE_NIGHT_AWAY:
