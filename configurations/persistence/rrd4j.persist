@@ -60,6 +60,11 @@ Items {
     Ping_Verizon : strategy = everyMinute, restoreOnStartup
     Ping_Google : strategy = everyMinute, restoreOnStartup
     Ping_Printer : strategy = everyMinute, restoreOnStartup
-    Ping_TV : strategy = everyMinute, restoreOnStartup
+    Ping_TV_THERMO : strategy = everyMinute, restoreOnStartup
+    Ping_LR_THERMO : strategy = everyChange, restoreOnStartup
+    Ping_AS_THERMO : strategy = everyChange, restoreOnStartup
+    Ping_SF_THERMO : strategy = everyChange, restoreOnStartup
+    Ping_ST_THERMO : strategy = everyChange, restoreOnStartup
+    Ping_MBR_THERMO : strategy = everyChange, restoreOnStartup
     Speedtest : strategy = everyMinute, restoreOnStartup
 }

@@ -117,25 +117,32 @@ when Time cron "*/10 * * * * ?" then
     		    "   Temp: " + Temperature_FF_Living_Thermo.state + "\n" +
     		    "   Prev:" + FF_LR_temp + "\n" +
     		    "   time since change: " + FF_LR_last_change + "\n" +
+    		    "   ping time: " + Ping_LR_THERMO.state + "\n" +
     		    "\n" +
     		    "## Master bed room: ## \n" +
     		    "  Temp: " + Temperature_FF_MBR.state + "\n" +
     		    "  Prev: " + MBR_temp + "\n" +
     		    "  time since change: " + MBR_last_change + "\n" +
+    		    "  ping time: " + Ping_MBR_THERMO.state + "\n" +
     		    "\n" +
     		    "## Art studio: ##\n"+
     		    "  Temp: " + Temperature_AS_Studio_Thermo.state +"\n" +
     		    "  Prev: " + AS_temp + "\n" +
     		    "  time since change:" + AS_last_change + "\n" +
+    		    "  ping time: " + Ping_AS_THERMO.state + "\n" +
     		    "\n" +
     		    "## Second floor: ##\n" +
     		    " Temp: " + Temperature_SF_Hall_Thermo.state + "\n" +
     		    " Prev: " + SF_temp + "\n" +
     		    " time since change:" + SF_last_change + "\n" +
+    		    " ping time: " + Ping_SF_THERMO.state + "\n" +
+    		    "\n" +
     		    "## Stove : ##\n" +
     		    " Temp: " + Temperature_FF_Stove.state + "\n" +
     		    " Prev: " + ST_temp + "\n" +
     		    " time since change:" + ST_last_change + "\n" +
+    		    " ping time: " + Ping_ST_THERMO.state + "\n" +
+    		    "\n" +
                 "# other info #\n" + 
                 " ticks since email:" + ticks_since_email + "\n"
     		    )

@@ -25,6 +25,10 @@ sitemap whf label="Main Menu"
 				Chart item=Pings_All period=h refresh=60000 visibility=[Net_Chart_Period==0, Net_Chart_Period=="Uninitialized"]
 				Chart item=Pings_All period=D refresh=300000 visibility=[Net_Chart_Period==1]
 				Chart item=Pings_All period=W refresh=1200000 visibility=[Net_Chart_Period==2]
+            } Frame label="Thermo" {
+				Chart item=Pings_Thermo period=h refresh=60000 visibility=[Net_Chart_Period==0, Net_Chart_Period=="Uninitialized"]
+				Chart item=Pings_Thermo period=D refresh=300000 visibility=[Net_Chart_Period==1]
+				Chart item=Pings_Thermo period=W refresh=1200000 visibility=[Net_Chart_Period==2]
             } Frame label="Speedtest" {
 				Chart item=Speedtest period=h refresh=60000 visibility=[Net_Chart_Period==0, Net_Chart_Period=="Uninitialized"]
 				Chart item=Speedtest period=D refresh=300000 visibility=[Net_Chart_Period==1]

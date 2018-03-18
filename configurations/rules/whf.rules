@@ -1,4 +1,4 @@
-Temperature_FF_Living_Thermo changedimport org.openhab.core.library.types.*
+import org.openhab.core.library.types.*
 import org.openhab.core.persistence.*
 import org.openhab.model.script.actions.*
 
