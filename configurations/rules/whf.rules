@@ -28,7 +28,7 @@ val org.eclipse.xtext.xbase.lib.Functions$Function2 pushItem = [ theItem, List<I
 //		logInfo("FILE", "    * pushing 0");
 		theArray.add(0)
 	}
-	if( theArray.size() > 480) { 
+	if( theArray.size() > 120) { 
 //		logInfo("FILE", "    * dropping the 1st item");
 		theArray.remove(0)
 	}

@@ -43,114 +43,115 @@ end
 /* Deadman          */
 /********************/
 
-rule "Deadman cron"
-when Time cron "*/10 * * * * ?" then
-    ticks_since_doorbell_email += 1 // doesn't really belong here, but didn't want a new cron rule
-    ticks_since_email += 1
-
-    NowString = now.getMonthOfYear + "/" + now.getDayOfMonth + "/" + now.getYear + " " + 
-        now.getHourOfDay + ":" + String::format( "%02d" , now.getMinuteOfHour) + ":" + String::format("%02d",now.getSecondOfMinute)
-	logInfo("FILE", "** deadman cron " + NowString + " ***")
-	logInfo("FILE", "* ticks since email: " + ticks_since_email )
-	logInfo("FILE", "* LR Thermo:" + Temperature_FF_Living_Thermo.state + " Prev: " + FF_LR_temp + " last change: " + FF_LR_last_change )
-	logInfo("FILE", "* MBR Thermo:" + Temperature_FF_MBR.state + " Prev:" + MBR_temp + " last change: " + MBR_last_change)
-	logInfo("FILE", "* AS Thermo:" + Temperature_AS_Studio_Thermo.state + " Prev: " + AS_temp + " last change: " + AS_last_change)
-	logInfo("FILE", "* SF Thermo:" + Temperature_SF_Hall_Thermo.state + " Prev: " + SF_temp + " last change: " + SF_last_change)
-	logInfo("FILE", "* Stove Thermo:" + Temperature_FF_Stove.state + " Prev: " + ST_temp + " last change: " + ST_last_change)
-	
-    if Temperature_FF_Living_Thermo.state != FF_LR_temp {
-	    // logInfo("FILE", "* LR Thermo changed")
-	    FF_LR_temp = Temperature_FF_Living_Thermo.state
-	    FF_LR_last_change = 0
-    } else {
-    	FF_LR_last_change += 1
-    	// logInfo("FILE", "* LR Thermo unchanged for " + FF_LR_last_change + " ticks")
-    }
-    
-    if Temperature_FF_MBR.state != MBR_temp {
-	    // logInfo("FILE", "* MBR Thermo changed")
-	    MBR_temp = Temperature_FF_MBR.state
-	    MBR_last_change = 0
-    } else {
-    	MBR_last_change += 1
-    	// logInfo("FILE", "* MBR Thermo unchanged for " + MBR_last_change + " ticks")
-    }
-    
-    if Temperature_AS_Studio_Thermo.state != AS_temp {
-	    // logInfo("FILE", "* Art studio Thermo changed")
-	    AS_temp = Temperature_AS_Studio_Thermo.state
-	    AS_last_change = 0
-    } else {
-    	AS_last_change += 1
-    	// logInfo("FILE", "* Art Studio Thermo unchanged for " + AS_last_change + " ticks")
-    }
-    
-    if Temperature_SF_Hall_Thermo.state != SF_temp {
-	    // logInfo("FILE", "* Second floor Thermo changed")
-	    SF_temp = Temperature_SF_Hall_Thermo.state
-	    SF_last_change = 0
-    } else {
-    	SF_last_change += 1
-    	// logInfo("FILE", "* Second floor Thermo unchanged for " + SF_last_change + " ticks")
-    }
-
-    if Temperature_FF_Stove.state != ST_temp {
-	    // logInfo("FILE", "* Stove temp changed")
-	    ST_temp = Temperature_FF_Stove.state
-	    ST_last_change = 0
-        postUpdate(Temperature_Diff_Stove, (Temperature_FF_Stove.state as DecimalType) - (Temperature_FF_Living_Thermo.state as DecimalType) )
-        logInfo("FILE", "Changing Stove diff to " + Temperature_Diff_Stove.state as DecimalType )
-    } else {
-    	ST_last_change += 1
-    	// logInfo("FILE", "* Stove temp unchanged for " + ST_last_change + " ticks")
-    }
-    
-    if ((FF_LR_last_change > dmt) || (AS_last_change > dmt) || (SF_last_change > dmt) || (MBR_last_change > dmt) || (ST_last_change > dmt) ) {
-    	logInfo("FILE", "*** Something's stuck! ***")
-    	if ticks_since_email < email_freq {
-    		logInfo("FILE", "* supressing email because we sent one " + ticks_since_email + " ticks ago ***")
-    	} else {
-    		logInfo("FILE", "* sending email")
-        	sendMail("jfstepha@gmail.com","Openhab alert: Temperature stuck!!!","**** Openhab alert: temperature stuck **** \n\n" +
-        		"Some temperature is stuck!\n\n" +
-    	    	"## Living Room: ## " + "\n"+
-    		    "   Temp: " + Temperature_FF_Living_Thermo.state + "\n" +
-    		    "   Prev:" + FF_LR_temp + "\n" +
-    		    "   time since change: " + FF_LR_last_change + "\n" +
-    		    "   ping time: " + Ping_LR_THERMO.state + "\n" +
-    		    "\n" +
-    		    "## Master bed room: ## \n" +
-    		    "  Temp: " + Temperature_FF_MBR.state + "\n" +
-    		    "  Prev: " + MBR_temp + "\n" +
-    		    "  time since change: " + MBR_last_change + "\n" +
-    		    "  ping time: " + Ping_MBR_THERMO.state + "\n" +
-    		    "\n" +
-    		    "## Art studio: ##\n"+
-    		    "  Temp: " + Temperature_AS_Studio_Thermo.state +"\n" +
-    		    "  Prev: " + AS_temp + "\n" +
-    		    "  time since change:" + AS_last_change + "\n" +
-    		    "  ping time: " + Ping_AS_THERMO.state + "\n" +
-    		    "\n" +
-    		    "## Second floor: ##\n" +
-    		    " Temp: " + Temperature_SF_Hall_Thermo.state + "\n" +
-    		    " Prev: " + SF_temp + "\n" +
-    		    " time since change:" + SF_last_change + "\n" +
-    		    " ping time: " + Ping_SF_THERMO.state + "\n" +
-    		    "\n" +
-    		    "## Stove : ##\n" +
-    		    " Temp: " + Temperature_FF_Stove.state + "\n" +
-    		    " Prev: " + ST_temp + "\n" +
-    		    " time since change:" + ST_last_change + "\n" +
-    		    " ping time: " + Ping_ST_THERMO.state + "\n" +
-    		    "\n" +
-                "# other info #\n" + 
-                " ticks since email:" + ticks_since_email + "\n"
-    		    )
-            ticks_since_email = 0
-        }
-    }
-	
-end
+//rule "Deadman cron"
+//when Time cron "*/10 * * * * ?" then
+    //ticks_since_doorbell_email += 1 // doesn't really belong here, but didn't want a new cron rule
+    //ticks_since_email += 1
+//
+    //NowString = now.getMonthOfYear + "/" + now.getDayOfMonth + "/" + now.getYear + " " + 
+        //now.getHourOfDay + ":" + String::format( "%02d" , now.getMinuteOfHour) + ":" + String::format("%02d",now.getSecondOfMinute)
+	//logInfo("FILE", "** deadman cron " + NowString + " ***")
+	//logInfo("FILE", "* ticks since email: " + ticks_since_email )
+	//logInfo("FILE", "* LR Thermo:" + Temperature_FF_Living_Thermo.state + " Prev: " + FF_LR_temp + " last change: " + FF_LR_last_change )
+	//logInfo("FILE", "* MBR Thermo:" + Temperature_FF_MBR.state + " Prev:" + MBR_temp + " last change: " + MBR_last_change)
+	//logInfo("FILE", "* AS Thermo:" + Temperature_AS_Studio_Thermo.state + " Prev: " + AS_temp + " last change: " + AS_last_change)
+	//logInfo("FILE", "* SF Thermo:" + Temperature_SF_Hall_Thermo.state + " Prev: " + SF_temp + " last change: " + SF_last_change)
+	//logInfo("FILE", "* Stove Thermo:" + Temperature_FF_Stove.state + " Prev: " + ST_temp + " last change: " + ST_last_change)
+	//
+    //if Temperature_FF_Living_Thermo.state != FF_LR_temp {
+	    //// logInfo("FILE", "* LR Thermo changed")
+	    //FF_LR_temp = Temperature_FF_Living_Thermo.state
+	    //FF_LR_last_change = 0
+    //} else {
+    	//FF_LR_last_change += 1
+    	//// logInfo("FILE", "* LR Thermo unchanged for " + FF_LR_last_change + " ticks")
+    //}
+    //
+    //if Temperature_FF_MBR.state != MBR_temp {
+	    //// logInfo("FILE", "* MBR Thermo changed")
+	    //MBR_temp = Temperature_FF_MBR.state
+	    //MBR_last_change = 0
+    //} else {
+    	//MBR_last_change += 1
+    	//// logInfo("FILE", "* MBR Thermo unchanged for " + MBR_last_change + " ticks")
+    //}
+    //
+    //if Temperature_AS_Studio_Thermo.state != AS_temp {
+	    //// logInfo("FILE", "* Art studio Thermo changed")
+	    //AS_temp = Temperature_AS_Studio_Thermo.state
+	    //AS_last_change = 0
+    //} else {
+    	//AS_last_change += 1
+    	//// logInfo("FILE", "* Art Studio Thermo unchanged for " + AS_last_change + " ticks")
+    //}
+    //
+    //if Temperature_SF_Hall_Thermo.state != SF_temp {
+	    //// logInfo("FILE", "* Second floor Thermo changed")
+	    //SF_temp = Temperature_SF_Hall_Thermo.state
+	    //SF_last_change = 0
+    //} else {
+    	//SF_last_change += 1
+    	//// logInfo("FILE", "* Second floor Thermo unchanged for " + SF_last_change + " ticks")
+    //}
+//
+    //if Temperature_FF_Stove.state != ST_temp {
+	    //// logInfo("FILE", "* Stove temp changed")
+	    //ST_temp = Temperature_FF_Stove.state
+	    //ST_last_change = 0
+        //postUpdate(Temperature_Diff_Stove, (Temperature_FF_Stove.state as DecimalType) - (Temperature_FF_Living_Thermo.state as DecimalType) )
+        //logInfo("FILE", "Changing Stove diff to " + Temperature_Diff_Stove.state as DecimalType )
+    //} else {
+    	//ST_last_change += 1
+    	//// logInfo("FILE", "* Stove temp unchanged for " + ST_last_change + " ticks")
+    //}
+    //
+    ////if ((FF_LR_last_change > dmt) || (AS_last_change > dmt) || (SF_last_change > dmt) || (MBR_last_change > dmt) || (ST_last_change > dmt) ) {
+    //if ((FF_LR_last_change > dmt) || (AS_last_change > dmt) || (SF_last_change > dmt) ||(ST_last_change > dmt) ) {
+    	//logInfo("FILE", "*** Something's stuck! ***")
+    	//if ticks_since_email < email_freq {
+    		//logInfo("FILE", "* supressing email because we sent one " + ticks_since_email + " ticks ago ***")
+    	//} else {
+    		//logInfo("FILE", "* sending email")
+        	//sendMail("jfstepha@gmail.com","Openhab alert: Temperature stuck!!!","**** Openhab alert: temperature stuck **** \n\n" +
+        		//"Some temperature is stuck!\n\n" +
+    	    	//"## Living Room: ## " + "\n"+
+    		    //"   Temp: " + Temperature_FF_Living_Thermo.state + "\n" +
+    		    //"   Prev:" + FF_LR_temp + "\n" +
+    		    //"   time since change: " + FF_LR_last_change + "\n" +
+    		    //"   ping time: " + Ping_LR_THERMO.state + "\n" +
+    		    //"\n" +
+    		    //"## Master bed room: ## \n" +
+    		    //"  Temp: " + Temperature_FF_MBR.state + "\n" +
+    		    //"  Prev: " + MBR_temp + "\n" +
+    		    //"  time since change: " + MBR_last_change + "\n" +
+    		    //"  ping time: " + Ping_MBR_THERMO.state + "\n" +
+    		    //"\n" +
+    		    //"## Art studio: ##\n"+
+    		    //"  Temp: " + Temperature_AS_Studio_Thermo.state +"\n" +
+    		    //"  Prev: " + AS_temp + "\n" +
+    		    //"  time since change:" + AS_last_change + "\n" +
+    		    //"  ping time: " + Ping_AS_THERMO.state + "\n" +
+    		    //"\n" +
+    		    //"## Second floor: ##\n" +
+    		    //" Temp: " + Temperature_SF_Hall_Thermo.state + "\n" +
+    		    //" Prev: " + SF_temp + "\n" +
+    		    //" time since change:" + SF_last_change + "\n" +
+    		    //" ping time: " + Ping_SF_THERMO.state + "\n" +
+    		    //"\n" +
+    		    //"## Stove : ##\n" +
+    		    //" Temp: " + Temperature_FF_Stove.state + "\n" +
+    		    //" Prev: " + ST_temp + "\n" +
+    		    //" time since change:" + ST_last_change + "\n" +
+    		    //" ping time: " + Ping_ST_THERMO.state + "\n" +
+    		    //"\n" +
+                //"# other info #\n" + 
+                //" ticks since email:" + ticks_since_email + "\n"
+    		    //)
+            //ticks_since_email = 0
+        //}
+    //}
+	//
+//end
 
 
 /********************/
