@@ -7,104 +7,124 @@ import java.util.ArrayList
 
 
 val org.eclipse.xtext.xbase.lib.Functions$Function1 calcMean = [ List<Integer> theArray |
-//	logInfo("FILE", "  * Calc Mean");
-//	logInfo("FILE", "    # array = " + theArray);
+	logInfo("FILE", "  * Calc Mean");
+	logInfo("FILE", "    # array = " + theArray);
 	var sum = 0.0 
 	for( int v: theArray) { 
 		sum = sum + v * 1.0;
 	}
 	var retval = sum / theArray.size() * 100.0;
-//	logInfo("FILE", "    # returning: " + retval);
+	logInfo("FILE", "    # returning: " + retval);
 	retval
 ]
 
 val org.eclipse.xtext.xbase.lib.Functions$Function2 pushItem = [ theItem, List<Integer> theArray |
-//	logInfo("FILE", "  * Pushing item " + theItem);
-//	logInfo("FILE", "    * array = " + theArray);
-	if( theItem == "ON" ) { 
-//	    logInfo("FILE", "    * pushing 1");
+	//logInfo("FILE", "  * Pushing item " + theItem);
+	//logInfo("FILE", "    * array = " + theArray);
+	if( theItem == "true" ) { 
+	    logInfo("FILE", "    * pushing 1");
 		theArray.add(1)
 	} else { 
-//		logInfo("FILE", "    * pushing 0");
+		logInfo("FILE", "    * pushing 0");
 		theArray.add(0)
 	}
-	if( theArray.size() > 120) { 
-//		logInfo("FILE", "    * dropping the 1st item");
+	if( theArray.size() > 48) { 
+		logInfo("FILE", "    * dropping the 1st item");
 		theArray.remove(0)
 	}
-//	logInfo("FILE", "    * newary= " + theArray);
+	logInfo("FILE", "    * newary= " + theArray);
+	theArray;
+]
+
+val org.eclipse.xtext.xbase.lib.Functions$Function2 pushItemL = [ theItem, List<Integer> theArray |
+	//logInfo("FILE", "  * Pushing item " + theItem);
+	//logInfo("FILE", "    * array = " + theArray);
+	if( theItem == "true" ) { 
+	    logInfo("FILE", "    * pushing 1");
+		theArray.add(1)
+	} else { 
+		logInfo("FILE", "    * pushing 0");
+		theArray.add(0)
+	}
+	if( theArray.size() > 10000) { 
+		logInfo("FILE", "    * dropping the 1st item");
+		theArray.remove(0)
+	}
+	logInfo("FILE", "    * newary= " + theArray);
 	theArray;
 ]
 
 /* for duty cycles */
 
 val List<Integer> aryHeatFF = newArrayList(0,0,1,1)
-val List<Integer> aryHeatSF = newArrayList(0,0,1,1)
-val List<Integer> aryHeatAS = newArrayList(0,0,1,1)
+val List<Integer> aryHeatDailyFF = newArrayList(0,0,1,1)
 val List<Integer> aryCoolFF = newArrayList(0,0,1,1)
-val List<Integer> aryCoolSF = newArrayList(0,0,1,1)
 
 
 rule "Set temp 50"
 when
-	Item SetTemp60_FF_Living changed to ON
+	Item SetTemp60_FF_Living changed to true
 then
 	sendHttpGetRequest("http://pi/_setTarget/77.0")
 end
 
+rule "Reset Daily"
+when Time cron "0 0 0 * * ?" then
+	logInfo("FILE", "********************************************** ")
+	logInfo("FILE", "****** reseting daily duty cycles ************ ")
+    aryHeatDailyFF = newArrayList(0,0,1,1)
+	logInfo("FILE", "done"
+	logInfo("FILE", "********************************************** ")
+end
 
 rule "Duty Cycle Adjust"
-// when Time cron "0 * * * * ?" then
-when Time cron "0 * * * * ?" then
+when Time cron "0 */5 * * * ?" then
 
 	logInfo("FILE", "********************************************** ")
 	logInfo("FILE", "****** Executing simplified DC cron job ****** ")
 	
 	if( Heat_FF_Duty_Cycle.state == NULL) { postUpdate( Heat_FF_Duty_Cycle, 0 )}
-	if( Heat_SF_Duty_Cycle.state == NULL) { postUpdate( Heat_SF_Duty_Cycle, 0 )}
-	if( Heat_AS_Duty_Cycle.state == NULL) { postUpdate( Heat_AS_Duty_Cycle, 0 )}
+	if( Heat_FF_Daily_Duty_Cycle.state == NULL) { postUpdate( Heat_FF_Daily_Duty_Cycle, 0 )}
 	if( Cool_FF_Duty_Cycle.state == NULL) { postUpdate( Cool_FF_Duty_Cycle, 0 )}
-	if( Cool_SF_Duty_Cycle.state == NULL) { postUpdate( Cool_SF_Duty_Cycle, 0 )}
 
-    logInfo("FILE", " ** First Floor heat ** State=" + Heat_FF_Living.state + " DC = " + Heat_FF_Duty_Cycle.state.format("%.7f"))
-    aryHeatFF = pushItem.apply( Heat_FF_Living.state, aryHeatFF )
+    logInfo("FILE", " ** First Floor Fan ** State=" + Fan_FF_Living.state + " DC = " + Heat_FF_Duty_Cycle.state.format("%.7f"))
+    aryHeatFF = pushItem.apply( Fan_FF_Living.state, aryHeatFF )
     postUpdate( Heat_FF_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryHeatFF) ) ) )
 
-    logInfo("FILE", " ** Second Floor heat ** State=" + Heat_SF_Hall.state + " DC = " + Heat_SF_Duty_Cycle.state.format("%.7f"))
-    aryHeatSF = pushItem.apply( Heat_SF_Hall.state, aryHeatSF )
-    postUpdate( Heat_SF_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryHeatSF) ) ) )
-
-    logInfo("FILE", " ** Art Studio heat ** State=" + Heat_AS_Studio.state + " DC = " + Heat_AS_Duty_Cycle.state.format("%.7f"))
-    aryHeatAS = pushItem.apply( Heat_AS_Studio.state, aryHeatAS )
-    postUpdate( Heat_AS_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryHeatAS) ) ) )
+    logInfo("FILE", " ** First Floor Fan Daily ** State=" + Fan_FF_Living.state + " DC = " + Heat_FF_Daily_Duty_Cycle.state.format("%.7f"))
+    aryHeatDailyFF = pushItemL.apply( Fan_FF_Living.state, aryHeatDailyFF )
+    postUpdate( Heat_FF_Daily_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryHeatDailyFF) ) ) )
 
     logInfo("FILE", " ** First Floor cool ** State=" + Cool_FF_Living.state + " DC = " + Cool_FF_Duty_Cycle.state.format("%.7f"))
     aryCoolFF = pushItem.apply( Cool_FF_Living.state, aryCoolFF )
     postUpdate( Cool_FF_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryCoolFF) ) ) )
 
-  
-    logInfo("FILE", " ** Second Floor cool ** State=" + Cool_SF_Hall.state + " DC = " + Cool_SF_Duty_Cycle.state.format("%.7f"))
-    aryCoolSF = pushItem.apply( Cool_SF_Hall.state, aryCoolSF )
-    postUpdate( Cool_SF_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryCoolSF) ) ) )
-
-
-
-
 	logInfo("FILE", "** Duty cycle Cron job done **")
+end
+
+rule "Update Honeywell Thermostat"
+when Time cron "10 */5 * * * ?" then
+    logInfo("FILE", "---- updating honeywell thermostat ----")
+    val String results=executeCommandLine("/home/jfstepha/bin/openhab/refresh_txt.sh", 10000)
+    logInfo("FILE", results)
+    logInfo("FILE", "---- done honeywell done----")
+    
 end
 
 /********************************/
 /* Living room thermostat rules */
 /*********************************/
-
+/*
 
 rule "Change LR temp Up"
 when
    Item TempSet_FF_Living_Change received command UP
 then
-   logInfo("FILE", String::format("Changing LR temp to %.3f", (TempSet_FF_Living.state as DecimalType) + 0.5 ) )
-   sendHttpGetRequest(String::format("http://lr-thermo/_setTarget/%.3f", (TempSet_FF_Living.state as DecimalType) + 0.5 ) )
-   postUpdate(TempSet_FF_Living, (TempSet_FF_Living.state as DecimalType) + 0.5 ) 
+   logInfo("FILE", String::format("Changing LR temp") )
+   //logInfo("FILE", String::format("Changing LR temp to %.3f", (TempSet_FF_Living.state as DecimalType) + 1.0) )
+   //sendHttpGetRequest(String::format("http://lr-thermo/_setTarget/%.3f", (TempSet_FF_Living.state as DecimalType) + 0.5 ) )
+   //val String results=executeCommandLine( String::format("/home/jfstepha/bin/openhab/honeywell_set_temp.sh %.1f", (TempSet_FF_Living.state as DecimalType) + 1.0 ), 1500)
+   //postUpdate(TempSet_FF_Living, (TempSet_FF_Living.state as DecimalType) + 1.0) 
 end
 
 rule "Change LR temp Down"
@@ -116,337 +136,67 @@ then
    postUpdate(TempSet_FF_Living, (TempSet_FF_Living.state as DecimalType) - 0.5 )
 end
 
-rule "Change AS temp Up"
-when
-   Item TempSet_AS_Studio_Change received command UP
-then
-   logInfo("FILE", String::format("Changing AS temp to %.3f", (TempSet_AS_Studio.state as DecimalType) + 0.5 ) )
-   sendHttpGetRequest(String::format("http://as-thermo/_setTarget/%.3f", (TempSet_AS_Studio.state as DecimalType) + 0.5 ) )
-   postUpdate(TempSet_AS_Studio, (TempSet_AS_Studio.state as DecimalType) + 0.5 ) 
-end
-
-rule "Change AS temp Down"
-when
-   Item TempSet_AS_Studio_Change received command Down
-then
-   logInfo("FILE", String::format("Changing AS temp to %.3f", (TempSet_AS_Studio.state as DecimalType) - 0.5 ) )
-   sendHttpGetRequest(String::format("http://as-thermo/_setTarget/%.3f", (TempSet_AS_Studio.state as DecimalType) - 0.5 ) )
-   postUpdate(TempSet_AS_Studio, (TempSet_AS_Studio.state as DecimalType) - 0.5 ) 
-end
-
-rule "Change AS Day temp Up"
-when
-   Item TempSet_AS_Studio_Day_Change received command UP
-then
-   logInfo("FILE", String::format("Changing AS Day temp to %.3f", (TempSet_AS_Studio_Day.state as DecimalType) + 0.5 ) )
-   sendHttpGetRequest(String::format("http://as-thermo/_setTargetDayActive/%.3f", (TempSet_AS_Studio_Day.state as DecimalType) + 0.5 ) )
-   postUpdate(TempSet_AS_Studio_Day, (TempSet_AS_Studio_Day.state as DecimalType) + 0.5 ) 
-end
-
-rule "Change AS Day temp Down"
-when
-   Item TempSet_AS_Studio_Day_Change received command DOWN
-then
-   logInfo("FILE", String::format("Changing AS Day temp to %.3f", (TempSet_AS_Studio_Day.state as DecimalType) - 0.5 ) )
-   sendHttpGetRequest(String::format("http://as-thermo/_setTargetDayActive/%.3f", (TempSet_AS_Studio_Day.state as DecimalType) - 0.5 ) )
-   postUpdate(TempSet_AS_Studio_Day, (TempSet_AS_Studio_Day.state as DecimalType) - 0.5 ) 
-end
-
-rule "Change AS Day Away temp Up"
-when
-   Item TempSet_AS_Studio_Day_Away_Change received command UP
-then
-   logInfo("FILE", String::format("Changing AS Day Away temp to %.3f", (TempSet_AS_Studio_Day_Away.state as DecimalType) + 0.5 ) )
-   sendHttpGetRequest(String::format("http://as-thermo/_setTargetDayIdle/%.3f", (TempSet_AS_Studio_Day_Away.state as DecimalType) + 0.5 ) )
-   postUpdate(TempSet_AS_Studio_Day, (TempSet_AS_Studio_Day_Away.state as DecimalType) + 0.5 ) 
-end
-
-rule "Change AS Day Away temp Down"
-when
-   Item TempSet_AS_Studio_Day_Away_Change received command DOWN
-then
-   logInfo("FILE", String::format("Changing AS Day Away temp to %.3f", (TempSet_AS_Studio_Day_Away.state as DecimalType) - 0.5 ) )
-   sendHttpGetRequest(String::format("http://as-thermo/_setTargetDayIdle/%.3f", (TempSet_AS_Studio_Day_Away.state as DecimalType) - 0.5 ) )
-   postUpdate(TempSet_AS_Studio_Day_Away, (TempSet_AS_Studio_Day_Away.state as DecimalType) - 0.5 ) 
-end
-
-
-rule "Change AS Night temp Up"
-when
-   Item TempSet_AS_Studio_Night_Change received command UP
-then
-   logInfo("FILE", String::format("Changing AS Night temp to %.3f", (TempSet_AS_Studio_Night.state as DecimalType) + 0.5 ) )
-   sendHttpGetRequest(String::format("http://as-thermo/_setTargetNightActive/%.3f", (TempSet_AS_Studio_Night.state as DecimalType) + 0.5 ) )
-   postUpdate(TempSet_AS_Studio_Night, (TempSet_AS_Studio_Night.state as DecimalType) + 0.5 ) 
-end
-
-rule "Change AS Night temp Down"
-when
-   Item TempSet_AS_Studio_Night_Change received command Down
-then
-   logInfo("FILE", String::format("Changing AS Night temp to %.3f", (TempSet_AS_Studio_Night.state as DecimalType) - 0.5 ) )
-   sendHttpGetRequest(String::format("http://as-thermo/_setTargetNightActive/%.3f", (TempSet_AS_Studio_Night.state as DecimalType) - 0.5 ) )
-   postUpdate(TempSet_AS_Studio_Night, (TempSet_AS_Studio_Night.state as DecimalType) - 0.5 ) 
-end
-
-rule "Change AS Night Away temp Up"
-when
-   Item TempSet_AS_Studio_Night_Away_Change received command UP
-then
-   logInfo("FILE", String::format("Changing AS Night Away temp to %.3f", (TempSet_AS_Studio_Night_Away.state as DecimalType) + 0.5 ) )
-   sendHttpGetRequest(String::format("http://as-thermo/_setTargetNightIdle/%.3f", (TempSet_AS_Studio_Night_Away.state as DecimalType) + 0.5 ) )
-   postUpdate(TempSet_AS_Studio_Night_Away, (TempSet_AS_Studio_Night_Away.state as DecimalType) + 0.5 ) 
-end
-
-rule "Change AS Night Away temp Down"
-when
-   Item TempSet_AS_Studio_Night_Away_Change received command DOWN
-then
-   logInfo("FILE", String::format("Changing AS Night Away temp to %.3f", (TempSet_AS_Studio_Night_Away.state as DecimalType) - 0.5 ) )
-   sendHttpGetRequest(String::format("http://as-thermo/_setTargetNightIdle/%.3f", (TempSet_AS_Studio_Night_Away.state as DecimalType) - 0.5 ) )
-   postUpdate(TempSet_AS_Studio_Night_Away, (TempSet_AS_Studio_Night_Away.state as DecimalType) - 0.5 ) 
-end
-
 
 rule "Set thermo temp" when
 	Item TempSet_FF_Living changed 
 then
 	sendHttpGetRequest("http://lr-thermo/_setTarget/" + TempSet_FF_Living.state)
 end
-
+*/
+/* old 
 rule "Fan scaling"
 when
-        Item Fan_FF_Living changed to ON
+        Item Fan_FF_Living changed to "true"
 then
-        postUpdate(Fan_FF_Living_Scaled, 71)
+        postUpdate(Fan_FF_Living_Scaled, 65)
 end
 
 rule "Fan scaling2"
 when
-        Item Fan_FF_Living changed to OFF
+        Item Fan_FF_Living changed to "false"
 then
-        postUpdate(Fan_FF_Living_Scaled, 70)
+        postUpdate(Fan_FF_Living_Scaled, 64)
+end
+*/
+
+rule "Fan scaling"
+when
+        Item Fan_FF_Living received update
+then
+    if (Fan_FF_Living.state=="true") {
+        postUpdate(Fan_FF_Living_Scaled, 65)
+    }
+    else {
+        postUpdate(Fan_FF_Living_Scaled, 64)
+    }
+    
 end
 
 rule "Cool scaling"
 when
-        Item Cool_FF_Living changed to ON
+        Item Cool_FF_Living changed to 1
 then
         postUpdate(Cool_FF_Living_Scaled, 69)
 end
 
 rule "Cool scaling2"
 when
-        Item Cool_FF_Living changed to OFF
+        Item Cool_FF_Living changed to 0
 then
     postUpdate(Cool_FF_Living_Scaled, 68)
 end
 
 rule "Heat FF scaling on"
 when
-        Item Heat_FF_Living changed to ON
+        Item Heat_FF_Living changed to 1
 then
-        postUpdate(Heat_FF_Living_Scaled, 67)
+        postUpdate(Heat_FF_Living_Scaled, 71)
 
 end
 
 rule "Heat FF scaling off"
 when
-        Item Heat_FF_Living changed to OFF
+        Item Heat_FF_Living changed to 0
 then
-	postUpdate(Heat_FF_Living_Scaled, 66)
-end
-
-
-/*******************************/
-/* Art Studio thermostat rules */
-/*******************************/
-rule "Set thermo temp AS"
-when
-	Item TempSet_AS_Studio received command
-then
-	sendHttpGetRequest("http://as-thermo/_setTarget/" + TempSet_AS_Studio.state)
-end
-
-rule "Fan scaling AS"
-when
-        Item Fan_AS_Studio changed to ON
-then
-        postUpdate(Fan_AS_Studio_Scaled, 71)
-end
-
-rule "Fan scaling2 AS"
-when
-        Item Fan_AS_Studio changed to OFF
-then
-        postUpdate(Fan_AS_Studio_Scaled, 70)
-end
-
-rule "Cool scaling AS"
-when
-        Item Cool_AS_Studio changed to ON
-then
-        postUpdate(Cool_AS_Studio_Scaled, 69)
-end
-
-rule "Cool scaling2 AS"
-when
-        Item Cool_AS_Studio changed to OFF
-then
-        postUpdate(Cool_AS_Studio_Scaled, 68)
-end
-
-rule "Heat scaling AS on"
-when
-        Item Heat_AS_Studio changed to ON
-then
-        postUpdate(Heat_AS_Studio_Scaled, 67)
-
-end
-
-rule "Heat scaling off AS"
-when
-        Item Heat_AS_Studio changed to OFF
-then
-        postUpdate(Heat_AS_Studio_Scaled, 66)
-
-end
-
-/***********************************************/
-/* Smart Thermo Art Studio rules               */
-/***********************************************/
-
-rule "Set smartthermo day active temp AS"
-when
-	Item TempSet_AS_Studio_Day received command
-then
-	sendHttpGetRequest("http://as-thermo/_setTargetDayActive/" + TempSet_AS_Studio_Day.state)
-end
-
-rule "Set smartthermo day idle temp AS"
-when
-	Item TempSet_AS_Studio_Day_Away received command
-then
-	sendHttpGetRequest("http://as-thermo/_setTargetDayIdle/" + TempSet_AS_Studio_Day_Away.state)
-end
-
-rule "Set smartthermo Night active temp AS"
-when
-	Item TempSet_AS_Studio_Night received command
-then
-	sendHttpGetRequest("http://as-thermo/_setTargetNightActive/" + TempSet_AS_Studio_Night.state)
-end
-
-rule "Set smartthermo night idle temp AS"
-when
-	Item TempSet_AS_Studio_Night_Away received command
-then
-	sendHttpGetRequest("http://as-thermo/_setTargetNightIdle/" + TempSet_AS_Studio_Night_Away.state)
-end
-
-
-rule "Set smartthermo state AS"
-when
-    Item SmartThermo_AS_Mode received command
-then
-	sendHttpGetRequest("http://as-thermo/_setSmartState/" + SmartThermo_AS_Mode.state)
-
-end
-
-
-
-/*********************************/
-/* Second floor thermostat rules */
-/*********************************/
-
-rule "Set SF thermo temp"
-when
-	Item TempSet_SF_Hall changed
-then
-	sendHttpGetRequest("http://sf-thermo/_setTarget/" + TempSet_SF_Hall.state)
-end
-
-rule "Fan SF scaling on"
-when
-        Item Fan_SF_Hall changed to ON
-then
-        postUpdate(Fan_SF_Hall_Scaled, 71)
-end
-
-rule "Fan SF scaling off"
-when
-        Item Fan_SF_Hall changed to OFF
-then
-        postUpdate(Fan_SF_Hall_Scaled, 70)
-end
-
-rule "Cool SF scaling on"
-when
-        Item Cool_SF_Hall changed to ON
-then
-        postUpdate(Cool_SF_Hall_Scaled, 69)
-end
-
-rule "Cool SF scaling off"
-when
-        Item Cool_SF_Hall changed to OFF
-then
-        postUpdate(Cool_SF_Hall_Scaled, 68)
-end
-
-rule "Heat SF scaling on"
-when
-        Item Heat_SF_Hall changed to ON
-then
-        postUpdate(Heat_SF_Hall_Scaled, 67)
-
-end
-
-rule "Heat SF scaling off"
-when
-        Item Heat_SF_Hall changed to OFF
-then
-        postUpdate(Heat_SF_Hall_Scaled, 66)
-
-end
-
-/***********************************************/
-/* Smart Thermo Second floor rules             */
-/***********************************************/
-
-rule "Set smartthermo day active temp SF"
-when
-	Item TempSet_SF_Hall_Day received command
-then
-	sendHttpGetRequest("http://sf-thermo/_setTargetDayActive/" + TempSet_SF_Hall_Day.state)
-end
-
-rule "Set smartthermo day idle temp SF"
-when
-	Item TempSet_SF_Hall_Day_Away received command
-then
-	sendHttpGetRequest("http://sf-thermo/_setTargetDayIdle/" + TempSet_SF_Hall_Day_Away.state)
-end
-
-rule "Set smartthermo Night active temp SF"
-when
-	Item TempSet_SF_Hall_Night received command
-then
-	sendHttpGetRequest("http://sf-thermo/_setTargetNightActive/" + TempSet_SF_Hall_Night.state)
-end
-
-rule "Set smartthermo night idle temp SF"
-when
-	Item TempSet_SF_Hall_Night_Away received command
-then
-	sendHttpGetRequest("http://sf-thermo/_setTargetNightIdle/" + TempSet_SF_Hall_Night_Away.state)
-end
-
-
-rule "Set smartthermo state SF"
-when
-    Item SmartThermo_SF_Mode received command
-then
-	sendHttpGetRequest("http://sf-thermo/_setSmartState/" + SmartThermo_SF_Mode.state)
-
+	postUpdate(Heat_FF_Living_Scaled, 70)
 end
