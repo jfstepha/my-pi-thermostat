@@ -53,6 +53,8 @@ sitemap whf label="Main Menu"
 						Text item=Cool_FF_Duty_Cycle
 						Text item=Heat_FF_Duty_Cycle
 						Text item=Heat_FF_Daily_Duty_Cycle
+                        Text item=Heat_FF_Day_Avg_Duty_Cycle
+                        Text item=Weather_Temp_Day_Avg
 					}
 					Frame label="Temp summary" {
 						Switch item=Temp_LR_Chart_Period label="Living Room" mappings=[0="Hour", 1="Day", 2="Week"]

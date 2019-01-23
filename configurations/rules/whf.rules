@@ -7,14 +7,28 @@ import java.util.ArrayList
 
 
 val org.eclipse.xtext.xbase.lib.Functions$Function1 calcMean = [ List<Integer> theArray |
-	logInfo("FILE", "  * Calc Mean");
-	logInfo("FILE", "    # array = " + theArray);
+	//logInfo("FILE", "  * Calc Mean");
+	//logInfo("FILE", "    # array = " + theArray);
 	var sum = 0.0 
 	for( int v: theArray) { 
 		sum = sum + v * 1.0;
 	}
 	var retval = sum / theArray.size() * 100.0;
-	logInfo("FILE", "    # returning: " + retval);
+	//logInfo("FILE", "    # returning: " + retval);
+	retval
+]
+
+val org.eclipse.xtext.xbase.lib.Functions$Function1 calcMeanF = [ List<Float> theArray |
+	//logInfo("FILE", "  * Calc MeanF");
+	//logInfo("FILE", "    # array = " + theArray);
+	var sum = 0.0 
+	for( double v: theArray) { 
+        //logInfo("FILE", "    # sum = " + sum + " adding " + v )
+		sum = sum + v * 1.0;
+	}
+    //logInfo("FILE", "final calc:")
+	var retval = sum / theArray.size() * 1.0;
+	//logInfo("FILE", "    # returning: " + retval);
 	retval
 ]
 
@@ -22,17 +36,17 @@ val org.eclipse.xtext.xbase.lib.Functions$Function2 pushItem = [ theItem, List<I
 	//logInfo("FILE", "  * Pushing item " + theItem);
 	//logInfo("FILE", "    * array = " + theArray);
 	if( theItem == "true" ) { 
-	    logInfo("FILE", "    * pushing 1");
+	    //logInfo("FILE", "    * pushing 1");
 		theArray.add(1)
 	} else { 
-		logInfo("FILE", "    * pushing 0");
+		//logInfo("FILE", "    * pushing 0");
 		theArray.add(0)
 	}
-	if( theArray.size() > 48) { 
-		logInfo("FILE", "    * dropping the 1st item");
+	if( theArray.size() > 1200) { 
+		//logInfo("FILE", "    * dropping the 1st item");
 		theArray.remove(0)
 	}
-	logInfo("FILE", "    * newary= " + theArray);
+	//logInfo("FILE", "    * newary= " + theArray);
 	theArray;
 ]
 
@@ -40,17 +54,17 @@ val org.eclipse.xtext.xbase.lib.Functions$Function2 pushItemL = [ theItem, List<
 	//logInfo("FILE", "  * Pushing item " + theItem);
 	//logInfo("FILE", "    * array = " + theArray);
 	if( theItem == "true" ) { 
-	    logInfo("FILE", "    * pushing 1");
+	    //logInfo("FILE", "    * pushing 1");
 		theArray.add(1)
 	} else { 
-		logInfo("FILE", "    * pushing 0");
+		//logInfo("FILE", "    * pushing 0");
 		theArray.add(0)
 	}
 	if( theArray.size() > 10000) { 
-		logInfo("FILE", "    * dropping the 1st item");
+		//logInfo("FILE", "    * dropping the 1st item");
 		theArray.remove(0)
 	}
-	logInfo("FILE", "    * newary= " + theArray);
+	//logInfo("FILE", "    * newary= " + theArray);
 	theArray;
 ]
 
@@ -59,6 +73,8 @@ val org.eclipse.xtext.xbase.lib.Functions$Function2 pushItemL = [ theItem, List<
 val List<Integer> aryHeatFF = newArrayList(0,0,1,1)
 val List<Integer> aryHeatDailyFF = newArrayList(0,0,1,1)
 val List<Integer> aryCoolFF = newArrayList(0,0,1,1)
+val List<Float> aryTempOutdoor = newArrayList(50,50,50)
+val List<Float> arySetpointFF = newArrayList(50,50,50)
 
 
 rule "Set temp 50"
@@ -71,14 +87,25 @@ end
 rule "Reset Daily"
 when Time cron "0 0 0 * * ?" then
 	logInfo("FILE", "********************************************** ")
+    logInfo("FILE", "posting daily average duty cycle")
+    postUpdate( Heat_FF_Day_Avg_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryHeatDailyFF) ) ) )
+    logInfo("FILE", "posting daily average weather")
+    postUpdate( Weather_Temp_Day_Avg, String::format("%.7f", (calcMeanF.apply( aryTempOutdoor ) )
+    logInfo("FILE", "posting daily average setpoint")
+    postUpdate( TempSet_FF_Day_Avg, String::format("%.7f", (calcMeanF.apply( arySetpointFF ) )
+    logInfo("FILE", "posting setpoint minus outdoor")
+    val Float diff = (TempSet_FF_Day_Avg.state as DecimalType).floatValue - (Weather_Temp_Day_Avg.state as DecimalType).floatValue
+    postUpdate( Outdoor_Set_FF_Day_Avg , String::format("%.7f", diff ) )
 	logInfo("FILE", "****** reseting daily duty cycles ************ ")
     aryHeatDailyFF = newArrayList(0,0,1,1)
+    aryTempOutdoor = newArrayList(50,50,50)
+    arySetpointFF = newArrayList(50,50,50)
 	logInfo("FILE", "done"
 	logInfo("FILE", "********************************************** ")
 end
 
 rule "Duty Cycle Adjust"
-when Time cron "0 */5 * * * ?" then
+when Time cron "5/15 * * * * ?" then
 
 	logInfo("FILE", "********************************************** ")
 	logInfo("FILE", "****** Executing simplified DC cron job ****** ")
@@ -99,11 +126,29 @@ when Time cron "0 */5 * * * ?" then
     aryCoolFF = pushItem.apply( Cool_FF_Living.state, aryCoolFF )
     postUpdate( Cool_FF_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryCoolFF) ) ) )
 
+    logInfo("FILE", " ** First Floor cool ** State=" + Cool_FF_Living.state + " DC = " + Cool_FF_Duty_Cycle.state.format("%.7f"))
+
+    logInfo("FILE", " ** Calculating daily average outdoor temp ** ")
+	logInfo("FILE", "    * outdoor= " + Weather_Temperature.state)
+    aryTempOutdoor.add( (Weather_Temperature.state as DecimalType).floatValue ) 
+    logInfo("FILE", " posting update")
+    postUpdate( Weather_Temp_Daily, String::format("%.7f", (calcMeanF.apply( aryTempOutdoor ) )
+    logInfo("FILE", " calculating new agv")
+    logInfo("FILE", " ** new average = " + calcMeanF.apply( aryTempOutdoor ) ) 
+
+    logInfo("FILE", " ** Calculating daily average setpoint temp ** ")
+	logInfo("FILE", "    * setpoint= " + TempSet_FF_Living.state)
+    arySetpointFF.add( (TempSet_FF_Living.state as DecimalType).floatValue ) 
+    logInfo("FILE", " posting update")
+    postUpdate( TempSet_FF_Daily, String::format("%.7f", (calcMeanF.apply( arySetpointFF ) )
+    logInfo("FILE", " calculating new agv")
+    logInfo("FILE", " ** new average = " + calcMeanF.apply( arySetpointFF ) ) 
+
 	logInfo("FILE", "** Duty cycle Cron job done **")
 end
 
 rule "Update Honeywell Thermostat"
-when Time cron "10 */5 * * * ?" then
+when Time cron "*/15 * * * * ?" then
     logInfo("FILE", "---- updating honeywell thermostat ----")
     val String results=executeCommandLine("/home/jfstepha/bin/openhab/refresh_txt.sh", 10000)
     logInfo("FILE", results)
@@ -114,60 +159,16 @@ end
 /********************************/
 /* Living room thermostat rules */
 /*********************************/
-/*
-
-rule "Change LR temp Up"
-when
-   Item TempSet_FF_Living_Change received command UP
-then
-   logInfo("FILE", String::format("Changing LR temp") )
-   //logInfo("FILE", String::format("Changing LR temp to %.3f", (TempSet_FF_Living.state as DecimalType) + 1.0) )
-   //sendHttpGetRequest(String::format("http://lr-thermo/_setTarget/%.3f", (TempSet_FF_Living.state as DecimalType) + 0.5 ) )
-   //val String results=executeCommandLine( String::format("/home/jfstepha/bin/openhab/honeywell_set_temp.sh %.1f", (TempSet_FF_Living.state as DecimalType) + 1.0 ), 1500)
-   //postUpdate(TempSet_FF_Living, (TempSet_FF_Living.state as DecimalType) + 1.0) 
-end
-
-rule "Change LR temp Down"
-when
-   Item TempSet_FF_Living_Change received command DOWN
-then
-   logInfo("FILE", String::format("Changing LR temp to %.3f", (TempSet_FF_Living.state as DecimalType) - 0.5 ) )
-   sendHttpGetRequest(String::format("http://lr-thermo/_setTarget/%.3f", (TempSet_FF_Living.state as DecimalType) - 0.5 ) )
-   postUpdate(TempSet_FF_Living, (TempSet_FF_Living.state as DecimalType) - 0.5 )
-end
-
-
-rule "Set thermo temp" when
-	Item TempSet_FF_Living changed 
-then
-	sendHttpGetRequest("http://lr-thermo/_setTarget/" + TempSet_FF_Living.state)
-end
-*/
-/* old 
-rule "Fan scaling"
-when
-        Item Fan_FF_Living changed to "true"
-then
-        postUpdate(Fan_FF_Living_Scaled, 65)
-end
-
-rule "Fan scaling2"
-when
-        Item Fan_FF_Living changed to "false"
-then
-        postUpdate(Fan_FF_Living_Scaled, 64)
-end
-*/
 
 rule "Fan scaling"
 when
         Item Fan_FF_Living received update
 then
     if (Fan_FF_Living.state=="true") {
-        postUpdate(Fan_FF_Living_Scaled, 65)
+        postUpdate(Fan_FF_Living_Scaled, 55)
     }
     else {
-        postUpdate(Fan_FF_Living_Scaled, 64)
+        postUpdate(Fan_FF_Living_Scaled, 50)
     }
     
 end

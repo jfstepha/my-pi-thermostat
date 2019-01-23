@@ -89,8 +89,10 @@ then
     sendMail("jfstepha@gmail.com","Openhab daily email","**** This Openhab daily status email " + NowString + " **** \n\n" + 
     	  "** temperatures **\n" +
     	  "Living room temp: " + Temperature_FF_Living_Thermo.state + " setpoint: " + TempSet_FF_Living.state + "\n" +
+          "Weather day average: " + Weather_Temp_Day_Avg.state + "\n" +
     	  "\n** duty cycles **\n " +
     	  "First floor heat: " + Heat_FF_Duty_Cycle.state + " First floor cool:" + Cool_FF_Duty_Cycle.state +"\n" +
+          "Day average first floor:" + Heat_FF_Day_Avg_Duty_Cycle.state + "\n" +
     	  "\n** deamons **\n" +
     	  "Living room: " + Daemon_FF_Living.state + "\n" 
     )

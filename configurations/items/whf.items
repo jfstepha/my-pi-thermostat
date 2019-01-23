@@ -42,7 +42,8 @@ Number Motion_Period "Motion" <line>
 
 /* For calculating duty cycle */
 Number Heat_FF_Duty_Cycle "Duty Cycle Heat First Floor: [%.2f]" <heating>
-Number Heat_FF_Daily_Duty_Cycle "Daily Duty Cycle Heat First Floor: [%.2f]" <heating>
+Number Heat_FF_Daily_Duty_Cycle "Daily Duty Cycle Heat First Floor today so far: [%.2f]" <heating>
+Number Heat_FF_Day_Avg_Duty_Cycle "Daily Duty Cycle Heat First Floor: [%.2f]" <heating>
 Number Cool_FF_Duty_Cycle "Duty Cycle Cool First Floor: [%.2f]" <heating>
 
 /* active groups */
@@ -61,12 +62,15 @@ Switch       tvOnOff "TV On/Off"    <video>       {samsungtv="ON:livingroom:KEY_
 
 
 /* Thermostat */
-Number Temperature_FF_Living_Thermo   "Modera Thermostat temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, All_Temp_Chart) { exec="<[cat /tmp/honeywell_status.txt -n:60000:REGEX(.*?DispTemperature\".([0-9]+).*)]" }
+Number Temperature_FF_Living_Thermo   "Modera Thermostat temp [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart, All_Temp_Chart) { exec="<[cat /tmp/honeywell_status.txt -n:5000:REGEX(.*?DispTemperature\".([0-9]+).*)]" }
 Number TempSet_FF_Living  "Modera Heat Setpoint [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart) { exec="<[cat /tmp/honeywell_status.txt -n:60000:REGEX(.*?HeatSetpoint\".([0-9]+).*)] >[*:/home/jfstepha/bin/openhab/honeywell_set_temp.sh %2$s]" }
-String Fan_FF_Living "LR Fan [%s]" <temperature> (Temperature, FF_Living)           { exec="<[cat /tmp/honeywell_status.txt -n:60000:REGEX(.*?fanIsRunning\".([a-z]+).*)]" }
-String Cool_FF_Living "LR Cool [%s]" <temperature> (Temperature, FF_Living)         { exec="<[cat /tmp/honeywell_status.txt -n:60000:REGEX(.*?StatusCool\".([0-9]+).*)]" } 
-String Heat_FF_Living "LR Heat [%s]" <heating> (Temperature, FF_Living)             { exec="<[cat /tmp/honeywell_status.txt -n:60000:REGEX(.*?StatusHeat\".([0-9]+).*)]" }
-String Daemon_FF_Living "LR Daemon [%s]" <temperature> (Temperature, FF_Living)     { exec="<[cat /tmp/honeywell_status.txt -n:60000:REGEX(.*?deviceLive\".([a-z]+).*)]" }
+Number TempSet_FF_Daily    "Average Heat Setpoint so far today [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
+Number TempSet_FF_Day_Avg  "Average Day Heat Setpoint [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
+Number Outdoor_Set_FF_Day_Avg  "Average day Outdoor Minus Setpoint [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
+String Fan_FF_Living "LR Fan [%s]" <temperature> (Temperature, FF_Living)           { exec="<[cat /tmp/honeywell_status.txt -n:5000:REGEX(.*?fanIsRunning\".([a-z]+).*)]" }
+String Cool_FF_Living "LR Cool [%s]" <temperature> (Temperature, FF_Living)         { exec="<[cat /tmp/honeywell_status.txt -n:5000:REGEX(.*?StatusCool\".([0-9]+).*)]" } 
+String Heat_FF_Living "LR Heat [%s]" <heating> (Temperature, FF_Living)             { exec="<[cat /tmp/honeywell_status.txt -n:5000:REGEX(.*?StatusHeat\".([0-9]+).*)]" }
+String Daemon_FF_Living "LR Daemon [%s]" <temperature> (Temperature, FF_Living)     { exec="<[cat /tmp/honeywell_status.txt -n:5000:REGEX(.*?deviceLive\".([a-z]+).*)]" }
 Number Fan_FF_Living_Scaled "LR Fan scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
 Number Cool_FF_Living_Scaled "LR Cool scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
 Number Heat_FF_Living_Scaled "LR Heat scaled [%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
@@ -75,6 +79,8 @@ Number Heat_FF_Living_Scaled "LR Heat scaled [%.1f]" <temperature> (Temperature,
 /* Outdoor temperatures */
 Group Weather_Chart													(Weather)
 Number Weather_Temperature          "Outside Temperature [%.1f °F]"	<temperature> (Weather_Chart, All_Temp_Chart) { http="<[http://api.wunderground.com/api/35e37526b02970e3/conditions/q/MA/Hopkinton.json:900000:JSONPATH($.current_observation.temp_f)]"}
+Number Weather_Temp_Day_Avg         "Outside Temp Day Avg [%.1f °F]"	<temperature> (Weather_Chart, All_Temp_Chart) 
+Number Weather_Temp_Daily           "Outside Temp Day Avg so far [%.1f °F]"	<temperature> (Weather_Chart, All_Temp_Chart) 
 Number Weather_Temp_Max             "Todays Maximum [%.1f °F]"	<temperature> (Weather_Chart) { http="<[http://api.wunderground.com/api/35e37526b02970e3/forecast/q/MA/Hopkinton.json:900000:JSONPATH($.forecast.simpleforecast.forecastday[0].high.fahrenheit)]"}
 Number Weather_Temp_Min             "Todays Minimum [%.1f °F]"	<temperature> (Weather_Chart) { http="<[http://api.wunderground.com/api/35e37526b02970e3/forecast/q/MA/Hopkinton.json:900000:JSONPATH($.forecast.simpleforecast.forecastday[0].low.fahrenheit)]"}
 /* String Weather_Station              "Weather Station [%s]"	<temperature> { weather="locationId=home, type=station, property=name" } */
