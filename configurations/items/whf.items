@@ -78,11 +78,12 @@ Number Heat_FF_Living_Scaled "LR Heat scaled [%.1f]" <temperature> (Temperature,
 
 /* Outdoor temperatures */
 Group Weather_Chart													(Weather)
-Number Weather_Temperature          "Outside Temperature [%.1f °F]"	<temperature> (Weather_Chart, All_Temp_Chart) { http="<[http://api.wunderground.com/api/35e37526b02970e3/conditions/q/MA/Hopkinton.json:900000:JSONPATH($.current_observation.temp_f)]"}
+/* old : Number Weather_Temperature          "Outside Temperature [%.1f °F]"	<temperature> (Weather_Chart, All_Temp_Chart) { http="<[http://api.wunderground.com/api/35e37526b02970e3/conditions/q/MA/Hopkinton.json:900000:JSONPATH($.current_observation.temp_f)]"} */
+Number Weather_Temperature          "Outside Temperature [%.1f °F]"	<temperature> (Weather_Chart, All_Temp_Chart) { http="<[http://api.openweathermap.org/data/2.5/weather?zip=01748&units=imperial&APPID=973ed5529e08c6a5fec8b524f5722d12:900000:JSONPATH($.main.temp)]"}
 Number Weather_Temp_Day_Avg         "Outside Temp Day Avg [%.1f °F]"	<temperature> (Weather_Chart, All_Temp_Chart) 
 Number Weather_Temp_Daily           "Outside Temp Day Avg so far [%.1f °F]"	<temperature> (Weather_Chart, All_Temp_Chart) 
-Number Weather_Temp_Max             "Todays Maximum [%.1f °F]"	<temperature> (Weather_Chart) { http="<[http://api.wunderground.com/api/35e37526b02970e3/forecast/q/MA/Hopkinton.json:900000:JSONPATH($.forecast.simpleforecast.forecastday[0].high.fahrenheit)]"}
-Number Weather_Temp_Min             "Todays Minimum [%.1f °F]"	<temperature> (Weather_Chart) { http="<[http://api.wunderground.com/api/35e37526b02970e3/forecast/q/MA/Hopkinton.json:900000:JSONPATH($.forecast.simpleforecast.forecastday[0].low.fahrenheit)]"}
+Number Weather_Temp_Max             "Todays Maximum [%.1f °F]"	<temperature> (Weather_Chart) { http="<[http://api.openweathermap.org/data/2.5/weather?zip=01748&units=imperial&APPID=973ed5529e08c6a5fec8b524f5722d12:900000:JSONPATH($.main.temp_max)]"}
+Number Weather_Temp_Min             "Todays Minimum [%.1f °F]"	<temperature> (Weather_Chart) { http="<[http://api.openweathermap.org/data/2.5/weather?zip=01748&units=imperial&APPID=973ed5529e08c6a5fec8b524f5722d12:900000:JSONPATH($.main.temp_min)]"}
 /* String Weather_Station              "Weather Station [%s]"	<temperature> { weather="locationId=home, type=station, property=name" } */
 
 Number Weather_Chart_Period	    "Weather Chart Period" <line>
