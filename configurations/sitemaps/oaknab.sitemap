@@ -1,0 +1,27 @@
+sitemap oaknab label="Main Menu"
+{
+    Frame label="Summary" {
+        Text item=Weather_Temperature
+        Text item=Temp_Kitchen_Thermo
+        }
+    Frame label="Heating system" {
+        Text item=Temp_Kitchen_Thermo
+        Text item=Temp_Outdoor
+        Text item=Fan
+        Text item=Fan_Scaled
+        Text item=Fan_Duty_Cycle
+        Text item=Fan_Day_Avg_Duty_Cycle
+        Text item=Fan_Daily_Duty_Cycle
+        Text item=TempSet
+        Text item=TempSet_Daily
+        Text item=TempSet_Day_Avg
+    }
+    Frame label="Network" {
+        Text item=Ping_Router
+        Text item=Ping_Stupid
+        Text item=Ping_Verizon
+        Text item=Ping_Google
+        Text item=Speedtest
+    }
+
+}

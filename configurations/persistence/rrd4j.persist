@@ -13,22 +13,23 @@ Strategies {
  */
 Items {
 	Temperature* : strategy = everyMinute, restoreOnStartup
-	Weather_Chart* : strategy = everyMinute, restoreOnStartup
-	Heat_FF_Duty_Cycle : strategy = everyMinute, restoreOnStartup
-	Heat_FF_Daily_Duty_Cycle : strategy = everyMinute, restoreOnStartup
-    Heat_FF_Day_Avg_Duty_Cycle : strategy = everyMinute, restoreOnStartup
-    Outdoor_Set_FF_Day_Average : strategy = everyMinute, restoreOnStartup
-    TempSet_FF_Daily : strategy = everyMinute, restoreOnStartup
-    TempSet_FF_Day_Avg : strategy = everyMinute, restoreOnStartup
+	Weather_Temperature : strategy = everyMinute, restoreOnStartup
+	Fan_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+	Fan_Daily_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+    Fan_Day_Avg_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+    Fan : strategy = everyMinute, restoreOnStartup
+    Fan_Scaled : strategy = everyMinute, restoreOnStartup
+    Temp_Outdoor_Minus_Set_Daily : strategy = everyMinute, restoreOnStartup
+    TempSet : strategy = everyMinute, restoreOnStartup
+    TempSet_Daily : strategy = everyMinute, restoreOnStartup
+    TempSet_Day_Avg : strategy = everyMinute, restoreOnStartup
 	Weather_Temp_Daily : strategy = everyMinute, restoreOnStartup
-	Cool_FF_Duty_Cycle : strategy = everyMinute, restoreOnStartup
 	Attic_Uptime : strategy = everyMinute, restoreOnStartup
 	Attic_lsp : strategy = everyMinute, restoreOnStartup
 	Attic_wifi_strength : strategy = everyMinute, restoreOnStartup
 	Attic_pings_rec : strategy = everyMinute, restoreOnStartup
 	Basement_Uptime : strategy = everyMinute, restoreOnStartup
 	Basement_Temperature : strategy = everyMinute, restoreOnStartup
-    Temperature_FF_Living_Thermo : strategy = everyMinute, restoreOnStartup
     Ping_Router : strategy = everyMinute, restoreOnStartup
     Ping_Stupid : strategy = everyMinute, restoreOnStartup
     Ping_Router2 : strategy = everyMinute, restoreOnStartup
@@ -43,4 +44,7 @@ Items {
     Ping_MBR_THERMO : strategy = everyChange, restoreOnStartup
     Speedtest : strategy = everyMinute, restoreOnStartup
     Weather_Temp_Day_Avg : strategy = everyChange, restoreOnStartup
+    /* these are for oaknab */
+	Temp_Kitchen_Thermo : strategy = everyMinute, restoreOnStartup
+	Temp_Outdoor : strategy = everyMinute, restoreOnStartup
 }

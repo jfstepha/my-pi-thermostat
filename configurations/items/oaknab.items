@@ -1,0 +1,24 @@
+
+Number Weather_Temperature          "Outside Temperature [%.1f °F]"   <temperature> { http="<[http://api.openweathermap.org/data/2.5/weather?zip=01748&units=imperial&APPID=973ed5529e08c6a5fec8b524f5722d12:900000:JSONPATH($.main.temp)]"}
+Number Weather_Temp_Day_Avg         "Outside Temp Day Avg so far [%.1f °F]"              <temperature> 
+Number Weather_Temp_Daily           "Outside Temp Daily Avg yesterday [%.1f °F]"         <temperature> 
+
+Number Temp_Kitchen_Thermo          "Kitchen temp [%.1f]"                                <temperature>  { exec="<[cat /tmp/honeywell_oaknab_status.txt -n:5000:REGEX(.*?DispTemperature\".([0-9]+).*)]" }
+Number Temp_Outdoor                 "Outdoor temp [%.1f]"                                <temperature>  { exec="<[cat /tmp/honeywell_oaknab_status.txt -n:5000:REGEX(.*?OutdoorTemperature\".([0-9]+).*)]" }
+String Fan                          "Heating System Fan [%s]"                            <temperature>  { exec="<[cat /tmp/honeywell_oaknab_status.txt -n:5000:REGEX(.*?fanIsRunning\".([a-z]+).*)]" }
+Number Fan_Scaled                   "Heating System Fan scaled [%.1f]"                   <temperature>
+Number Fan_Duty_Cycle               "Heating System Fan Duty Cycle: [%.2f]"              <heating>
+Number Fan_Day_Avg_Duty_Cycle       "Heating System Fan Duty Cycle today so far: [%.2f]" <heating>
+Number Fan_Daily_Duty_Cycle         "Heating System Fan Daily Duty yesterday: [%.2f]"    <heating>
+
+/***** Network stuff ********/
+Number Ping_Router  "Main Router Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh 192.168.1.1:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_Stupid  "Not found ping      [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh 192.168.2.254:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_Verizon "Verizon Ping        [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh www.verizon.com:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_Google  "Google Ping         [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh www.google.com:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Speedtest    "Speetest [%.2f Mb/s]" <light> (BW_All) { exec="<[speedtest-cli:4000000:REGEX(.*Download: ([0-9]+.?[0-9]*).*)]" }
+
+Number TempSet  "Setpoint [%.1f]" <temperature> { exec="<[cat /tmp/honeywell_oaknab_status.txt -n:60000:REGEX(.*?CoolSetpoint\".([0-9]+).*)] >[*:/home/jfstepha/bin/openhab/honeywell_set_temp.sh %2$s]" }
+Number TempSet_Daily    "Average Day Heat Setpoint[%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
+Number TempSet_Day_Avg  "Average Day Heat Setpoint so far today[%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
+Number Temp_Outdoor_Minus_Set_Daily  "Outdoor temp minus setpoint [%.1f]"                                <temperature>  { exec="<[cat /tmp/honeywell_oaknab_status.txt -n:5000:REGEX(.*?OutdoorTemperature\".([0-9]+).*)]" }
