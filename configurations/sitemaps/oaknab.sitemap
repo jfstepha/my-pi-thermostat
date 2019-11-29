@@ -6,6 +6,7 @@ sitemap oaknab label="Main Menu"
         }
     Frame label="Heating system" {
         Text item=Temp_Kitchen_Thermo
+        Text item=Temp_Basement_Office
         Text item=Temp_Outdoor
         Text item=Fan
         Text item=Fan_Scaled
@@ -15,6 +16,9 @@ sitemap oaknab label="Main Menu"
         Text item=TempSet
         Text item=TempSet_Daily
         Text item=TempSet_Day_Avg
+        Slider item=Fan_Daily_Duty_Cycle
+        Text item=Equip_Status
+        Text item=Equip_Status_Scaled
     }
     Frame label="Network" {
         Text item=Ping_Router
@@ -22,6 +26,21 @@ sitemap oaknab label="Main Menu"
         Text item=Ping_Verizon
         Text item=Ping_Google
         Text item=Speedtest
+    }
+    Frame label="Lights" {
+        Switch  item=Light1_Toggle
+        Slider  item=Light1_Dimmer 
+        Switch  item=Light2_Toggle
+        Slider  item=Light2_Dimmer 
+        Switch  item=Light3_Toggle
+        Slider  item=Light3_Dimmer 
+        Switch  item=Light4_Toggle
+        Slider  item=Light4_Dimmer 
+        Switch  item=Light5_Toggle
+        Slider  item=Light5_Dimmer 
+        Switch  item=Light6_Toggle
+        Slider  item=Light6_Dimmer 
+        Text item=Power1_Power
     }
 
 }

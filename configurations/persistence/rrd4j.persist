@@ -19,6 +19,11 @@ Items {
     Fan_Day_Avg_Duty_Cycle : strategy = everyMinute, restoreOnStartup
     Fan : strategy = everyMinute, restoreOnStartup
     Fan_Scaled : strategy = everyMinute, restoreOnStartup
+	Heat_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+	Heat_Daily_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+    Heat_Day_Avg_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+    Equip_Status : strategy = everyMinute, restoreOnStartup
+    Equip_Status_Scaled : strategy = everyMinute, restoreOnStartup
     Temp_Outdoor_Minus_Set_Daily : strategy = everyMinute, restoreOnStartup
     TempSet : strategy = everyMinute, restoreOnStartup
     TempSet_Daily : strategy = everyMinute, restoreOnStartup
@@ -47,4 +52,11 @@ Items {
     /* these are for oaknab */
 	Temp_Kitchen_Thermo : strategy = everyMinute, restoreOnStartup
 	Temp_Outdoor : strategy = everyMinute, restoreOnStartup
+	Temp_Basement_Office : strategy = everyMinute, restoreOnStartup
+	Temp_Tate_BR : strategy = everyMinute, restoreOnStartup
+	Temp_MBR : strategy = everyMinute, restoreOnStartup
+	Power1_Power : strategy = everyMinute, restoreOnStartup
+	Power1_Current : strategy = everyMinute, restoreOnStartup
+	Power1_WattHours : strategy = everyMinute, restoreOnStartup
+	Equip_Status_Scaled : strategy = everyMinute, restoreOnStartup
 }

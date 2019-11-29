@@ -1,0 +1,8 @@
+rule "Tate room midnight"
+when Time cron "0 2 0 * * ? *" then
+    logInfo("Logging daily power")
+    postUpdate( Power1_Daily_WattHours, Power1_WattHours.state )
+    logInfo("Resetting power measurements")
+    executeCommandLine("/home/jfstepha/bin/openhab/pzem_reset.py",100000)
+end
+
