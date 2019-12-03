@@ -55,8 +55,17 @@ Items {
 	Temp_Basement_Office : strategy = everyMinute, restoreOnStartup
 	Temp_Tate_BR : strategy = everyMinute, restoreOnStartup
 	Temp_MBR : strategy = everyMinute, restoreOnStartup
+	Power0_Power : strategy = everyMinute, restoreOnStartup
+	Power0_Current : strategy = everyMinute, restoreOnStartup
+	Power0_WattHours : strategy = everyMinute, restoreOnStartup
+	Power0_Daily_WattHours : strategy = everyMinute, restoreOnStartup
 	Power1_Power : strategy = everyMinute, restoreOnStartup
 	Power1_Current : strategy = everyMinute, restoreOnStartup
 	Power1_WattHours : strategy = everyMinute, restoreOnStartup
+	Power1_Daily_WattHours : strategy = everyMinute, restoreOnStartup
+	Power2_Power : strategy = everyMinute, restoreOnStartup
+	Power2_Current : strategy = everyMinute, restoreOnStartup
+	Power2_WattHours : strategy = everyMinute, restoreOnStartup
+	Power2_Daily_WattHours : strategy = everyMinute, restoreOnStartup
 	Equip_Status_Scaled : strategy = everyMinute, restoreOnStartup
 }
