@@ -20,8 +20,9 @@
 #   - install python-wxgtk2.8
 #   - sudo apt-get install python-wxgtk2.8
 #   - add "jfstepha ALL=(ALL) NOPASSWD: ALL" to sudoers file
-#   - install AdafruitDHT: https://learn.adafruit.com/dht-humidity-sensing-on-raspberry-pi-with-gdocs-logging/software-install-updated
-#   - install Adafruit Pi TFT drivers: https://learn.adafruit.com/adafruit-2-8-pitft-capacitive-touch/easy-install
+#   - ## install AdafruitDHT: https://learn.adafruit.com/dht-humidity-sensing-on-raspberry-pi-with-gdocs-logging/software-install-updated
+#   - now, it aopears adafruit is added sudo pip install adafruit-DHT
+#   - ### install Adafruit Pi TFT drivers: https://learn.adafruit.com/adafruit-2-8-pitft-capacitive-touch/easy-install
 #   - Edit config file
 #   - sudo usermod -a -G gpio jfstepha
 #   - add wifi ssid and password in /etc/network/interfaces

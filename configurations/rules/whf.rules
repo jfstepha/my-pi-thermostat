@@ -105,7 +105,7 @@ when Time cron "0 10 0 * * ?" then
     aryHeatDayAvg = newArrayList(0,0,1,1)
     aryTempOutdoor = newArrayList(50,50,50)
     arySetpoint = newArrayList(50,50,50)
-	logInfo("FILE", "done"
+	logInfo("FILE", "done")
 	logInfo("FILE", "********************************************** ")
 end
 
