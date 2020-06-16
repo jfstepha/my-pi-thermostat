@@ -22,8 +22,17 @@ Items {
 	Heat_Duty_Cycle : strategy = everyMinute, restoreOnStartup
 	Heat_Daily_Duty_Cycle : strategy = everyMinute, restoreOnStartup
     Heat_Day_Avg_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+	HeatPump_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+	HeatPump_Daily_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+    HeatPump_Day_Avg_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+	HeatOil_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+	HeatOil_Daily_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+    HeatOil_Day_Avg_Duty_Cycle : strategy = everyMinute, restoreOnStartup
     Equip_Status : strategy = everyMinute, restoreOnStartup
     Equip_Status_Scaled : strategy = everyMinute, restoreOnStartup
+    Heat_Scaled : strategy = everyMinute, restoreOnStartup
+    HeatOil_Scaled : strategy = everyMinute, restoreOnStartup
+    HeatPump_Scaled : strategy = everyMinute, restoreOnStartup
     Temp_Outdoor_Minus_Set_Daily : strategy = everyMinute, restoreOnStartup
     TempSet : strategy = everyMinute, restoreOnStartup
     TempSet_Daily : strategy = everyMinute, restoreOnStartup
@@ -70,4 +79,10 @@ Items {
 	Power2_WattHours : strategy = everyMinute, restoreOnStartup
 	Power2_Daily_WattHours : strategy = everyMinute, restoreOnStartup
 	Equip_Status_Scaled : strategy = everyMinute, restoreOnStartup
+	UPS_load : strategy = everyMinute, restoreOnStartup
+	UPS_charge : strategy = everyMinute, restoreOnStartup
+	UPS_bat_voltage : strategy = everyMinute, restoreOnStartup
+	UPS_bat_runtime : strategy = everyMinute, restoreOnStartup
+	UPS_in_voltage : strategy = everyMinute, restoreOnStartup
+    UPS_ticks_since_down : strategy = everyMinute, restoreOnStartup
 }

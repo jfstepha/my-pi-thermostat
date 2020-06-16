@@ -77,6 +77,10 @@ val List<Integer> aryFan = newArrayList(0,0,1,1)           /* last 4 hours */
 val List<Integer> aryFanDayAvg = newArrayList(0,0,1,1)     /* avg for the day */
 val List<Integer> aryHeat = newArrayList(0,0,1,1)           /* last 4 hours */
 val List<Integer> aryHeatDayAvg = newArrayList(0,0,1,1)     /* avg for the day */
+val List<Integer> aryHeatPump = newArrayList(0,0,1,1)           /* last 4 hours */
+val List<Integer> aryHeatPumpDayAvg = newArrayList(0,0,1,1)     /* avg for the day */
+val List<Integer> aryHeatOil = newArrayList(0,0,1,1)           /* last 4 hours */
+val List<Integer> aryHeatOilDayAvg = newArrayList(0,0,1,1)     /* avg for the day */
 val List<Float> aryTempOutdoor = newArrayList(50,50,50)    /* avg for the day */
 val List<Float> arySetpoint = newArrayList(50,50,50)       /* avg for the day */
 
@@ -87,6 +91,10 @@ when Time cron "0 5 0 * * ?" then
     postUpdate( Fan_Daily_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryFanDayAvg ) ) ) )
     logInfo("FILE", "posting daily Heat average duty cycle: " + String::format("%.7f", ( calcMean.apply( aryHeatDayAvg ) ) ) )
     postUpdate( Heat_Daily_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryHeatDayAvg ) ) ) )
+    logInfo("FILE", "posting daily HeatPump average duty cycle: " + String::format("%.7f", ( calcMean.apply( aryHeatPumpDayAvg ) ) ) )
+    postUpdate( HeatPump_Daily_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryHeatPumpDayAvg ) ) ) )
+    logInfo("FILE", "posting daily HeatOil average duty cycle: " + String::format("%.7f", ( calcMean.apply( aryHeatOilDayAvg ) ) ) )
+    postUpdate( HeatOil_Daily_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryHeatOilDayAvg ) ) ) )
     logInfo("FILE", "posting daily average weather: " + String::format("%.7f", (calcMeanF.apply( aryTempOutdoor ) ) ) )
     postUpdate( Weather_Temp_Daily, String::format("%.7f", (calcMeanF.apply( aryTempOutdoor ) )
     logInfo("FILE", "posting daily average setpoint: " + String::format("%.7f", (calcMeanF.apply( arySetpoint ) ) ) )
@@ -103,6 +111,8 @@ when Time cron "0 10 0 * * ?" then
 	logInfo("FILE", "****** reseting daily duty cycles ************ ")
     aryFanDayAvg = newArrayList(0,0,1,1)
     aryHeatDayAvg = newArrayList(0,0,1,1)
+    aryHeatPumpDayAvg = newArrayList(0,0,1,1)
+    aryHeatOilDayAvg = newArrayList(0,0,1,1)
     aryTempOutdoor = newArrayList(50,50,50)
     arySetpoint = newArrayList(50,50,50)
 	logInfo("FILE", "done")
@@ -123,27 +133,58 @@ when Time cron "5 * * * * ?" then
 	if( Heat_Daily_Duty_Cycle.state == NULL) { postUpdate( Heat_Daily_Duty_Cycle, 0 )}
 	if( Heat_Day_Avg_Duty_Cycle.state == NULL) { postUpdate( Heat_Day_Avg_Duty_Cycle, 0 )}
 
+	if( HeatPump_Duty_Cycle.state == NULL) { postUpdate( HeatPump_Duty_Cycle, 0 )}
+	if( HeatPump_Daily_Duty_Cycle.state == NULL) { postUpdate( HeatPump_Daily_Duty_Cycle, 0 )}
+	if( HeatPump_Day_Avg_Duty_Cycle.state == NULL) { postUpdate( HeatPump_Day_Avg_Duty_Cycle, 0 )}
+
+	if( HeatOil_Duty_Cycle.state == NULL) { postUpdate( HeatOil_Duty_Cycle, 0 )}
+	if( HeatOil_Daily_Duty_Cycle.state == NULL) { postUpdate( HeatOil_Daily_Duty_Cycle, 0 )}
+	if( HeatOil_Day_Avg_Duty_Cycle.state == NULL) { postUpdate( HeatOil_Day_Avg_Duty_Cycle, 0 )}
+
     logInfo("FILE", " ** First Floor Fan ** State=" + Fan.state + " DC = " + Fan_Duty_Cycle.state.format("%.7f"))
-	// logInfo("FILE", "    * fan.state = " + Fan.state + " aryFan = " + aryFan);
+	logInfo("FILE", "    * fan.state = " + Fan.state + " aryFan = " + aryFan);
     dumbFunction.apply( Fan.state, aryFan );
 	logInfo("FILE", "    * after dumb function");
     aryFan = pushItem.apply( Fan.state, aryFan )
     postUpdate( Fan_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryFan) ) ) )
 
-    logInfo("FILE", " ** Heat ** State=" + Equip_Status.state + " DC = " + Heat_Duty_Cycle.state.format("%.7f"))
-	// logInfo("FILE", "    * heat.state = " + Equip_Status.state + " aryHeat = " + aryHeat);
-    dumbFunction.apply( Equip_Status.state, aryHeat );
+    logInfo("FILE", " ** Heat ** State=" + Heat_Status.state + " DC = " + Heat_Duty_Cycle.state.format("%.7f"))
+	logInfo("FILE", "    * heat.state = " + Heat_Status.state + " aryHeat = " + aryHeat);
+    dumbFunction.apply( Heat_Status.state, aryHeat );
 	logInfo("FILE", "    * after dumb function");
-    aryHeat = pushItem.apply( Equip_Status.state, aryHeat )
+    aryHeat = pushItem.apply( Heat_Status.state, aryHeat )
     postUpdate( Heat_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryHeat) ) ) )
 
+    logInfo("FILE", " ** HeatPump ** State=" + HeatPump_Status.state + " DC = " + HeatPump_Duty_Cycle.state.format("%.7f"))
+	logInfo("FILE", "    * heatpump.state = " + HeatPump_Status.state + " aryHeatPump = " + aryHeatPump);
+    dumbFunction.apply( HeatPump_Status.state, aryHeatPump );
+	logInfo("FILE", "    * after dumb function");
+    aryHeatPump = pushItem.apply( HeatPump_Status.state, aryHeatPump )
+    postUpdate( HeatPump_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryHeatPump) ) ) )
+
+    logInfo("FILE", " ** HeatOil ** State=" + HeatOil_Status.state + " DC = " + HeatOil_Duty_Cycle.state.format("%.7f"))
+	logInfo("FILE", "    * heatoil.state = " + HeatOil_Status.state + " aryHeatOil = " + aryHeatOil);
+    dumbFunction.apply( Equip_Status.state, aryHeatOil );
+	logInfo("FILE", "    * after dumb function");
+    aryHeatOil = pushItem.apply( HeatOil_Status.state, aryHeatOil )
+    postUpdate( HeatOil_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryHeatOil) ) ) )
+
     logInfo("FILE", " ** First Floor Fan Day Avg ** State=" + Fan.state + " DC = " + Fan_Day_Avg_Duty_Cycle.state.format("%.7f"))
+	logInfo("FILE", "    * Fan.state = " + Fan.state + " aryFanDayAvg = " + aryFanDayAvg);
     aryFanDayAvg = pushItemL.apply( Fan.state, aryFanDayAvg )
     postUpdate( Fan_Day_Avg_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryFanDayAvg) ) ) )
 
     logInfo("FILE", " ** First Floor Heat Day Avg ** State=" + Equip_Status.state + " DC = " + Heat_Day_Avg_Duty_Cycle.state.format("%.7f"))
-    aryHeatDayAvg = pushItemL.apply( Equip_Status.state, aryHeatDayAvg )
+	logInfo("FILE", "    * Heat_Status.state = " + Heat_Status.state + " aryHeatDayAvg = " + aryHeatDayAvg);
+    aryHeatDayAvg = pushItemL.apply( Heat_Status.state, aryHeatDayAvg )
     postUpdate( Heat_Day_Avg_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryHeatDayAvg) ) ) )
+    logInfo("FILE", " ** First Floor Heat Day Avg ** State=" + Heat_Status.state + " DC = " + Heat_Day_Avg_Duty_Cycle.state.format("%.7f"))
+
+    aryHeatPumpDayAvg = pushItemL.apply( HeatPump_Status.state, aryHeatPumpDayAvg )
+    postUpdate( HeatPump_Day_Avg_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryHeatPumpDayAvg) ) ) )
+
+    aryHeatOilDayAvg = pushItemL.apply( HeatOil_Status.state, aryHeatOilDayAvg )
+    postUpdate( HeatOil_Day_Avg_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryHeatOilDayAvg) ) ) )
 
     logInfo("FILE", " ** Calculating daily average outdoor temp ** ")
 	logInfo("FILE", "    * outdoor= " + Weather_Temperature.state)
@@ -195,10 +236,25 @@ when
     Item Equip_Status received update
 then
     if (Equip_Status.state=="0") {
+        postUpdate(Heat_Status, "0")
+        postUpdate(HeatPump_Status, "0")
+        postUpdate(HeatOil_Status, "0")
         postUpdate(Equip_Status_Scaled, 30)
+        postUpdate(Heat_Scaled, 20)
+        postUpdate(HeatPump_Scaled, 10)
+        postUpdate(HeatOil_Scaled, 0)
     }
     else if (Equip_Status.state=="1") {
         postUpdate(Equip_Status_Scaled, 35)
+        postUpdate(Heat_Scaled, 25)
+        postUpdate(Heat_Status, "1")
+        if ( Temp_Outdoor.state > 50) {
+            postUpdate(HeatPump_Scaled, 15)
+            postUpdate(HeatPump_Status, "1")
+        } else {
+            postUpdate(HeatOil_Scaled, 5)
+            postUpdate(HeatOil_Status, "1")
+        }
     }
     else if (Equip_Status.state=="2") {
         postUpdate(Equip_Status_Scaled, 40)

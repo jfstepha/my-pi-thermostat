@@ -29,6 +29,12 @@ sitemap oaknab label="Main Menu"
         Slider item=Fan_Daily_Duty_Cycle
         Text item=Equip_Status
         Text item=Equip_Status_Scaled
+        Text item=Heat_Status
+        Text item=Heat_Scaled
+        Text item=HeatOil_Status
+        Text item=HeatOil_Scaled
+        Text item=HeatPump_Status
+        Text item=HeatPump_Scaled
     }
     Frame label="Network" {
         Text item=Ping_Router
@@ -38,10 +44,10 @@ sitemap oaknab label="Main Menu"
         Text item=Speedtest
     }
     Frame label="Lights" {
-        Switch  item=Light1_Toggle
-        Slider  item=Light1_Dimmer 
-        Switch  item=Light2_Toggle
-        Slider  item=Light2_Dimmer 
+        Switch  item=Light_Hall1_Toggle
+        Slider  item=Light_Hall1_Dimmer
+        Switch  item=Light_Hall2_Toggle
+        Slider  item=Light_Hall2_Dimmer 
         Switch  item=Light3_Toggle
         Slider  item=Light3_Dimmer 
         Switch  item=Light4_Toggle
@@ -51,6 +57,19 @@ sitemap oaknab label="Main Menu"
         Switch  item=Light6_Toggle
         Slider  item=Light6_Dimmer 
         Text item=Power1_Power
+        Text item=Power1_Power
+    }
+    Frame label="UPS" {
+        Text item=UPS_load
+        Text item=UPS_status
+        Text item=UPS_charge
+        Text item=UPS_bat_voltage
+        Text item=UPS_bat_runtime
+        Text item=UPS_in_voltage
+        Text item=UPS_ticks_since_down
+    }
+    Frame label="garage" {
+        Text item=GarageDoorString
     }
 
 }

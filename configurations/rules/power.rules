@@ -19,3 +19,36 @@ when Time cron "0 00 04 * * ?" then
     logInfo("FILE", "*********** done with daily power *******************")
 end
 
+rule "Tick"
+when Time cron "0 * * * * ?" then
+        logInfo("FILE", "- UPS tick ---------------------########################--------------------------")
+        logInfo("FILE", "- UPS tick ---------------------########################--------------------------")
+    if( UPS_ticks_since_down.state == NULL) { 
+        logInfo("FILE","  UPS tick:NULL ")
+        postUpdate( UPS_ticks_since_down, 0 )
+    }
+    else { 
+        postUpdate( UPS_ticks_since_down, (UPS_ticks_since_down.state as DecimalType).intValue + 1) 
+        logInfo("FILE", "UPS tick " + UPS_ticks_since_down.state ) 
+    }
+        logInfo("FILE", "- UPS tick ---------------------########################--------------------------")
+        logInfo("FILE", "- UPS tick ---------------------########################--------------------------")
+end
+
+rule "UPS Down"
+when
+        Item UPS_status received update
+then
+        logInfo("FILE", "----------------------########################--------------------------")
+        logInfo("FILE", "----------------------########################--------------------------")
+        logInfo("FILE", "UPS status:" + UPS_status.state)
+        if(  UPS_status.state == "OB" || UPS_status.state == "OB DISCHRG" ) {
+             logInfo("FILE", "UPS rule resetting time since down")
+             postUpdate( UPS_ticks_since_down, 0)
+        }
+        logInfo("FILE", "UPS ticks since down: " + UPS_ticks_since_down.state ) 
+        logInfo("FILE", "----------------------########################--------------------------")
+        logInfo("FILE", "----------------------########################--------------------------")
+end
+
+
