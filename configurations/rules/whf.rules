@@ -96,13 +96,13 @@ when Time cron "0 5 0 * * ?" then
     logInfo("FILE", "posting daily HeatOil average duty cycle: " + String::format("%.7f", ( calcMean.apply( aryHeatOilDayAvg ) ) ) )
     postUpdate( HeatOil_Daily_Duty_Cycle, String::format("%.7f", ( calcMean.apply( aryHeatOilDayAvg ) ) ) )
     logInfo("FILE", "posting daily average weather: " + String::format("%.7f", (calcMeanF.apply( aryTempOutdoor ) ) ) )
-    postUpdate( Weather_Temp_Daily, String::format("%.7f", (calcMeanF.apply( aryTempOutdoor ) )
+    postUpdate( Weather_Temp_Daily, String::format("%.7f", (calcMeanF.apply( aryTempOutdoor ) ) ) ) 
     logInfo("FILE", "posting daily average setpoint: " + String::format("%.7f", (calcMeanF.apply( arySetpoint ) ) ) )
-    postUpdate( TempSet_Daily, String::format("%.7f", (calcMeanF.apply( arySetpoint ) )
+    postUpdate( TempSet_Daily, String::format("%.7f", (calcMeanF.apply( arySetpoint ) ) ) )
     logInfo("FILE", "posting setpoint minus outdoor")
     val Float diff = (TempSet_Day_Avg.state as DecimalType).floatValue - (Weather_Temp_Day_Avg.state as DecimalType).floatValue
     postUpdate( Temp_Outdoor_Minus_Set_Daily , String::format("%.7f", diff ) )
-	logInfo("FILE", "done"
+	logInfo("FILE", "done" )
 	logInfo("FILE", "********************************************** ")
 end
 
@@ -190,7 +190,7 @@ when Time cron "5 * * * * ?" then
 	logInfo("FILE", "    * outdoor= " + Weather_Temperature.state)
     aryTempOutdoor.add( (Weather_Temperature.state as DecimalType).floatValue ) 
     logInfo("FILE", " posting update")
-    postUpdate( Weather_Temp_Daily, String::format("%.7f", (calcMeanF.apply( aryTempOutdoor ) )
+    postUpdate( Weather_Temp_Daily, String::format("%.7f", (calcMeanF.apply( aryTempOutdoor ) ) ) )
     logInfo("FILE", " calculating new agv")
     logInfo("FILE", " ** new average = " + calcMeanF.apply( aryTempOutdoor ) ) 
 
@@ -198,7 +198,7 @@ when Time cron "5 * * * * ?" then
 	logInfo("FILE", "    * setpoint= " + TempSet.state)
     arySetpoint.add( (TempSet.state as DecimalType).floatValue ) 
     logInfo("FILE", " posting update")
-    postUpdate( TempSet_Day_Avg, String::format("%.7f", (calcMeanF.apply( arySetpoint ) )
+    postUpdate( TempSet_Day_Avg, String::format("%.7f", (calcMeanF.apply( arySetpoint ) ) ) )
     logInfo("FILE", " calculating new agv")
     logInfo("FILE", " ** new average = " + calcMeanF.apply( arySetpoint ) ) 
 

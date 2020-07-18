@@ -1,4 +1,4 @@
-sitemap oaknab label="Main Menu"
+sitemap oaknab label="Oaknab"
 {
     Frame label="Summary" {
         Text item=Weather_Temperature
@@ -11,6 +11,7 @@ sitemap oaknab label="Main Menu"
         Text item=Power1_WattHours
         Text item=Power2_Power
         Text item=Power2_WattHours
+    }
     Frame label="Heating system" {
         Text item=Temp_Kitchen_Thermo
         Text item=Temp_Kitchen_Thermo2
@@ -68,8 +69,5 @@ sitemap oaknab label="Main Menu"
         Text item=UPS_in_voltage
         Text item=UPS_ticks_since_down
     }
-    Frame label="garage" {
-        Text item=GarageDoorString
-    }
-
 }
+
