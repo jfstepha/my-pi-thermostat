@@ -22,9 +22,12 @@ Items {
 	Heat_Duty_Cycle : strategy = everyMinute, restoreOnStartup
 	Heat_Daily_Duty_Cycle : strategy = everyMinute, restoreOnStartup
     Heat_Day_Avg_Duty_Cycle : strategy = everyMinute, restoreOnStartup
-	HeatPump_Duty_Cycle : strategy = everyMinute, restoreOnStartup
-	HeatPump_Daily_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+    HeatPump_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+    HeatPump_Daily_Duty_Cycle : strategy = everyMinute, restoreOnStartup
     HeatPump_Day_Avg_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+    Cool_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+    Cool_Daily_Duty_Cycle : strategy = everyMinute, restoreOnStartup
+    Cool_Day_Avg_Duty_Cycle : strategy = everyMinute, restoreOnStartup
 	HeatOil_Duty_Cycle : strategy = everyMinute, restoreOnStartup
 	HeatOil_Daily_Duty_Cycle : strategy = everyMinute, restoreOnStartup
     HeatOil_Day_Avg_Duty_Cycle : strategy = everyMinute, restoreOnStartup
@@ -33,6 +36,7 @@ Items {
     Heat_Scaled : strategy = everyMinute, restoreOnStartup
     HeatOil_Scaled : strategy = everyMinute, restoreOnStartup
     HeatPump_Scaled : strategy = everyMinute, restoreOnStartup
+    Cool_Scaled : strategy = everyMinute, restoreOnStartup
     Temp_Outdoor_Minus_Set_Daily : strategy = everyMinute, restoreOnStartup
     TempSet : strategy = everyMinute, restoreOnStartup
     TempSet_Daily : strategy = everyMinute, restoreOnStartup
@@ -49,13 +53,13 @@ Items {
     Ping_Router2 : strategy = everyMinute, restoreOnStartup
     Ping_Verizon : strategy = everyMinute, restoreOnStartup
     Ping_Google : strategy = everyMinute, restoreOnStartup
+    Ping_tv_pc : strategy = everyMinute, restoreOnStartup
     Ping_Printer : strategy = everyMinute, restoreOnStartup
-    Ping_TV_THERMO : strategy = everyMinute, restoreOnStartup
-    Ping_LR_THERMO : strategy = everyChange, restoreOnStartup
-    Ping_AS_THERMO : strategy = everyChange, restoreOnStartup
-    Ping_SF_THERMO : strategy = everyChange, restoreOnStartup
-    Ping_ST_THERMO : strategy = everyChange, restoreOnStartup
-    Ping_MBR_THERMO : strategy = everyChange, restoreOnStartup
+    Ping_lexi_t : strategy = everyMinute, restoreOnStartup
+    Ping_office_t : strategy = everyMinute, restoreOnStartup
+    Ping_tate_t : strategy = everyMinute, restoreOnStartup
+    Ping_mbr_t : strategy = everyMinute, restoreOnStartup
+    Ping_kitchen_t : strategy = everyMinute, restoreOnStartup
     Speedtest : strategy = everyMinute, restoreOnStartup
     Weather_Temp_Day_Avg : strategy = everyChange, restoreOnStartup
     /* these are for oaknab */

@@ -40,6 +40,12 @@ Number HeatPump_Duty_Cycle               "Electric Heat Duty Cycle: [%.2f]"     
 Number HeatPump_Day_Avg_Duty_Cycle       "Electric Heat Duty Cycle today so far: [%.2f]" <heating>
 Number HeatPump_Daily_Duty_Cycle         "Electric Heat Daily Duty yesterday: [%.2f]"    <heating>
 
+String Cool_Status                   "A/C Output Status [%s]" 
+Number Cool_Scaled                   "A/C scaled [%.1f]"                   <temperature>
+Number Cool_Duty_Cycle               "A/C Duty Cycle: [%.2f]"              <heating>
+Number Cool_Day_Avg_Duty_Cycle       "A/C Duty Cycle today so far: [%.2f]" <heating>
+Number Cool_Daily_Duty_Cycle         "A/C Daily Duty yesterday: [%.2f]"    <heating>
+
 String HeatOil_Status                   "Oil Heat Output Status [%s]" 
 Number HeatOil_Scaled                   "Oil Heat scaled [%.1f]"                   <temperature>
 Number HeatOil_Duty_Cycle               "Oil Heat Duty Cycle: [%.2f]"              <heating>
@@ -47,11 +53,17 @@ Number HeatOil_Day_Avg_Duty_Cycle       "Oil Heat Duty Cycle today so far: [%.2f
 Number HeatOil_Daily_Duty_Cycle         "Oil Heat Daily Duty yesterday: [%.2f]"    <heating>
 
 /***** Network stuff ********/
-Number Ping_Router  "Main Router Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh 192.168.1.1:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
-Number Ping_Stupid  "Not found ping      [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh 192.168.2.254:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
-Number Ping_Verizon "Verizon Ping        [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh www.verizon.com:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
-Number Ping_Google  "Google Ping         [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh www.google.com:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
-Number Speedtest    "Speetest [%.2f Mb/s]" <light> (BW_All) { exec="<[speedtest-cli:4000000:REGEX(.*Download: ([0-9]+.?[0-9]*).*)]" }
+Number Ping_Router    "Main Router Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh 192.168.1.1:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_Stupid    "Not found ping      [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh 192.168.2.254:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_Verizon   "Verizon Ping        [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh www.verizon.com:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_Google    "Google Ping         [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh www.google.com:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_tv_pc     "TV pc Ping          [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh tv-pc2.localdomain:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_lexi_t    "Lexi-thermo Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh lexi-thermo.localdomain:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_office_t  "Basement Office thermo Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh sf-thermo.localdomain:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_tate_t    "Tate Bedroom thermo Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh as-thermo.localdomain:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_mbr_t     "Master Bedroom thermo Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh mbr-thermo.localdomain:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_kitchen_t "Kitchen thermo Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh kitchen-thermo.localdomain:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Speedtest      "Speetest [%.2f Mb/s]" <light> (BW_All) { exec="<[speedtest-cli:4000000:REGEX(.*Download: ([0-9]+.?[0-9]*).*)]" }
 
 /**** Power stuff *****/
 Number Power1_Power   "Power 1 power [%.3f W]"   <temperature>         { exec="<[/home/jfstepha/bin/my-pi-thermostat/pzem_reader.py -w -u 1:30000:REGEX(Watts ([0-9]+\\.?[0-9]*))]" }
