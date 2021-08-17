@@ -1,0 +1,387 @@
+sitemap whf label="Main Menu"
+{
+	Frame label="Summary" {
+        Text item=Weather_Temperature
+        Text item=Weather_Temp_Min
+        Text item=Weather_Temp_Max		
+		Text item=Temperature_FF_Living_Thermo
+		Text item=Temperature_FF_AVG
+		Text item=Temperature_SF_Hall_Thermo		
+		Text item=Temperature_AS_Studio_Thermo	
+        }
+	Frame label="Floors" {
+        Text label="Network" icon="attic" {
+            Frame label="sum" { 
+                Text item=Ping_Router
+                Text item=Ping_Router2
+                Text item=Ping_Verizon
+                Text item=Ping_Google
+                Text item=Ping_Printer
+                Text item=Ping_TV
+                Text item=Ping_Stupid
+                Text item=Speedtest
+            } Frame label="Network graphs" {
+				Switch item=Net_Chart_Period label="Network" mappings=[0="Hour", 1="Day", 2="Week"]
+				Chart item=Pings_All period=h refresh=60000 visibility=[Net_Chart_Period==0, Net_Chart_Period=="Uninitialized"]
+				Chart item=Pings_All period=D refresh=300000 visibility=[Net_Chart_Period==1]
+				Chart item=Pings_All period=W refresh=1200000 visibility=[Net_Chart_Period==2]
+            } Frame label="Thermo" {
+				Chart item=Pings_Thermo period=h refresh=60000 visibility=[Net_Chart_Period==0, Net_Chart_Period=="Uninitialized"]
+				Chart item=Pings_Thermo period=D refresh=300000 visibility=[Net_Chart_Period==1]
+				Chart item=Pings_Thermo period=W refresh=1200000 visibility=[Net_Chart_Period==2]
+            } Frame label="Speedtest" {
+				Chart item=Speedtest period=h refresh=60000 visibility=[Net_Chart_Period==0, Net_Chart_Period=="Uninitialized"]
+				Chart item=Speedtest period=D refresh=300000 visibility=[Net_Chart_Period==1]
+				Chart item=Speedtest period=W refresh=1200000 visibility=[Net_Chart_Period==2]
+            }
+        }
+		Text label="Attic" icon="attic" {
+		    Frame label="sum" {
+		    	Text item=Temperature_AT_Finished
+          	    Text item=Humidity_AT_Finished
+		        Text item=Attic_Uptime
+		        Text item=Attic_lsp
+		        Text item=Attic_wifi_strength
+                Text item=Attic_pings_rec
+                Switch item=Attic_relay1 mappings=["ON"="ON", "OFF"="OFF"]
+                Text item=Attic_relay1_state
+                Switch item=Attic_relay2 mappings=["ON"="ON", "OFF"="OFF"]
+                Text item=Attic_relay2_state
+            
+            } Frame label="Temp summary" {
+				Switch item=Temp_AT_Chart_Period label="Attic" mappings=[0="Hour", 1="Day", 2="Week"]
+				Chart item=Temperature_AT_Finished period=h refresh=60000 visibility=[Temp_AT_Chart_Period==0, Temp_AT_Chart_Period=="Uninitialized"]
+				Chart item=Temperature_AT_Finished period=D refresh=300000 visibility=[Temp_AT_Chart_Period==1]
+				Chart item=Temperature_AT_Finished period=W refresh=1200000 visibility=[Temp_AT_Chart_Period==2]
+			} Frame label="Attic Loops since ping" {
+				Chart item=Attic_lsp period=h refresh=60000 visibility=[Temp_AT_Chart_Period==0, Temp_AT_Chart_Period=="Uninitialized"]
+				Chart item=Attic_lsp period=D refresh=300000 visibility=[Temp_AT_Chart_Period==1]
+				Chart item=Attic_lsp period=W refresh=1200000 visibility=[Temp_AT_Chart_Period==2]
+			} Frame label="Attic wifi strength" {
+				Chart item=Attic_wifi_strength period=h refresh=60000 visibility=[Temp_AT_Chart_Period==0, Temp_AT_Chart_Period=="Uninitialized"]
+				Chart item=Attic_wifi_strength period=D refresh=300000 visibility=[Temp_AT_Chart_Period==1]
+				Chart item=Attic_wifi_strength period=W refresh=1200000 visibility=[Temp_AT_Chart_Period==2]
+			} Frame label="Attic uptime" {
+				Chart item=Attic_Uptime period=h refresh=60000 visibility=[Temp_AT_Chart_Period==0, Temp_AT_Chart_Period=="Uninitialized"]
+				Chart item=Attic_Uptime period=D refresh=300000 visibility=[Temp_AT_Chart_Period==1]
+				Chart item=Attic_Uptime period=W refresh=1200000 visibility=[Temp_AT_Chart_Period==2]
+			} Frame label="Attic pings received" {
+				Chart item=Attic_pings_rec period=h refresh=60000 visibility=[Temp_AT_Chart_Period==0, Temp_AT_Chart_Period=="Uninitialized"]
+				Chart item=Attic_pings_rec period=D refresh=300000 visibility=[Temp_AT_Chart_Period==1]
+				Chart item=Attic_pings_rec period=W refresh=1200000 visibility=[Temp_AT_Chart_Period==2]
+			} Frame label="Attic outlet1" {
+				Chart item=Attic_relay1_state period=h refresh=60000 visibility=[Temp_AT_Chart_Period==0, Temp_AT_Chart_Period=="Uninitialized"]
+				Chart item=Attic_relay1_state period=D refresh=300000 visibility=[Temp_AT_Chart_Period==1]
+				Chart item=Attic_relay1_state period=W refresh=1200000 visibility=[Temp_AT_Chart_Period==2]
+			} Frame label="Attic outlet2" {
+				Chart item=Attic_relay2_state period=h refresh=60000 visibility=[Temp_AT_Chart_Period==0, Temp_AT_Chart_Period=="Uninitialized"]
+				Chart item=Attic_relay2_state period=D refresh=300000 visibility=[Temp_AT_Chart_Period==1]
+				Chart item=Attic_relay2_state period=W refresh=1200000 visibility=[Temp_AT_Chart_Period==2]
+            }
+        }
+		Text label="Second Floor" icon="firstfloor" {
+			Frame label="Rooms" {
+				Text label="Hall" icon="firstfloor" {
+					Frame label="Thermostat" {
+						Text item=Temperature_SF_Hall_Thermo
+						Setpoint item=TempSet_SF_Hall step=0.5 minValue=40 maxValue=120
+						Text item=Humidity_SF_Hall_Thermo
+						Text item=Fan_SF_Hall
+						Text item=Cool_SF_Hall
+						Text item=Heat_SF_Hall 
+						Text item=Daemon_SF_Hall
+                        Text item=Lastmotion_SF_Hall
+                        Text item=Heat_SF_Duty_Cycle
+
+						Frame label="Smart thermostat" {
+    						Switch item=SmartThermo_SF_Mode label="Smart Thermo Mode" mappings=[0="No Sensor", 1="DayIdl", 2="DayMotion", 3="DayAway", 4="DayActive", 5="NgtIdl", 6="NgtMotion",7="NightAway",8="NightActive"]
+    					}
+    					Frame {
+				    		Text item=SmartThermo_SF_Mode_String label="Smart Thermo Mode [%s]"
+                            Text item=SmartThermo_SF_Override_Remaining
+	    					Setpoint item=TempSet_SF_Hall_Day step=0.5 minValue=40 maxValue=120
+		    				Setpoint item=TempSet_SF_Hall_Night step=0.5 minValue=40 maxValue=120
+			    			Setpoint item=TempSet_SF_Hall_Day_Away step=0.5 minValue=40 maxValue=120
+			    			Setpoint item=TempSet_SF_Hall_Night_Away step=0.5 minValue=40 maxValue=120
+						}
+
+					} 
+					Frame label="Temp summary" {
+						Switch item=Temp_SF_Chart_Period label="Second Floor" mappings=[0="Hour", 1="Day", 2="Week"]
+						Chart item=Temp_SF_Chart period=h refresh=60000 visibility=[Temp_SF_Chart_Period==0, Temp_SF_Chart_Period=="Uninitialized"]
+						Chart item=Temp_SF_Chart period=D refresh=300000 visibility=[Temp_SF_Chart_Period==1]
+						Chart item=Temp_SF_Chart period=W refresh=1200000 visibility=[Temp_SF_Chart_Period==2]
+					}
+					Frame label="Motion" {
+					    Chart item=Lastmotion_SF_Hall period=h refresh=60000 visibility=[Temp_SF_Chart_Period==0, Temp_SF_Chart_Period=="Uninitialized"]
+					    Chart item=Lastmotion_SF_Hall period=D refresh=300000 visibility=[Temp_SF_Chart_Period==1]
+					    Chart item=Lastmotion_SF_Hall period=W refresh=1200000 visibility=[Temp_SF_Chart_Period==2]
+                    }
+					Frame label="Heat Duty Cycle summary"  {
+						Chart item=Heat_SF_Duty_Cycle period=h refresh=60000 visibility=[Temp_SF_Chart_Period==0, Temp_SF_Chart_Period=="Uninitialized"]
+						Chart item=Heat_SF_Duty_Cycle period=D refresh=300000 visibility=[Temp_SF_Chart_Period==1]
+						Chart item=Heat_SF_Duty_Cycle period=W refresh=1200000 visibility=[Temp_SF_Chart_Period==2]
+					}
+					Frame label="Thermo state" {
+						Text item=Fan_SF_Hall_Scaled
+						Text item=Cool_SF_Hall_Scaled
+						Text item=Heat_SF_Hall_Scaled
+					}
+					Frame label="Humidity summary" {
+						Chart item=Humidity_SF_Chart period=h refresh=60000 visibility=[Temp_SF_Chart_Period==0, Temp_SF_Chart_Period=="Uninitialized"]
+						Chart item=Humidity_SF_Chart period=D refresh=300000 visibility=[Temp_SF_Chart_Period==1]
+						Chart item=Humidity_SF_Chart period=W refresh=1200000 visibility=[Temp_SF_Chart_Period==2]
+					}
+				}
+			}
+		}
+		Text label="First Floor" icon="groundfloor" {
+			Frame label="Rooms" {
+				Text label="Living Room" icon="groundfloor" {
+					Frame label="TV" {
+						Text label="TV" icon="video" {
+							Frame label="TV" {
+								Switch item=mute
+								Slider item=volume
+								Switch item=tvInput
+								Switch item=tvOnOff
+							}
+						}	
+					}
+					Frame label="Thermostat" {
+						Text item=Temperature_FF_Living_Thermo
+						Text item=Temperature_FF_Stove
+						Text item=Temperature_FF_AVG
+						Setpoint item=TempSet_FF_Living step=0.5 minValue=40 maxValue=120 
+						Switch item=SmartThermo_FF_Mode label="Smart Thermo Mode" mappings=[0="Disabled", 1="Away", 2="Night", 3="Day"]
+						Setpoint item=TempSet_FF_Living_Day step=0.5 minValue=40 maxValue=120
+						Setpoint item=TempSet_FF_Living_Night step=0.5 minValue=40 maxValue=120
+						Setpoint item=TempSet_FF_Living_Away step=0.5 minValue=40 maxValue=120
+						Text item=SmartThermo_FF_Mode_String
+						Text item=Humidity_FF_Living_Thermo
+						Text item=Fan_FF_Living
+						Text item=Cool_FF_Living
+						Text item=Heat_FF_Living
+						Text item=Daemon_FF_Living
+						Text item=Cool_FF_Duty_Cycle
+						Text item=Heat_FF_Duty_Cycle
+						Text item=Lastmotion_FF_Stove
+                        Text item=Temperature_Diff_Stove
+					}
+					Frame label="Temp summary" {
+						Switch item=Temp_LR_Chart_Period label="Living Room" mappings=[0="Hour", 1="Day", 2="Week"]
+						Chart item=Temp_LR_Chart period=h refresh=60000 visibility=[Temp_LR_Chart_Period==0, Temp_LR_Chart_Period=="Uninitialized"]
+						Chart item=Temp_LR_Chart period=D refresh=300000 visibility=[Temp_LR_Chart_Period==1]
+						Chart item=Temp_LR_Chart period=W refresh=1200000 visibility=[Temp_LR_Chart_Period==2]
+					}
+					Frame label="Humidity summary" {
+						Chart item=Humidity_FF_Living_Thermo period=h refresh=60000 visibility=[Temp_LR_Chart_Period==0, Temp_LR_Chart_Period=="Uninitialized"]
+						Chart item=Humidity_FF_Living_Thermo period=D refresh=300000 visibility=[Temp_LR_Chart_Period==1]
+						Chart item=Humidity_FF_Living_Thermo period=W refresh=1200000 visibility=[Temp_LR_Chart_Period==2]
+					}
+					Frame label="Heat Duty Cycle summary" {
+						Chart item=Heat_FF_Duty_Cycle period=h refresh=60000 visibility=[Temp_LR_Chart_Period==0, Temp_LR_Chart_Period=="Uninitialized"]
+						Chart item=Heat_FF_Duty_Cycle period=D refresh=300000 visibility=[Temp_LR_Chart_Period==1]
+						Chart item=Heat_FF_Duty_Cycle period=W refresh=1200000 visibility=[Temp_LR_Chart_Period==2]
+					}
+					Frame label="Thermo state"{
+						Text item=Fan_FF_Living_Scaled
+						Text item=Cool_FF_Living_Scaled
+						Text item=Heat_FF_Living_Scaled
+					}
+				}
+				Text label="Master Bed Room" icon="groundfloor" {
+					Frame label="Thermostat" {
+						Text item=Temperature_FF_MBR
+						Text item=Lastmotion_FF_MBR
+					}
+					Frame {
+					    Switch item=Motion_Period label="Last Motion" mappings=[0="Hour", 1="Day", 2="Week"]
+					    Chart item=Lastmotion_FF_MBR period=h refresh=60000 visibility=[Motion_Period==0, Motion_Period=="Uninitialized"]
+					    Chart item=Lastmotion_FF_MBR period=D refresh=300000 visibility=[Motion_Period==1]
+					    Chart item=Lastmotion_FF_MBR period=W refresh=1200000 visibility=[Motion_Period==2]
+				    }
+				    Frame {
+					    Switch item=Motion_Period label="Temperature" mappings=[0="Hour", 1="Day", 2="Week"]
+					    Chart item=Temperature_FF_MBR period=h refresh=60000 visibility=[Motion_Period==0, Motion_Period=="Uninitialized"]
+					    Chart item=Temperature_FF_MBR period=D refresh=300000 visibility=[Motion_Period==1]
+					    Chart item=Temperature_FF_MBR period=W refresh=1200000 visibility=[Motion_Period==2]
+				    }
+				    Frame {
+					    Switch item=Motion_Period label="Humidity" mappings=[0="Hour", 1="Day", 2="Week"]
+					    Chart item=Humidity_FF_MBR period=h refresh=60000 visibility=[Motion_Period==0, Motion_Period=="Uninitialized"]
+					    Chart item=Humidity_FF_MBR period=D refresh=300000 visibility=[Motion_Period==1]
+					    Chart item=Humidity_FF_MBR period=W refresh=1200000 visibility=[Motion_Period==2]
+				    }
+
+				}
+				Text label="Art Studio" icon="groundfloor" {
+					Frame label="Thermostat" {
+						Text item=Temperature_AS_Studio_Thermo
+						Setpoint item=TempSet_AS_Studio step=0.5 minValue=40 maxValue=120
+						Frame label="Smart thermostat" {
+    						Switch item=SmartThermo_AS_Mode label="Smart Thermo Mode" mappings=[0="No Sensor", 1="DayIdl", 2="DayMotion", 3="DayAway", 4="DayActive", 5="NgtIdl", 6="NgtMotion",7="NightAway",8="NightActive"]
+    					}
+    					Frame {
+				    		Text item=SmartThermo_AS_Mode_String label="Smart Thermo Mode [%s]"
+                            Text item=SmartThermo_AS_Override_Remaining
+	    					Setpoint item=TempSet_AS_Studio_Day step=0.5 minValue=40 maxValue=120
+		    				Setpoint item=TempSet_AS_Studio_Night step=0.5 minValue=40 maxValue=120
+			    			Setpoint item=TempSet_AS_Studio_Day_Away step=0.5 minValue=40 maxValue=120
+			    			Setpoint item=TempSet_AS_Studio_Night_Away step=0.5 minValue=40 maxValue=120
+						}
+						Text item=Humidity_AS_Studio_Thermo
+						Text item=Fan_AS_Studio
+						Text item=Cool_AS_Studio
+						Text item=Heat_AS_Studio 
+						Text item=Daemon_AS_Studio
+						Text item=Lastmotion_AS_Studio
+						Text item=Cool_SF_Duty_Cycle
+						Text item=Heat_SF_Duty_Cycle
+					} 
+					Frame label="Temp summary" {
+						Switch item=Temp_AS_Chart_Period label="Art Studio" mappings=[0="Hour", 1="Day", 2="Week"]
+						Chart item=Temp_AS_Chart period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
+						Chart item=Temp_AS_Chart period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
+						Chart item=Temp_AS_Chart period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
+//					}
+//					Frame label="Motion" {
+					    Chart item=Lastmotion_AS_Studio period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
+					    Chart item=Lastmotion_AS_Studio period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
+					    Chart item=Lastmotion_AS_Studio period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
+//                    }
+//					Frame label="Duty Cycle summary" {
+						Chart item=Heat_AS_Duty_Cycle period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
+						Chart item=Heat_AS_Duty_Cycle period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
+						Chart item=Heat_AS_Duty_Cycle period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
+//					}
+//					Frame label="Humidity summary" {
+						Chart item=Humidity_AS_Studio_Thermo period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
+						Chart item=Humidity_AS_Studio_Thermo period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
+						Chart item=Humidity_AS_Studio_Thermo period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
+//					}
+//					Frame label="Smart thermo summary" {
+						Chart item=SmartThermo_AS_Mode period=h refresh=60000 visibility=[Temp_AS_Chart_Period==0, Temp_AS_Chart_Period=="Uninitialized"]
+						Chart item=SmartThermo_AS_Mode period=D refresh=300000 visibility=[Temp_AS_Chart_Period==1]
+						Chart item=SmartThermo_AS_Mode period=W refresh=1200000 visibility=[Temp_AS_Chart_Period==2]
+					}
+					Frame label="Thermo state" {
+						Text item=Fan_AS_Studio_Scaled
+						Text item=Cool_AS_Studio_Scaled
+						Text item=Heat_AS_Studio_Scaled
+					}
+				}
+			}
+			Frame label="Temp summary" {
+				Switch item=Temp_FF_Chart_Period label="Temperature" mappings=[0="Hour", 1="Day", 2="Week"]
+				Chart item=Temp_FF_Chart period=h refresh=60000 visibility=[Temp_FF_Chart_Period==0, Temp_FF_Chart_Period=="Uninitialized"]
+				Chart item=Temp_FF_Chart period=D refresh=300000 visibility=[Temp_FF_Chart_Period==1]
+				Chart item=Temp_FF_Chart period=W refresh=1200000 visibility=[Temp_FF_Chart_Period==2]
+			}
+			Frame label="Humidity summary" {
+				Chart item=Humidity_FF_Chart period=h refresh=60000 visibility=[Temp_FF_Chart_Period==0, Temp_FF_Chart_Period=="Uninitialized"]
+				Chart item=Humidity_FF_Chart period=D refresh=300000 visibility=[Temp_FF_Chart_Period==1]
+				Chart item=Humidity_FF_Chart period=W refresh=1200000 visibility=[Temp_FF_Chart_Period==2]
+			}
+		}	
+		Text label="Basement" icon="attic" {
+		    Text item=Basement_Temperature
+		    Text item=Basement_Uptime
+		    Text item=Basement_lsp
+		    Text item=Basement_lsdoor1
+		    Text item=Basement_lsdoor2
+		    Text item=Basement_wifi_strength
+            Text item=Basement_pings_rec
+            Switch item=Basement_relay1 mappings=["ON"="ON", "OFF"="OFF"]
+            Text item=Basement_relay1_state
+            Text item=Basement_current1
+            Switch item=Basement_relay2 mappings=["ON"="ON", "OFF"="OFF"]
+            Text item=Basement_relay2_state
+            Text item=Basement_current2
+			Frame label="Basement temperature" {
+				Switch item=Temp_BS_Chart_Period label="Basement" mappings=[0="Hour", 1="Day", 2="Week"]
+				Chart item=Basement_Temperature period=h refresh=60000 visibility=[Temp_BS_Chart_Period==0, Temp_BS_Chart_Period=="Uninitialized"]
+				Chart item=Basement_Temperature period=D refresh=300000 visibility=[Temp_BS_Chart_Period==1]
+				Chart item=Basement_Temperature period=W refresh=1200000 visibility=[Temp_BS_Chart_Period==2]
+			} Frame label="Basement Loops since ping" {
+				Chart item=Basement_lsp period=h refresh=60000 visibility=[Temp_BS_Chart_Period==0, Temp_BS_Chart_Period=="Uninitialized"]
+				Chart item=Basement_lsp period=D refresh=300000 visibility=[Temp_BS_Chart_Period==1]
+				Chart item=Basement_lsp period=W refresh=1200000 visibility=[Temp_BS_Chart_Period==2]
+			} Frame label="Basement wifi strength" {
+				Chart item=Basement_wifi_strength period=h refresh=60000 visibility=[Temp_BS_Chart_Period==0, Temp_BS_Chart_Period=="Uninitialized"]
+				Chart item=Basement_wifi_strength period=D refresh=300000 visibility=[Temp_BS_Chart_Period==1]
+				Chart item=Basement_wifi_strength period=W refresh=1200000 visibility=[Temp_BS_Chart_Period==2]
+			} Frame label="Basement uptime" {
+				Chart item=Basement_Uptime period=h refresh=60000 visibility=[Temp_BS_Chart_Period==0, Temp_BS_Chart_Period=="Uninitialized"]
+				Chart item=Basement_Uptime period=D refresh=300000 visibility=[Temp_BS_Chart_Period==1]
+				Chart item=Basement_Uptime period=W refresh=1200000 visibility=[Temp_BS_Chart_Period==2]
+			} Frame label="Basement doorbells" {
+				Chart item=Basement_doorbells period=h refresh=60000 visibility=[Temp_BS_Chart_Period==0, Temp_BS_Chart_Period=="Uninitialized"]
+				Chart item=Basement_doorbells period=D refresh=300000 visibility=[Temp_BS_Chart_Period==1]
+				Chart item=Basement_doorbells period=W refresh=1200000 visibility=[Temp_BS_Chart_Period==2]
+			} Frame label="Basement pings received" {
+				Chart item=Basement_pings_rec period=h refresh=60000 visibility=[Temp_BS_Chart_Period==0, Temp_BS_Chart_Period=="Uninitialized"]
+				Chart item=Basement_pings_rec period=D refresh=300000 visibility=[Temp_BS_Chart_Period==1]
+				Chart item=Basement_pings_rec period=W refresh=1200000 visibility=[Temp_BS_Chart_Period==2]
+			} Frame label="Xmas Lights" {
+				Chart item=Basement_relay1_state period=h refresh=60000 visibility=[Temp_BS_Chart_Period==0, Temp_BS_Chart_Period=="Uninitialized"]
+				Chart item=Basement_relay1_state period=D refresh=300000 visibility=[Temp_BS_Chart_Period==1]
+				Chart item=Basement_relay1_state period=W refresh=1200000 visibility=[Temp_BS_Chart_Period==2]
+			} Frame label="Eve heaters" {
+				Chart item=Basement_relay2_state period=h refresh=60000 visibility=[Temp_BS_Chart_Period==0, Temp_BS_Chart_Period=="Uninitialized"]
+				Chart item=Basement_relay2_state period=D refresh=300000 visibility=[Temp_BS_Chart_Period==1]
+				Chart item=Basement_relay2_state period=W refresh=1200000 visibility=[Temp_BS_Chart_Period==2]
+			} Frame label="Xmas light current" {
+				Chart item=Basement_current1 period=h refresh=60000 visibility=[Temp_BS_Chart_Period==0, Temp_BS_Chart_Period=="Uninitialized"]
+				Chart item=Basement_current1 period=D refresh=300000 visibility=[Temp_BS_Chart_Period==1]
+				Chart item=Basement_current1 period=W refresh=1200000 visibility=[Temp_BS_Chart_Period==2]
+			} Frame label="Eve heater current" {
+				Chart item=Basement_current2 period=h refresh=60000 visibility=[Temp_BS_Chart_Period==0, Temp_BS_Chart_Period=="Uninitialized"]
+				Chart item=Basement_current2 period=D refresh=300000 visibility=[Temp_BS_Chart_Period==1]
+				Chart item=Basement_current2 period=W refresh=1200000 visibility=[Temp_BS_Chart_Period==2]
+            }
+        }
+	}
+        /*
+	Frame label="Forecast" {
+		Text item=Weather_Temperature
+		Text item=Weather_Temp_Min
+		Text item=Weather_Temp_Max
+    }
+        */
+	Frame label="Status" {
+		Text item=Daemon_FF_Living
+		Text item=Daemon_SF_Hall
+		Text item=Daemon_AS_Studio
+        Text item=FrontDoor_Temperature
+	}
+    
+	Frame {
+        Text item=Weather_Temperature
+        Text item=Weather_Temp_Min
+        Text item=Weather_Temp_Max
+        /* Text item=Weather_Station */
+    
+		Switch item=Weather_Chart_Period label="Outdoor (from wunderground)" mappings=[0="Hour", 1="Day", 2="Week"]
+		Chart item=Weather_Chart period=h refresh=600 visibility=[Weather_Chart_Period==0, Weather_Chart_Period=="Uninitialized"]
+		Chart item=Weather_Chart period=D refresh=600 visibility=[Weather_Chart_Period==1]
+		Chart item=Weather_Chart period=W refresh=600 visibility=[Weather_Chart_Period==2]
+    
+	}
+	Frame {
+		Switch item=All_Temp_Chart_Period label="Temperatures" mappings=[0="Hour", 1="Day", 2="Week"]
+		Chart item=All_Temp_Chart period=h refresh=600 visibility=[All_Temp_Chart_Period==0, All_Temp_Chart_Period=="Uninitialized"]
+		Chart item=All_Temp_Chart period=D refresh=600 visibility=[All_Temp_Chart_Period==1]
+		Chart item=All_Temp_Chart period=W refresh=600 visibility=[All_Temp_Chart_Period==2]
+	}
+	Frame {
+		Chart item=All_Motion_Chart period=h refresh=600 visibility=[All_Temp_Chart_Period==0, All_Temp_Chart_Period=="Uninitialized"]
+		Chart item=All_Motion_Chart period=D refresh=600 visibility=[All_Temp_Chart_Period==1]
+		Chart item=All_Motion_Chart period=W refresh=600 visibility=[All_Temp_Chart_Period==2]
+	}
+	Frame {
+		Chart item=All_Humidity_Chart period=h refresh=600 visibility=[All_Temp_Chart_Period==0, All_Temp_Chart_Period=="Uninitialized"]
+		Chart item=All_Humidity_Chart period=D refresh=600 visibility=[All_Temp_Chart_Period==1]
+		Chart item=All_Humidity_Chart period=W refresh=600 visibility=[All_Temp_Chart_Period==2]
+	}
+}

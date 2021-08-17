@@ -136,7 +136,7 @@ class PanelMain(wx.Panel):
         #### MAIN panel ######
         wx.Panel.__init__(self,parent=parent)
         self.bnJon = wx.Button(self, -1, "Jon", (150,150))
-        self.bnGretch = wx.Button(self, -1, "Gretch", (150,150))
+        self.bnGretch = wx.Button(self, -1, "Other", (150,150))
         self.bnJon.SetFont(wx.Font(20, wx.DEFAULT, wx.BOLD, wx.NORMAL))
         self.bnGretch.SetFont(wx.Font(20, wx.DEFAULT, wx.BOLD, wx.NORMAL))
 
@@ -729,9 +729,12 @@ class MainFrame(wx.Frame):
            orstr = ""
        else:
            orstr = ":%0.2f min override" % orr
-       t = "%d:%02d%s %d/%d/%d" % (h, now.minute, ampm, now.month, now.day, now.year)
-       self.pnScrenSaver.lblTemp.SetLabel("%0.1f\nT: %0.1f" % (temp, targ))
-       self.pnScrenSaver.lblStatus.SetLabel("%s\n%s%s\nheat:%s cool:%s fan:%s\nlast motion %ds ago" % (t, statestr,orstr, whatson[0], whatson[1],whatson[2],lsm))
+       # t = "%d:%02d%s %d/%d/%d" % (h, now.minute, ampm, now.month, now.day, now.year)
+       t = "%d:%02d %s\n%d/%d/%d" % (h, now.minute, ampm, now.month, now.day, now.year)
+       #self.pnScrenSaver.lblTemp.SetLabel("%0.1f\nT: %0.1f" % (temp, targ))
+       self.pnScrenSaver.lblTemp.SetLabel("%0.1f\n%s" % (temp, t))
+       #self.pnScrenSaver.lblStatus.SetLabel("%s\n%s%s\nheat:%s cool:%s fan:%s\nlast motion %ds ago" % (t, statestr,orstr, whatson[0], whatson[1],whatson[2],lsm))
+       self.pnScrenSaver.lblStatus.SetLabel("")
 
     #################################################################### 
     def GetOverrideRemaining(self):
