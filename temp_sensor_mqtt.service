@@ -1,0 +1,13 @@
+[Unit]
+Description=Pi-based thermostat MQTT client
+After=multi-user.target
+
+[Service]
+User=jfstepha
+Type=simple
+WorkingDirectory=/home/jfstepha/bin/my-pi-thermostat
+ExecStart=/home/jfstepha/bin/my-pi-thermostat/temp_sensor_mqtt.py
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
