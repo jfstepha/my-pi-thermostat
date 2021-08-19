@@ -1,0 +1,17 @@
+# /etc/systemd/system/temp_sensor_mqtt_homie.service
+
+# start with sudo systemctl start temp_sensor_mqtt
+
+[Unit]
+Description=Pi-based thermostat MQTT homie client
+After=multi-user.target
+
+[Service]
+User=jfstepha
+Type=simple
+WorkingDirectory=/home/jfstepha/bin/my-pi-thermostat
+ExecStart=/home/jfstepha/bin/my-pi-thermostat/temp_sensor_mqtt_homie.py
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
