@@ -1,28 +1,21 @@
-
-/*** UPS stuff ****/
-Number UPS_load                 "UPS load [%.3f W]"   <temperature>  { exec="<[upsc apc ups.load:30000:REGEX(.*?([0-9]+))]" } 
-Number UPS_charge               "UPS battery charge [%.3f %%]"   <temperature>  { exec="<[upsc apc battery.charge:30000:REGEX(.*?([0-9]+))]" } 
-Number UPS_bat_voltage          "UPS battery voltage [%.3f V]"   <temperature>  { exec="<[upsc apc battery.voltage:30000:REGEX(.*?([0-9]+\\.?[0-9]*))]" } 
-Number UPS_bat_runtime          "UPS battery runtime [%.3f]"     <temperature>  { exec="<[upsc apc battery.runtime:30000:REGEX(.*?([0-9]+\\.?[0-9]*))]" } 
-Number UPS_in_voltage           "UPS input voltage [%.3f V]"     <temperature>  { exec="<[upsc apc input.voltage:30000:REGEX(.*?([0-9]+\\.?[0-9]*))]" } 
-String UPS_status               "UPS status [%s]"                    { exec="<[upsc apc ups.status:5000:REGEX(Init SSL without certificate database.(.*))]" }
-Number UPS_ticks_since_down     "UPS minutes since down [%d]" <temperature>
-
 /*** thermostats ***/
-Number Weather_Temperature          "Outside Temperature [%.1f °F]"   <temperature> { http="<[http://api.openweathermap.org/data/2.5/weather?zip=01748&units=imperial&APPID=973ed5529e08c6a5fec8b524f5722d12:900000:JSONPATH($.main.temp)]"}
 Number Weather_Temp_Day_Avg         "Outside Temp Day Avg so far [%.1f °F]"              <temperature> 
 Number Weather_Temp_Daily           "Outside Temp Daily Avg yesterday [%.1f °F]"         <temperature> 
-Number Temp_Basement_Office         "Basement Office Temp [%.1f]"                        <temperature>  {http="<[http://sf-thermo.localdomain/_liveSensorValue/thermo_SF/temp:5000:REGEX((.*?))]"}
-Number Temp_Lexi_BR                 "Lexi Bedroom Temp [%.1f]"                           <temperature>  {http="<[http://lexi-thermo.localdomain/_liveSensorValue/thermo_LEXI/temp:5000:REGEX((.*?))]"}
-Number Temp_Tate_BR                 "Tate Bedroom Temp [%.1f]"                           <temperature>  {http="<[http://as-thermo.localdomain/_liveSensorValue/thermo_AS/temp:5000:REGEX((.*?))]"}
-Number Temp_MBR                     "Master Bedroom Temp [%.1f]"                         <temperature>  {http="<[http://mbr-thermo.localdomain/_liveSensorValue/thermo_MBR/temp:5000:REGEX((.*?))]"}
-Number Temp_Kitchen_Thermo          "Thermostat temp [%.1f]"                             <temperature>  { exec="<[cat /tmp/honeywell_oaknab_status.txt -n:5000:REGEX(.*?DispTemperature\".([0-9]+).*)]" }
-Number Temp_Kitchen_Thermo2         "Kitchen Temp [%.1f]"                                <temperature>  {http="<[http://kitchen-thermo.localdomain/_liveSensorValue/thermo_KITCH/temp:5000:REGEX((.*?))]"}
-Number Temp_Outdoor                 "Outdoor temp [%.1f]"                                <temperature>  { exec="<[cat /tmp/honeywell_oaknab_status.txt -n:5000:REGEX(.*?OutdoorTemperature\".([0-9]+).*)]" }
+/* Number Temp_Basement_Office         "Basement Office Temp [%.1f]"                        <temperature>  {http="<[http://sf-thermo.localdomain/_liveSensorValue/thermo_SF/temp:5000:REGEX((.*?))]"} */
+/* Number Temp_Kitchen_Thermo          "Thermostat temp [%.1f]"                             <temperature>  { exec="<[cat /tmp/honeywell_oaknab_status.txt -n:5000:REGEX(.*?DispTemperature\".([0-9]+).*)]" } */
+/* Number Temp_Kitchen_Thermo2         "Kitchen Temp [%.1f]"                                <temperature>  {http="<[http://kitchen-thermo.localdomain/_liveSensorValue/thermo_KITCH/temp:5000:REGEX((.*?))]"} */
+/* Number Temp_Outdoor                 "Outdoor temp [%.1f]"                                <temperature>  { exec="<[cat /tmp/honeywell_oaknab_status.txt -n:5000:REGEX(.*?OutdoorTemperature\".([0-9]+).*)]" } */
 
-String Equip_Status                 "Equipment Output Status [%s]"                       <temperature>  { exec="<[cat /tmp/honeywell_oaknab_status.txt -n:5000:REGEX(.*?EquipmentOutputStatus\".([0-9]+).*)]" }
+/* These items moved to the new web interface and things:
+/* Number Weather_Temperature          "Outside Temperature [%.1f °F]"   <temperature> { http="<[http://api.openweathermap.org/data/2.5/weather?zip=01748&units=imperial&APPID=973ed5529e08c6a5fec8b524f5722d12:900000:JSONPATH($.main.temp)]"} */
+/* Number Temp_Lexi_BR                 "Lexi Bedroom Temp [%.1f]"                           <temperature>  {http="<[http://lexi-thermo.localdomain/_liveSensorValue/thermo_LEXI/temp:5000:REGEX((.*?))]"} */
+/* Number Temp_Tate_BR                 "Tate Bedroom Temp [%.1f]"                           <temperature>  {http="<[http://as-thermo.localdomain/_liveSensorValue/thermo_AS/temp:5000:REGEX((.*?))]"} */
+/* Number Temp_MBR                     "Master Bedroom Temp [%.1f]"                         <temperature>  {http="<[http://mbr-thermo.localdomain/_liveSensorValue/thermo_MBR/temp:5000:REGEX((.*?))]"} */
+
+
+/* String Equip_Status                 "Equipment Output Status [%s]"                       <temperature>  { exec="<[cat /tmp/honeywell_oaknab_status.txt -n:5000:REGEX(.*?EquipmentOutputStatus\".([0-9]+).*)]" } */
 Number Equip_Status_Scaled          "Equipment Output Status scaled [%.1f]"              <temperature>
-String Fan                          "Heating System Fan [%s]"                            <temperature>  { exec="<[cat /tmp/honeywell_oaknab_status.txt -n:5000:REGEX(.*?fanIsRunning\".([a-z]+).*)]" }
+/* String Fan                          "Heating System Fan [%s]"                            <temperature>  { exec="<[cat /tmp/honeywell_oaknab_status.txt -n:5000:REGEX(.*?fanIsRunning\".([a-z]+).*)]" } */
 Number Fan_Scaled                   "Heating System Fan scaled [%.1f]"                   <temperature>
 Number Fan_Duty_Cycle               "Heating System Fan Duty Cycle: [%.2f]"              <heating>
 Number Fan_Day_Avg_Duty_Cycle       "Heating System Fan Duty Cycle today so far: [%.2f]" <heating>
@@ -52,52 +45,9 @@ Number HeatOil_Duty_Cycle               "Oil Heat Duty Cycle: [%.2f]"           
 Number HeatOil_Day_Avg_Duty_Cycle       "Oil Heat Duty Cycle today so far: [%.2f]" <heating>
 Number HeatOil_Daily_Duty_Cycle         "Oil Heat Daily Duty yesterday: [%.2f]"    <heating>
 
-/***** Network stuff ********/
-Number Ping_Router    "Main Router Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh 192.168.1.1:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
-Number Ping_Stupid    "Not found ping      [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh 192.168.2.254:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
-Number Ping_Verizon   "Verizon Ping        [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh www.verizon.com:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
-Number Ping_Google    "Google Ping         [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh www.google.com:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
-Number Ping_tv_pc     "TV pc Ping          [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh tv-pc2.localdomain:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
-Number Ping_lexi_t    "Lexi-thermo Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh lexi-thermo.localdomain:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
-Number Ping_office_t  "Basement Office thermo Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh sf-thermo.localdomain:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
-Number Ping_tate_t    "Tate Bedroom thermo Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh as-thermo.localdomain:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
-Number Ping_mbr_t     "Master Bedroom thermo Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh mbr-thermo.localdomain:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
-Number Ping_kitchen_t "Kitchen thermo Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh kitchen-thermo.localdomain:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
-Number Speedtest      "Speetest [%.2f Mb/s]" <light> (BW_All) { exec="<[speedtest-cli:4000000:REGEX(.*Download: ([0-9]+.?[0-9]*).*)]" }
-
-/**** Power stuff *****/
-Number Power1_Power   "Power 1 power [%.3f W]"   <temperature>         { exec="<[/home/jfstepha/bin/my-pi-thermostat/pzem_reader.py -w -u 1:30000:REGEX(Watts ([0-9]+\\.?[0-9]*))]" }
-Number Power1_Current "Power 1 current [%.3f A]"   <temperature>       { exec="<[/home/jfstepha/bin/my-pi-thermostat/pzem_reader.py -c -u 1:30000:REGEX(Amps ([0-9]+\\.?[0-9]*))]" } 
-Number Power1_WattHours "Power 1 WattHours [%.3f Wh]"   <temperature>  { exec="<[/home/jfstepha/bin/my-pi-thermostat/pzem_reader.py -t -u 1:30000:REGEX(WHrs ([0-9]+\\.?[0-9]*))]" } 
-
-Number Power0_Power   "Power 0 power [%.3f W]"   <temperature>         { exec="<[/home/jfstepha/bin/my-pi-thermostat/pzem_reader.py -w -u 0:30000:REGEX(Watts ([0-9]+\\.?[0-9]*))]" }
-Number Power0_Current "Power 0 current [%.3f A]"   <temperature>       { exec="<[/home/jfstepha/bin/my-pi-thermostat/pzem_reader.py -c -u 0:30000:REGEX(Amps ([0-9]+\\.?[0-9]*))]" } 
-Number Power0_WattHours "Power 0 WattHours [%.3f Wh]"   <temperature>  { exec="<[/home/jfstepha/bin/my-pi-thermostat/pzem_reader.py -t -u 0:30000:REGEX(WHrs ([0-9]+\\.?[0-9]*))]" } 
-
-Number Power2_Power   "Total power [%.3f W]"   <temperature>         { exec="<[/home/jfstepha/bin/my-pi-thermostat/pzem_reader.py -w -u 2:30000:REGEX(Watts ([0-9]+\\.?[0-9]*))]" }
-Number Power2_Current "Total current [%.3f A]"   <temperature>       { exec="<[/home/jfstepha/bin/my-pi-thermostat/pzem_reader.py -c -u 2:30000:REGEX(Amps ([0-9]+\\.?[0-9]*))]" } 
-Number Power2_WattHours "Total WattHours [%.3f Wh]"   <temperature>  { exec="<[/home/jfstepha/bin/my-pi-thermostat/pzem_reader.py -t -u 2:30000:REGEX(WHrs ([0-9]+\\.?[0-9]*))]" } 
-
-Number Power0_Daily_WattHours "Power meter 0 WattHours yesterday [%.3f Wh]"  <temperature>  
-Number Power1_Daily_WattHours "Power meter 1 WattHours yesterday [%.3f Wh]"  <temperature>  
-Number Power2_Daily_WattHours "Total WattHours yesterday [%.3f Wh]"  <temperature>  
-
-Number TempSet  "Setpoint [%.1f]" <temperature> { exec="<[cat /tmp/honeywell_oaknab_status.txt -n:60000:REGEX(.*?CoolSetpoint\".([0-9]+).*)] >[*:/home/jfstepha/bin/openhab/honeywell_set_temp.sh %2$s]" }
+/* Number TempSet  "Setpoint [%.1f]" <temperature> { exec="<[cat /tmp/honeywell_oaknab_status.txt -n:60000:REGEX(.*?CoolSetpoint\".([0-9]+).*)] >[*:/home/jfstepha/bin/openhab/honeywell_set_temp.sh %2$s]" } */
 Number TempSet_Daily    "Average Day Heat Setpoint[%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
 Number TempSet_Day_Avg  "Average Day Heat Setpoint so far today[%.1f]" <temperature> (Temperature, FF_Living, Temp_LR_Chart)
 Number Temp_Outdoor_Minus_Set_Daily  "Outdoor temp minus setpoint [%.1f]"                                <temperature>  { exec="<[cat /tmp/honeywell_oaknab_status.txt -n:5000:REGEX(.*?OutdoorTemperature\".([0-9]+).*)]" }
 
 
-/*** Phillips HUE stuff ****/
-Switch  Light_Hall1_Toggle "Hall light 1"      { channel="hue:0100:1:bulb_hall1:brightness" }
-Dimmer  Light_Hall1_Dimmer "Hall light 1"      { channel="hue:0100:1:bulb_hall1:brightness" }
-Switch  Light_Hall2_Toggle "Hall light 2"      { channel="hue:0100:2:bulb_hall2:brightness" }
-Dimmer  Light_Hall2_Dimmer "Hall light 2"      { channel="hue:0100:2:bulb_hall2:brightness" }
-Switch  Light3_Toggle       { channel="hue:0100:1:bulb3:brightness" }
-Dimmer  Light3_Dimmer       { channel="hue:0100:1:bulb3:brightness" }
-Switch  Light4_Toggle       { channel="hue:0100:1:bulb4:brightness" }
-Dimmer  Light4_Dimmer       { channel="hue:0100:1:bulb4:brightness" }
-Switch  Light5_Toggle       { channel="hue:0100:1:bulb5:brightness" }
-Dimmer  Light5_Dimmer       { channel="hue:0100:1:bulb5:brightness" }
-Switch  Light6_Toggle       { channel="hue:0100:1:bulb6:brightness" }
-Dimmer  Light6_Dimmer       { channel="hue:0100:1:bulb6:brightness" } 

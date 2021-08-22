@@ -1,0 +1,2 @@
+cat /tmp/honeywell_oaknab_status.txt -n
+upsc apc

@@ -1,0 +1,18 @@
+/**** Power stuff *****/
+/* Number Power1_Power   "Power 1 power [%.3f W]"   <temperature>         { exec="<[/home/jfstepha/bin/my-pi-thermostat/pzem_reader.py -w -u 1:30000:REGEX(Watts ([0-9]+\\.?[0-9]*))]" }
+Number Power1_Current "Power 1 current [%.3f A]"   <temperature>       { exec="<[/home/jfstepha/bin/my-pi-thermostat/pzem_reader.py -c -u 1:30000:REGEX(Amps ([0-9]+\\.?[0-9]*))]" } 
+Number Power1_WattHours "Power 1 WattHours [%.3f Wh]"   <temperature>  { exec="<[/home/jfstepha/bin/my-pi-thermostat/pzem_reader.py -t -u 1:30000:REGEX(WHrs ([0-9]+\\.?[0-9]*))]" } 
+
+Number Power0_Power   "Power 0 power [%.3f W]"   <temperature>         { exec="<[/home/jfstepha/bin/my-pi-thermostat/pzem_reader.py -w -u 0:30000:REGEX(Watts ([0-9]+\\.?[0-9]*))]" }
+Number Power0_Current "Power 0 current [%.3f A]"   <temperature>       { exec="<[/home/jfstepha/bin/my-pi-thermostat/pzem_reader.py -c -u 0:30000:REGEX(Amps ([0-9]+\\.?[0-9]*))]" } 
+Number Power0_WattHours "Power 0 WattHours [%.3f Wh]"   <temperature>  { exec="<[/home/jfstepha/bin/my-pi-thermostat/pzem_reader.py -t -u 0:30000:REGEX(WHrs ([0-9]+\\.?[0-9]*))]" } 
+
+Number Power2_Power   "Total power [%.3f W]"   <temperature>         { exec="<[/home/jfstepha/bin/my-pi-thermostat/pzem_reader.py -w -u 2:30000:REGEX(Watts ([0-9]+\\.?[0-9]*))]" }
+Number Power2_Current "Total current [%.3f A]"   <temperature>       { exec="<[/home/jfstepha/bin/my-pi-thermostat/pzem_reader.py -c -u 2:30000:REGEX(Amps ([0-9]+\\.?[0-9]*))]" } 
+Number Power2_WattHours "Total WattHours [%.3f Wh]"   <temperature>  { exec="<[/home/jfstepha/bin/my-pi-thermostat/pzem_reader.py -t -u 2:30000:REGEX(WHrs ([0-9]+\\.?[0-9]*))]" } 
+*/
+
+Number Power0_Daily_WattHours "Power meter 0 WattHours yesterday [%.3f Wh]"  <temperature>  
+Number Power1_Daily_WattHours "Power meter 1 WattHours yesterday [%.3f Wh]"  <temperature>  
+Number Power2_Daily_WattHours "Total WattHours yesterday [%.3f Wh]"  <temperature>  
+

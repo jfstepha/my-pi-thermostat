@@ -1,0 +1,1 @@
+../openhab/pingit2.sh

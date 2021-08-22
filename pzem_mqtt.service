@@ -1,0 +1,16 @@
+# goes in /etc/systemd/system/
+# start with systemctl start pzem_mqtt
+# enable with systemctl enable pzeem_mqtt
+[Unit]
+Description=The PZEM power reader
+After=multi-user.target
+
+[Service]
+User=jfstepha
+Type=simple
+WorkingDirectory=/home/jfstepha/bin/my-pi-thermostat
+ExecStart=/home/jfstepha/bin/my-pi-thermostat/pzem_mqtt.py
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

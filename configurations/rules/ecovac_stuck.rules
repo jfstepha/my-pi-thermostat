@@ -1,0 +1,11 @@
+rule "ecovac stuck"
+when
+  Item ecovac_stuck_time changed from 61 to 71
+then
+  logInfo("FILE", "Ecovac is stuck!  Asking for help")
+
+  sendNotification("jfstepha@gmail.com", "Help! I'm stuck!  -Ecovac")
+
+  postUpdate (TEST, OFF)
+
+end

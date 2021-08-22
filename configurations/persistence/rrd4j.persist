@@ -3,7 +3,7 @@ Strategies {
 	everyMinute	: "0 * * * * ?"
 
 	// If no strategy is specified for an item entry below, the default list will be used.
-	default = everyChange
+	// default = everyChange
 }
 
 /*
@@ -12,6 +12,10 @@ Strategies {
  * item (excl. the group item itself).
  */
 Items {
+   * : strategy = everyChange, everyMinute, restoreOnStartup
+
+/* these were the old values, trying to change to save everything: */
+/*
 	Temperature* : strategy = everyMinute, restoreOnStartup
 	Weather_Temperature : strategy = everyMinute, restoreOnStartup
 	Fan_Duty_Cycle : strategy = everyMinute, restoreOnStartup
@@ -61,8 +65,9 @@ Items {
     Ping_mbr_t : strategy = everyMinute, restoreOnStartup
     Ping_kitchen_t : strategy = everyMinute, restoreOnStartup
     Speedtest : strategy = everyMinute, restoreOnStartup
-    Weather_Temp_Day_Avg : strategy = everyChange, restoreOnStartup
+    Weather_Temp_Day_Avg : strategy = everyChange, restoreOnStartup */
     /* these are for oaknab */
+/*
 	Temp_Kitchen_Thermo : strategy = everyMinute, restoreOnStartup
 	Temp_Kitchen_Thermo2 : strategy = everyMinute, restoreOnStartup
 	Temp_Outdoor : strategy = everyMinute, restoreOnStartup
@@ -89,4 +94,13 @@ Items {
 	UPS_bat_runtime : strategy = everyMinute, restoreOnStartup
 	UPS_in_voltage : strategy = everyMinute, restoreOnStartup
     UPS_ticks_since_down : strategy = everyMinute, restoreOnStartup
+    UPS_ticks_since_down : strategy = everyMinute, restoreOnStartup
+    EcobotDeebotMQTT_BatteryState : strategy = everyMinute, restoreOnStartup
+    EcobotDeebotMQTT_ChargeRate : strategy = everyMinute, restoreOnStartup
+    EcobotDeebotMQTT_DischargeRate : strategy = everyMinute, restoreOnStartup
+    ecovac_stuck_time : strategy = everyMinute, restoreOnStartup
+    ecovac_charge_state_scaled : strategy = everyMinute, restoreOnStartup
+    ecovac_clean_state_scaled : strategy = everyMinute, restoreOnStartup
+    ecovac_bot_status_scaled : strategy = everyMinute, restoreOnStartup
+*/
 }

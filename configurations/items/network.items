@@ -1,0 +1,14 @@
+
+/***** Network stuff ********/
+Number Ping_Router    "Main Router Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh 192.168.1.1:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_Stupid    "Not found ping      [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh 192.168.2.254:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_Verizon   "Verizon Ping        [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh www.verizon.com:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_Google    "Google Ping         [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh www.google.com:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_tv_pc     "TV pc Ping          [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh tv-pc2.localdomain:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_lexi_t    "Lexi-thermo Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh lexi-thermo.localdomain:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_office_t  "Basement Office thermo Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh sf-thermo.localdomain:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_tate_t    "Tate Bedroom thermo Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh as-thermo.localdomain:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_mbr_t     "Master Bedroom thermo Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh mbr-thermo.localdomain:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Ping_kitchen_t "Kitchen thermo Ping    [%.3f s]" <light> (Pings_All) { exec="<[/home/jfstepha/bin/openhab/pingit.sh kitchen-thermo.localdomain:60000:REGEX(([0-9]+\\.?[0-9]*))]" }
+Number Speedtest      "Speetest [%.2f Mb/s]" <light> (BW_All) { exec="<[speedtest-cli:4000000:REGEX(.*Download: ([0-9]+.?[0-9]*).*)]" }
+

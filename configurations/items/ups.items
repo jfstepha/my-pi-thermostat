@@ -1,0 +1,8 @@
+/*** UPS stuff ****/
+Number UPS_load                 "UPS load [%.3f W]"   <temperature>  { exec="<[upsc apc ups.load:30000:REGEX(.*?([0-9]+))]" } 
+Number UPS_charge               "UPS battery charge [%.3f %%]"   <temperature>  { exec="<[upsc apc battery.charge:30000:REGEX(.*?([0-9]+))]" } 
+Number UPS_bat_voltage          "UPS battery voltage [%.3f V]"   <temperature>  { exec="<[upsc apc battery.voltage:30000:REGEX(.*?([0-9]+\\.?[0-9]*))]" } 
+Number UPS_bat_runtime          "UPS battery runtime [%.3f]"     <temperature>  { exec="<[upsc apc battery.runtime:30000:REGEX(.*?([0-9]+\\.?[0-9]*))]" } 
+Number UPS_in_voltage           "UPS input voltage [%.3f V]"     <temperature>  { exec="<[upsc apc input.voltage:30000:REGEX(.*?([0-9]+\\.?[0-9]*))]" } 
+String UPS_status               "UPS status [%s]"                    { exec="<[upsc apc ups.status:5000:REGEX(Init SSL without certificate database.(.*))]" }
+Number UPS_ticks_since_down     "UPS minutes since down [%d]" <temperature>

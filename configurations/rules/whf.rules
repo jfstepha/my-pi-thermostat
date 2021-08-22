@@ -1,12 +1,15 @@
-import org.openhab.core.library.types.*
-import org.openhab.core.persistence.*
-import org.openhab.model.script.actions.*
+
+// import with astriks is depracated.  do I still need these?
+//import org.openhab.core.library.types.*
+//import org.openhab.core.persistence.*
+//import org.openhab.model.script.actions.*
 
 import java.util.List
-import java.util.ArrayList
+// apparently this is never used:
+//import java.util.ArrayList
 
 
-val org.eclipse.xtext.xbase.lib.Functions$Function1 calcMean = [ List<Integer> theArray |
+val org.eclipse.xtext.xbase.lib.Functions$Function1<List<Integer>, Float> calcMean = [ List<Integer> theArray |
 	// logInfo("FILE", "  * Calc Mean");
 	// logInfo("FILE", "    # array = " + theArray);
 	var sum = 0.0 
@@ -18,7 +21,7 @@ val org.eclipse.xtext.xbase.lib.Functions$Function1 calcMean = [ List<Integer> t
 	retval
 ]
 
-val org.eclipse.xtext.xbase.lib.Functions$Function1 calcMeanF = [ List<Float> theArray |
+val org.eclipse.xtext.xbase.lib.Functions$Function1<List<Float>, Float> calcMeanF = [ List<Float> theArray |
 	// logInfo("FILE", "  * Calc MeanF");
 	// logInfo("FILE", "    # array = " + theArray);
 	var sum = 0.0 
@@ -32,12 +35,12 @@ val org.eclipse.xtext.xbase.lib.Functions$Function1 calcMeanF = [ List<Float> th
 	retval
 ]
 
-val org.eclipse.xtext.xbase.lib.Functions$Function2 dumbFunction = [ theItem, List<Integer> theArray |
+val org.eclipse.xtext.xbase.lib.Functions$Function2 <String, List<Integer>, Void> dumbFunction = [ theItem, List<Integer> theArray |
 	//logInfo("FILE", "  * dumb function item " + theItem);
 	logInfo("FILE", "    * array = " + theArray);
 ]
 
-val org.eclipse.xtext.xbase.lib.Functions$Function2 pushItem = [ theItem, List<Integer> theArray |
+val org.eclipse.xtext.xbase.lib.Functions$Function2 <String, List<Integer>, List<Integer> > pushItem = [ theItem, List<Integer> theArray |
 	// logInfo("FILE", "    * array = " + theArray);
 	if( theItem == "true" || theItem == "1" ) { 
 	    // logInfo("FILE", "    * pushing 1");
@@ -54,7 +57,7 @@ val org.eclipse.xtext.xbase.lib.Functions$Function2 pushItem = [ theItem, List<I
 	theArray;
 ]
 
-val org.eclipse.xtext.xbase.lib.Functions$Function2 pushItemL = [ theItem, List<Integer> theArray |
+val org.eclipse.xtext.xbase.lib.Functions$Function2 <String, List<Integer>, List<Integer> > pushItemL = [ theItem, List<Integer> theArray |
 	// logInfo("FILE", "    * array = " + theArray);
 	if( theItem == "true" || theItem=="1" ) { 
 	    // logInfo("FILE", "    * pushing 1");
@@ -73,18 +76,18 @@ val org.eclipse.xtext.xbase.lib.Functions$Function2 pushItemL = [ theItem, List<
 
 /* for duty cycles */
 
-val List<Integer> aryFan = newArrayList(0,0,1,1)           /* last 4 hours */
-val List<Integer> aryFanDayAvg = newArrayList(0,0,1,1)     /* avg for the day */
-val List<Integer> aryHeat = newArrayList(0,0,1,1)           /* last 4 hours */
-val List<Integer> aryHeatDayAvg = newArrayList(0,0,1,1)     /* avg for the day */
-val List<Integer> aryHeatPump = newArrayList(0,0,1,1)           /* last 4 hours */
-val List<Integer> aryHeatPumpDayAvg = newArrayList(0,0,1,1)     /* avg for the day */
-val List<Integer> aryCool = newArrayList(0,0,1,1)           /* last 4 hours */
-val List<Integer> aryCoolDayAvg = newArrayList(0,0,1,1)     /* avg for the day */
-val List<Integer> aryHeatOil = newArrayList(0,0,1,1)           /* last 4 hours */
-val List<Integer> aryHeatOilDayAvg = newArrayList(0,0,1,1)     /* avg for the day */
-val List<Float> aryTempOutdoor = newArrayList(50,50,50)    /* avg for the day */
-val List<Float> arySetpoint = newArrayList(50,50,50)       /* avg for the day */
+var List<Integer> aryFan = newArrayList(0,0,1,1)           /* last 4 hours */
+var List<Integer> aryFanDayAvg = newArrayList(0,0,1,1)     /* avg for the day */
+var List<Integer> aryHeat = newArrayList(0,0,1,1)           /* last 4 hours */
+var List<Integer> aryHeatDayAvg = newArrayList(0,0,1,1)     /* avg for the day */
+var List<Integer> aryHeatPump = newArrayList(0,0,1,1)           /* last 4 hours */
+var List<Integer> aryHeatPumpDayAvg = newArrayList(0,0,1,1)     /* avg for the day */
+var List<Integer> aryCool = newArrayList(0,0,1,1)           /* last 4 hours */
+var List<Integer> aryCoolDayAvg = newArrayList(0,0,1,1)     /* avg for the day */
+var List<Integer> aryHeatOil = newArrayList(0,0,1,1)           /* last 4 hours */
+var List<Integer> aryHeatOilDayAvg = newArrayList(0,0,1,1)     /* avg for the day */
+var List<Float> aryTempOutdoor = newArrayList(50,50,50)    /* avg for the day */
+var List<Float> arySetpoint = newArrayList(50,50,50)       /* avg for the day */
 
 rule "Calc Daily"
 when Time cron "0 5 0 * * ?" then
@@ -205,7 +208,7 @@ when Time cron "5 * * * * ?" then
 
     logInfo("FILE", " ** Calculating daily average outdoor temp ** ")
 	logInfo("FILE", "    * outdoor= " + Weather_Temperature.state)
-    aryTempOutdoor.add( (Weather_Temperature.state as DecimalType).floatValue ) 
+    aryTempOutdoor.add( (Weather_Temperature.state as QuantityType<Temperature>).floatValue ) 
     logInfo("FILE", " posting update")
     postUpdate( Weather_Temp_Daily, String::format("%.7f", (calcMeanF.apply( aryTempOutdoor ) ) ) )
     logInfo("FILE", " calculating new agv")
@@ -213,7 +216,7 @@ when Time cron "5 * * * * ?" then
 
     logInfo("FILE", " ** Calculating daily average setpoint temp ** ")
 	logInfo("FILE", "    * setpoint= " + TempSet.state)
-    arySetpoint.add( (TempSet.state as DecimalType).floatValue ) 
+    arySetpoint.add( (TempSet.state as QuantityType<Temperature>).floatValue ) 
     logInfo("FILE", " posting update")
     postUpdate( TempSet_Day_Avg, String::format("%.7f", (calcMeanF.apply( arySetpoint ) ) ) )
     logInfo("FILE", " calculating new agv")
@@ -225,8 +228,12 @@ end
 rule "Update Honeywell Thermostat"
 when Time cron "*/15 * * * * ?" then
     logInfo("FILE", "---- updating honeywell thermostat ----")
-    val String results=executeCommandLine("/home/jfstepha/bin/openhab/refresh_txt.sh", 10000)
-    logInfo("FILE", results)
+    logInfo("FILE", "- executing the command:")
+    logInfo("FILE", "- this used to run a command, but now does not -")
+    logInfo("FILE", "- Equip Status:" + Equip_Status.state )
+    logInfo("FILE", "- Fan Running:" + Fan.state )
+    /* val results=executeCommandLine(Duration.ofSeconds(10),"/home/jfstepha/bin/openhab/refresh_txt.sh")
+       logInfo("FILE", results) */
     logInfo("FILE", "---- done honeywell done----")
     
 end
@@ -239,7 +246,7 @@ rule "Fan scaling"
 when
         Item Fan received update
 then
-    if (Fan.state=="true") {
+    if (Fan.state=="True") {
         postUpdate(Fan_Scaled, 55)
     }
     else {
@@ -252,7 +259,7 @@ rule "Equip scaling"
 when
     Item Equip_Status received update
 then
-    if (Equip_Status.state=="0") {
+    if (Equip_Status.state=="off") {
         postUpdate(Heat_Status, "0")
         postUpdate(HeatPump_Status, "0")
         postUpdate(Cool_Status, "0")
@@ -263,7 +270,7 @@ then
         postUpdate(Cool_Scaled, 40)
         postUpdate(HeatOil_Scaled, 0)
     }
-    else if (Equip_Status.state=="1") {
+    else if (Equip_Status.state=="heat") {
         postUpdate(Equip_Status_Scaled, 35)
         postUpdate(Heat_Scaled, 25)
         postUpdate(Heat_Status, "1")
@@ -275,7 +282,7 @@ then
             postUpdate(HeatOil_Status, "1")
         }
     }
-    else if (Equip_Status.state=="2") {
+    else if (Equip_Status.state=="cool") {
         postUpdate(Equip_Status_Scaled, 40)
         postUpdate(Cool_Scaled, 45)
         postUpdate(Cool_Status, "1")
