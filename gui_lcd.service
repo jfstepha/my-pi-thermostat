@@ -1,0 +1,17 @@
+# goes in /etc/systemd/system/
+# start with systemctl start pzem_mqtt
+# enable with systemctl enable pzeem_mqtt
+
+[Unit]
+Description=Pi-based LCD display service
+After=multi-user.target
+
+[Service]
+User=jfstepha
+Type=simple
+WorkingDirectory=/home/jfstepha/bin/my-pi-thermostat
+ExecStart=/home/jfstepha/bin/my-pi-thermostat/gui_lcd.py
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

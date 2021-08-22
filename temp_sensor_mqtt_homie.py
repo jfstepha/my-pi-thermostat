@@ -15,6 +15,7 @@
 import sys
 import time
 import os
+import ConfigParser
 
 import paho.mqtt.publish as pub
 from datetime import datetime
@@ -22,30 +23,17 @@ from datetime import datetime
 result = None
 retry = 0
 
+config = ConfigParser.ConfigParser()
+config.read("config.txt")
+did = config.get('homie','did')
+
 # MQTT settings
 MQTT_HOST="basement-pc"
 MQTT_PORT=1883
-did="tate-thermo"
 DEBUG=False
 loop=0
 
-# topics
-# /homie/did/$homie = 4.0
-# /homie/did/$name = did
-# /homie/did/$state = init  (then ready) (need to set LWT to "lost")
-# /homie/did/$nodes = "temperature,humidity
-# for prop = [temperature,humidity]:
-# /homie/did/prop/$name = prop
-# /homie/did/prop/$datatype = float
-# /homie/did/prop/$format = "-30:130" or "0:100"
-# /homie/did/prop/$settable = false
-# /homie/did/prop/$retained = true
-# /homie/did/prop = value
 
-
-
-# adafruit stuff 
-#dhtDevice = adafruit_dht.DHT22(board.D4)
 
 def publish_raw(topic_sub, msg, printit, will=None):
     now=datetime.today()

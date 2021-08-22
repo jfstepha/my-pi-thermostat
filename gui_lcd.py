@@ -1,67 +1,60 @@
 #!/usr/bin/python
-# Example using a character LCD connected to a Raspberry Pi or BeagleBone Black.
+
+
+import sys
 import time
-from subprocess import *
-import Adafruit_CharLCD as LCD
+import os
+import ConfigParser
+
+import paho.mqtt.client as mqtt
 from datetime import datetime
-from time import sleep, strftime
-import requests
 
-# Raspberry Pi pin configuration:
-lcd_rs        = 25  # Note this might need to be changed to 21 for older revision Pi's.
-lcd_en        = 24
-lcd_d4        = 23
-lcd_d5        = 4
-lcd_d6        = 26
-lcd_d7        = 22
-lcd_backlight = 27
+import I2C_LCD_driver
+from time import *
 
-# Define LCD column and row size for 16x2 LCD.
-lcd_columns = 16
-lcd_rows    = 2
-
-# Initialize the LCD using the pins above.
-lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7,
-                                   lcd_columns, lcd_rows, lcd_backlight)
-
-lcd.message('Starting...')
-print("backlight off")
-lcd.set_backlight(1)
-time.sleep(0.5)
-print("backlight on")
-lcd.set_backlight(0)
-time.sleep(0.5)
-print("Clearing")
-lcd.clear()
-time.sleep(0.5)
-print("Sending hello world:")
-lcd.message('Starting...')
-
-cmd = "iwconfig | grep Quality | awk '{print $2}' | cut -d= -f2"
-
-def get_web_val(url):
-    retval = -1
-    try:
-        r = requests.get( url )
-        retval = float(r.content)
-    except:
-        print "live temp request failed"
-    return retval
+config = ConfigParser.ConfigParser()
+config.read("config.txt")
+did = config.get('homie','did')
 
 
-def run_cmd(cmd):
-    p = Popen(cmd, shell=True, stdout=PIPE)
-    output = p.communicate()[0]
-    return output
+mylcd = I2C_LCD_driver.lcd()
+mylcd.lcd_display_string("Starting up..", 1)
+temp=""
+rh=""
 
-while 1:
-    temp = -1
-    rh = -1
-    lcd.clear()
-    wifi = run_cmd(cmd)
-    temp = get_web_val("http://localhost/_liveTemp")
-    rh = get_web_val( "http://localhost/_liveSensorValue/thermo_BR/rh")
-    setpt = get_web_val( "http://lr-thermo/_liveTargetTemp")
-    lcd.message('T:%0.1f rh:%0.1f%%' % ( temp, rh ) )
-    lcd.message("\nS:%0.1f W:%s" % (setpt, wifi) )
-    sleep(10)
+result = None
+retry = 0
+
+# MQTT settings
+MQTT_HOST="basement-pc"
+MQTT_PORT=1883
+DEBUG=False
+loop=0
+
+def on_connect(client, userdata, flags, rc):  # The callback for when the client connects to the broker
+    print("Connected with result code {0}".format(str(rc)))  # Print result of connection attempt
+    client.subscribe( "homie/" + did + "/thermostat/temperature")
+    client.subscribe( "homie/" + did + "/thermostat/humidity")
+
+
+def on_message(client, userdata, msg):  # The callback for when a PUBLISH message is received from the server.
+
+    print("Message received-> " + msg.topic + " " + str(msg.payload))  # Print a received msg
+    global temp
+    global rh
+    if msg.topic ==  "homie/" + did + "/thermostat/temperature" :
+        print("setting temp to " + str(msg.payload) )
+        temp = msg.payload
+    if msg.topic ==  "homie/" + did + "/thermostat/humidity" :
+        print("setting humidity to " + str(msg.payload) )
+        rh = msg.payload
+    now=datetime.today()
+    dt_string = now.strftime("%m/%d %I:%M %p")
+    mylcd.lcd_display_string(dt_string, 1)
+    mylcd.lcd_display_string("%sF %s%%" % (temp, rh), 2)
+
+client = mqtt.Client( did + "-gui")
+client.on_connect = on_connect  # Define callback function for successful connection
+client.on_message = on_message  # Define callback function for receipt of a message
+client.connect( MQTT_HOST, MQTT_PORT )
+client.loop_forever()  # Start networking daemon
