@@ -23,10 +23,10 @@ config.read("config.txt")
 iplist_str = config.get('pinger','iplist')
 namelist_str = config.get('pinger','namelist')
 did = config.get('pinger','did')
-pinglist_str = config.get('pinger','pinglist',fallback='None')
+pinglist_str = config.get('pinger','pinglist',fallback="None")
 
 rec_ping = True
-if namelist_str == "None":
+if pinglist_str == "None":
     rec_ping = False
 
 

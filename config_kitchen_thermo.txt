@@ -45,3 +45,8 @@ ishub = 0
 
 [homie]
 did = kitchen-thermo
+
+[pinger]
+did = kitchen-thermo-pinger
+iplist = 192.168.1.1,8.8.8.8,localhost,basement-pc
+namelist = router,google,localhost,basementpc

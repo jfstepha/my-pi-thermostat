@@ -11,7 +11,7 @@ User=jfstepha
 Type=simple
 WorkingDirectory=/home/jfstepha/bin/my-pi-thermostat
 ExecStart=/home/jfstepha/bin/my-pi-thermostat/temp_sensor_mqtt_homie.py
-Restart=on-abort
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
