@@ -8,6 +8,7 @@
 
 import asyncio
 import time
+import sys
 from datetime import datetime
 
 from pylitterbot import Account
@@ -204,7 +205,9 @@ async def lr_main(client):
              print("Keyboard interrupt")
              exit()
         except:
-             print("[%s] %s exception " % (self.name, datetime.datetime.now() ), sys.exc_info() ) 
+             now=datetime.today()
+             dt_string = now.strftime("%m/%d/%Y %H:%M:%S")
+             print("[" + dt_string + "] pylitter_mqtt: robot#:%d loop %d EXCEPTION!!! " % (irobot,loop), sys.exc_info()[0] );
 
         client.loop_start()
         await asyncio.sleep(60)

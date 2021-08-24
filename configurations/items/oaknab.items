@@ -1,6 +1,7 @@
 /*** thermostats ***/
 Number Weather_Temp_Day_Avg         "Outside Temp Day Avg so far [%.1f °F]"              <temperature> 
 Number Weather_Temp_Daily           "Outside Temp Daily Avg yesterday [%.1f °F]"         <temperature> 
+/* moved to mqtt.  Also renamed to bo-thermo.localdomain */
 /* Number Temp_Basement_Office         "Basement Office Temp [%.1f]"                        <temperature>  {http="<[http://sf-thermo.localdomain/_liveSensorValue/thermo_SF/temp:5000:REGEX((.*?))]"} */
 /* Number Temp_Kitchen_Thermo          "Thermostat temp [%.1f]"                             <temperature>  { exec="<[cat /tmp/honeywell_oaknab_status.txt -n:5000:REGEX(.*?DispTemperature\".([0-9]+).*)]" } */
 /* Number Temp_Kitchen_Thermo2         "Kitchen Temp [%.1f]"                                <temperature>  {http="<[http://kitchen-thermo.localdomain/_liveSensorValue/thermo_KITCH/temp:5000:REGEX((.*?))]"} */
@@ -9,6 +10,7 @@ Number Weather_Temp_Daily           "Outside Temp Daily Avg yesterday [%.1f °F]
 /* These items moved to the new web interface and things:
 /* Number Weather_Temperature          "Outside Temperature [%.1f °F]"   <temperature> { http="<[http://api.openweathermap.org/data/2.5/weather?zip=01748&units=imperial&APPID=973ed5529e08c6a5fec8b524f5722d12:900000:JSONPATH($.main.temp)]"} */
 /* Number Temp_Lexi_BR                 "Lexi Bedroom Temp [%.1f]"                           <temperature>  {http="<[http://lexi-thermo.localdomain/_liveSensorValue/thermo_LEXI/temp:5000:REGEX((.*?))]"} */
+/* moved to mqtt.  Also renamed to tate-thermo.localdomain */
 /* Number Temp_Tate_BR                 "Tate Bedroom Temp [%.1f]"                           <temperature>  {http="<[http://as-thermo.localdomain/_liveSensorValue/thermo_AS/temp:5000:REGEX((.*?))]"} */
 /* Number Temp_MBR                     "Master Bedroom Temp [%.1f]"                         <temperature>  {http="<[http://mbr-thermo.localdomain/_liveSensorValue/thermo_MBR/temp:5000:REGEX((.*?))]"} */
 
