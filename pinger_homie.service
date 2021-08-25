@@ -1,0 +1,15 @@
+# copy to /etc/systemd/system
+# start with sudo systemctl start pinger_homie
+[Unit]
+Description=Network ping MQTT homie client
+After=multi-user.target
+
+[Service]
+User=jfstepha
+Type=simple
+WorkingDirectory=/home/jfstepha/bin/my-pi-thermostat
+ExecStart=/home/jfstepha/bin/my-pi-thermostat/pinger_homie.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
