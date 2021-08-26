@@ -8,3 +8,12 @@ sudo openhab-cli backup "backups/backup_`date +'%y%m%d%H%M%S'`.zip"
 # Which can be resored with 
 
 sudo openhab-cli restore <filename>
+
+# to make the .exe addin work, need to add the command to 
+# /etc/openhab/misc/exec.whitelist/
+
+# to check the size of the rrd4j database:
+sudo du -sh /var/lib/openhab/persistence/rrd4j/
+
+# to check the size of the influxdb database:
+sudo du -sh /var/lib/influxdb/data/openhab_db

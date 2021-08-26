@@ -1,2 +1,3 @@
 cat /tmp/honeywell_oaknab_status.txt -n
 upsc apc
+/home/jfstepha/bin/my-pi-thermostat/pzem_reset.py

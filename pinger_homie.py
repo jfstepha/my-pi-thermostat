@@ -18,6 +18,17 @@ import paho.mqtt.publish as pub
 import paho.mqtt.client as mqtt
 from datetime import datetime
 
+# /homie/basement-pc-pinger/kitchenthermo/ping : basment-pc ping time to kitchen-thermo
+# /homie/basement-pc-pinger/recping : keep alive ping from master
+# /homie/basement-pc-pinger/lsp : return back from client to master.
+
+# /homie/kitchen-thermo-pinger/google/ping : kitchen-thermo ping time to google
+# /homie/kitchen-thermo-pinger/recping : kitchen-thermo keep alive ping from master
+# /homie/kitchen-thermo-pinger/lsp : return back from client to master
+
+# master has to publish all the recpings, but the LSPs just go to openhab
+# client has to sub to it's own recping and publish 
+
 config = configparser.ConfigParser()
 config.read("config.txt")
 iplist_str = config.get('pinger','iplist')
@@ -56,8 +67,8 @@ lsp = 0
 
 def on_connect(client, userdata, flags, rc):  # The callback for when the client connects to the broker
     print("Connected with result code {0}".format(str(rc)))  # Print result of connection attempt
-    client.subscribe("homie/"+did+"/recping")  
     print( "subscribing to homie/"+did+"/recping")  
+    client.subscribe("homie/"+did+"/recping")  
 
 def on_message(client, userdata, msg):  # The callback for when a PUBLISH message is received from the server.
     now=datetime.today()
@@ -95,36 +106,40 @@ publish_raw("$name", did, True);
 #publish_raw("$mac", "00:13:ef:c0:17:4f", True);
 publish_raw("$fw-name", "pinger_homie.py", True);
 publish_raw("$fw-version", "0.0.0", True);
-publish_raw("$nodes", ','.join( namelist ), True);
+publish_raw("$nodes", (','.join( namelist )) + ",lsp", True);
 
 ping_history = []
 ping_history_long = []
 
-publish_raw( "lsp/$datatype", "integer", True);
-publish_raw( "lsp/$format", "0:1000", True);
-publish_raw( "lsp/$unit", "ms", True);
-publish_raw( "lsp/$settable", "false", True);
-publish_raw( "lsp/$retained", "true", True);
+publish_raw( "lsp/$name", "lsp", True);
+publish_raw( "lsp/$type", "pinger", True);
+publish_raw( "lsp/$properties", "lsp,lsp10,lsp100", True);
 
-publish_raw( "lsp10/$datatype", "integer", True);
-publish_raw( "lsp10/$format", "0:1000", True);
-publish_raw( "lsp10/$unit", "ms", True);
-publish_raw( "lsp10/$settable", "false", True);
-publish_raw( "lsp10/$retained", "true", True);
+publish_raw( "lsp/lsp/$datatype", "integer", True);
+publish_raw( "lsp/lsp/$format", "0:1000", True);
+publish_raw( "lsp/lsp/$unit", "loops", True);
+publish_raw( "lsp/lsp/$settable", "false", True);
+publish_raw( "lsp/lsp/$retained", "true", True);
 
-publish_raw( "lsp100/$datatype", "integer", True);
-publish_raw( "lsp100/$format", "0:1000", True);
-publish_raw( "lsp100/$unit", "ms", True);
-publish_raw( "lsp100/$settable", "false", True);
-publish_raw( "lsp100/$retained", "true", True);
+publish_raw( "lsp/lsp10/$datatype", "integer", True);
+publish_raw( "lsp/lsp10/$format", "0:1000", True);
+publish_raw( "lsp/lsp10/$unit", "loops", True);
+publish_raw( "lsp/lsp10/$settable", "false", True);
+publish_raw( "lsp/lsp10/$retained", "true", True);
+
+publish_raw( "lsp/lsp100/$datatype", "integer", True);
+publish_raw( "lsp/lsp100/$format", "0:1000", True);
+publish_raw( "lsp/lsp100/$unit", "loops", True);
+publish_raw( "lsp/lsp100/$settable", "false", True);
+publish_raw( "lsp/lsp100/$retained", "true", True);
 
 for i in range( 0, len( iplist ) ):
     ip = iplist[ i ]
     name = namelist[ i ]
 
-    publish_raw( name+"/$name", "thermostat", True);
+    publish_raw( name+"/$name", name, True);
     publish_raw( name+"/$type", "pinger", True);
-    publish_raw( name+"/$properties", "ping,avg,max10,max100,lsp,lsp10,lsp100", True);
+    publish_raw( name+"/$properties", "ping,avg,max10,max100", True);
     publish_raw( name+"/$name", "ping", True);
 
     publish_raw( name+"/ping/$datatype", "float", True);
@@ -183,9 +198,9 @@ while 1:
   lsp10 = max( lsp_history )
   lsp100 = max( lsp_history_long )
   if loop % N == 0:
-      publish_raw( "lsp", "{0:d}".format(lsp), printit);
-      publish_raw( "lsp10", "{0:d}".format(lsp10), printit);
-      publish_raw( "lsp100", "{0:d}".format(lsp100), printit);
+      publish_raw( "lsp/lsp", "{0:d}".format(lsp), printit);
+      publish_raw( "lsp/lsp10", "{0:d}".format(lsp10), printit);
+      publish_raw( "lsp/lsp100", "{0:d}".format(lsp100), printit);
 
   for i in range( 0, len( iplist ) ):
     ip = iplist[ i ]
