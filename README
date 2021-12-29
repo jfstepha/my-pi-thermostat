@@ -1,0 +1,6 @@
+# sometimes the influxdb stops working, and sometimes it can be fixed with:
+journalctl -u influxdb -f
+sudo service influxdb stop
+sudo rm -rf /var/lib/influxdb/data/_internal
+sudo service influxdb stop
+

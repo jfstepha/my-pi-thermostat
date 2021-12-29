@@ -1,0 +1,15 @@
+# copy to /etc/systemd/system
+# start with sudo systemctl start pylitterrobot_mqtt.service
+[Unit]
+Description=Litter Robot home automation bridge
+After=multi-user.target
+
+[Service]
+User=jfstepha
+Type=simple
+WorkingDirectory=/home/jfstepha/bin/my-pi-thermostat
+ExecStart=/home/jfstepha/bin/my-pi-thermostat/pylitterrobot_mqtt.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
