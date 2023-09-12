@@ -42,3 +42,9 @@ ZIP = 01748
 name = thermo_SF
 domain = SF
 ishub = 0
+
+[pinger]
+did = basement-pc-pinger
+iplist = 192.168.1.1,8.8.8.8,kitchen-thermo,bo-thermo,tate-thermo,mbr-thermo,localhost
+namelist = router,google,kitchenthermo,officethermo,tatethermo,mbrthermo,localhost
+pinglist = kitchen-thermo,bo-thermo,tate-thermo,mbr-thermo,basement-pc

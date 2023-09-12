@@ -9,4 +9,4 @@ date >> $tmpfile
 echo "** UPS Status **" >> $tmpfile
 upsc apc >> $tmpfile
 
-cat $tmpfile | mailx -v -r "jfstepha@gmail.com" -s "UPS State Changed: $1" -S smtp="smtp.gmail.com:587" -S smtp-use-starttls -S smtp-auth=login -S smtp-auth-user="jfstepha@gmail.com" -S smtp-auth-password="xrkamtoyyflxrseo" -S ssl-verify=ignore jfstepha@gmail.com
+cat $tmpfile | s-nail -v -r "jfstepha@gmail.com" -s "UPS State Changed: $1" -S smtp="smtp.gmail.com:587" -S smtp-use-starttls -S smtp-auth=login -S smtp-auth-user="jfstepha@gmail.com" -S smtp-auth-password="glvczievokuatsna" -S ssl-verify=ignore jfstepha@gmail.com

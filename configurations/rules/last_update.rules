@@ -1,0 +1,610 @@
+/* note: I started with everthing in seconds, but realized minutes makes more sense */
+
+
+var sst = 0.25 /* minutes per tick */
+rule "LastUpdate tick"
+when Time cron "*/15 * * * * ?" then
+    logInfo("FILE", "## Last update increment tick")
+    postUpdate(EcobeeSensorThermostat_SensorTemperature_ssu, (EcobeeSensorThermostat_SensorTemperature_ssu.state as DecimalType)+ sst)
+    postUpdate(EcobeeSensorHall1_SensorTemperature_ssu, (EcobeeSensorHall1_SensorTemperature_ssu.state as DecimalType)+ sst)
+    postUpdate(EcobeeSensorLexiroom_ssu, (EcobeeSensorLexiroom_ssu.state as DecimalType)+ sst)
+    postUpdate(EcobeeSensorTatebedroom_SensorTemperature_ssu, (EcobeeSensorTatebedroom_SensorTemperature_ssu.state as DecimalType)+ sst)
+    postUpdate(EcobotDeebotMQTT_BatteryState_ssu, (EcobotDeebotMQTT_BatteryState_ssu.state as DecimalType)+ sst)
+    postUpdate(garage_door1_GarageDoorRollershutter_ssu, (garage_door1_GarageDoorRollershutter_ssu.state as DecimalType)+ sst)
+    postUpdate(MyQGarageDoor2_GarageDoorRollershutter_ssu, (MyQGarageDoor2_GarageDoorRollershutter_ssu.state as DecimalType)+ sst)
+    postUpdate(Garageoutdoorlight_Power_ssu, (Garageoutdoorlight_Power_ssu.state as DecimalType)+ sst)
+    postUpdate(Garageoverhead_Power_ssu, (Garageoverhead_Power_ssu.state as DecimalType)+ sst)
+    postUpdate(downstairshallRoom_Power_ssu, (downstairshallRoom_Power_ssu.state as DecimalType)+ sst)
+    postUpdate(downstairshallswitch_DimmerSwitchState_ssu, (downstairshallswitch_DimmerSwitchState_ssu.state as DecimalType)+ sst)
+    postUpdate(Downstairshallswitch2_DimmerSwitchState_ssu, (Downstairshallswitch2_DimmerSwitchState_ssu.state as DecimalType)+ sst)
+    postUpdate(Hallbulb1_Brightness_ssu, (Hallbulb1_Brightness_ssu.state as DecimalType)+ sst)
+    postUpdate(Hallbulb2_Brightness_ssu, (Hallbulb2_Brightness_ssu.state as DecimalType)+ sst)
+    postUpdate(Hallbulb3_Brightness_ssu, (Hallbulb3_Brightness_ssu.state as DecimalType)+ sst)
+    postUpdate(Hallbulb3a_Brightness_ssu, (Hallbulb3a_Brightness_ssu.state as DecimalType)+ sst)
+    postUpdate(Hallbulb4_Brightness_ssu, (Hallbulb4_Brightness_ssu.state as DecimalType)+ sst)
+    postUpdate(Hallbulb5_Brightness_ssu, (Hallbulb5_Brightness_ssu.state as DecimalType)+ sst)
+    postUpdate(LitterRobot_Lasttimethedevicewasseen_ssu, (LitterRobot_Lasttimethedevicewasseen_ssu.state as DecimalType)+ sst)
+    postUpdate(basementpcpinger_lsp_ssu, (basementpcpinger_lsp_ssu.state as DecimalType)+ sst)
+    postUpdate(Temp_Basement_Office_ssu, (Temp_Basement_Office_ssu.state as DecimalType)+ sst)
+    postUpdate(Power1_Watts_ssu, (Power1_Watts_ssu.state as DecimalType)+ sst)
+    postUpdate(UPSthing_Ups_Load_ssu, (UPSthing_Ups_Load_ssu.state as DecimalType)+ sst)
+    postUpdate(BasmentRoom_Power_ssu, (BasmentRoom_Power_ssu.state as DecimalType)+ sst)
+    postUpdate(Basementswitch_DimmerSwitchState_ssu, (Basementswitch_DimmerSwitchState_ssu.state as DecimalType)+ sst)
+    postUpdate(Basementbulb1_Brightness_ssu, (Basementbulb1_Brightness_ssu.state as DecimalType)+ sst)
+    postUpdate(Basementbulb2_Brightness_ssu, (Basementbulb2_Brightness_ssu.state as DecimalType)+ sst)
+    postUpdate(Basementbulb3_Brightness_ssu, (Basementbulb3_Brightness_ssu.state as DecimalType)+ sst)
+    postUpdate(Temp_Lexi_BR_ssu, (Temp_Lexi_BR_ssu.state as DecimalType)+ sst)
+    postUpdate(TatesroomRoom_Power_ssu, (TatesroomRoom_Power_ssu.state as DecimalType)+ sst)
+    postUpdate(Tatesroomswitch_DimmerSwitchState_ssu, (Tatesroomswitch_DimmerSwitchState_ssu.state as DecimalType)+ sst)
+    postUpdate(Takebulb1_Brightness_ssu, (Takebulb1_Brightness_ssu.state as DecimalType)+ sst)
+    postUpdate(Tatebulb2_Brightness_ssu, (Tatebulb2_Brightness_ssu.state as DecimalType)+ sst)
+    postUpdate(Tatebulb3_Brightness_ssu, (Tatebulb3_Brightness_ssu.state as DecimalType)+ sst)
+    postUpdate(Tatebulb4_Brightness_ssu, (Tatebulb4_Brightness_ssu.state as DecimalType)+ sst)
+    postUpdate(Tatebulb5_Brightness_ssu, (Tatebulb5_Brightness_ssu.state as DecimalType)+ sst)
+    postUpdate(Tatebulb6_Brightness_ssu, (Tatebulb6_Brightness_ssu.state as DecimalType)+ sst)
+    postUpdate(Temp_Tate_BR_ssu, (Temp_Tate_BR_ssu.state as DecimalType)+ sst)
+    postUpdate(Kitchenoverheadlight1_KitchenOverhead1onoff_ssu, (Kitchenoverheadlight1_KitchenOverhead1onoff_ssu.state as DecimalType)+ sst)
+    postUpdate(Kitchenoverhead2_Brightness_ssu, (Kitchenoverhead2_Brightness_ssu.state as DecimalType)+ sst)
+    postUpdate(Kitchensinklight_Power_ssu, (Kitchensinklight_Power_ssu.state as DecimalType)+ sst)
+    postUpdate(Temp_Kitchen_Thermo2_ssu, (Temp_Kitchen_Thermo2_ssu.state as DecimalType)+ sst)
+    postUpdate(SonosPlay1Kitchen_MediaTitle_ssu, (SonosPlay1Kitchen_MediaTitle_ssu.state as DecimalType)+ sst)
+    postUpdate(SonosBeamLivingRoom_MediaTitle_ssu, (SonosBeamLivingRoom_MediaTitle_ssu.state as DecimalType)+ sst)
+    postUpdate(SonosOneSLBedroom_ssu, (SonosOneSLBedroom_ssu.state as DecimalType)+ sst)
+    postUpdate(LivingroomRoom_Power_ssu, (LivingroomRoom_Power_ssu.state as DecimalType)+ sst)
+    postUpdate(Livingroomswitch_DimmerSwitchState_ssu, (Livingroomswitch_DimmerSwitchState_ssu.state as DecimalType)+ sst)
+    postUpdate(Livingroombulb1_Color_ssu, (Livingroombulb1_Color_ssu.state as DecimalType)+ sst)
+    postUpdate(Livingroombulb2_Color_ssu, (Livingroombulb2_Color_ssu.state as DecimalType)+ sst)
+    postUpdate(Livingroombulb3_Color_ssu, (Livingroombulb3_Color_ssu.state as DecimalType)+ sst)
+    postUpdate(Livingroombulb4_Color_ssu, (Livingroombulb4_Color_ssu.state as DecimalType)+ sst)
+    postUpdate(Livingroombulb5_Color_ssu, (Livingroombulb5_Color_ssu.state as DecimalType)+ sst)
+    postUpdate(Livingroombulb6_Color_ssu, (Livingroombulb6_Color_ssu.state as DecimalType)+ sst)
+    postUpdate(Livingroombulb7_Color_ssu, (Livingroombulb7_Color_ssu.state as DecimalType)+ sst)
+    postUpdate(Livingroombulb8_Color_ssu, (Livingroombulb8_Color_ssu.state as DecimalType)+ sst)
+    postUpdate(MasterbedroomRoom_Power_ssu, (MasterbedroomRoom_Power_ssu.state as DecimalType)+ sst)
+    postUpdate(Masterbedroomswitch_DimmerSwitchState_ssu, (Masterbedroomswitch_DimmerSwitchState_ssu.state as DecimalType)+ sst)
+    postUpdate(Masterbedroombulb1_ssu, (Masterbedroombulb1_ssu.state as DecimalType)+ sst)
+    postUpdate(Wholehouseswitch_ssu, (Wholehouseswitch_ssu.state as DecimalType)+ sst)
+    postUpdate(Temp_MBR_ssu, (Temp_MBR_ssu.state as DecimalType)+ sst)
+    postUpdate(PaigesspaceRoom_ssu, (PaigesspaceRoom_ssu.state as DecimalType)+ sst)
+    postUpdate(paigespacelight1_Brightness_ssu, (paigespacelight1_Brightness_ssu.state as DecimalType)+ sst)
+    postUpdate(paigespacelight2_ssu, (paigespacelight2_ssu.state as DecimalType)+ sst)
+    postUpdate(paigespacelight3_ssu, (paigespacelight3_ssu.state as DecimalType)+ sst)
+    postUpdate(StairsLight_Stairslightonoff_ssu, (StairsLight_Stairslightonoff_ssu.state as DecimalType)+ sst)
+    postUpdate(StoveFan_StoveFanonoff_ssu, (StoveFan_StoveFanonoff_ssu.state as DecimalType)+ sst)
+    postUpdate(Sidedoorlight_Power_ssu, (Sidedoorlight_Power_ssu.state as DecimalType)+ sst)
+    postUpdate(eqWeather__OutdoorTemperature_ssu, (eqWeather__OutdoorTemperature_ssu.state as DecimalType)+ sst)
+//    postUpdate(xx_ssu, (xx_ssu.state as DecimalType)+ sst)
+end
+
+rule "CheckSonos"
+when Time cron "15 * * * * ?" then
+    logInfo("FILE", "#### Last update sonos update tick")
+    var thingStatusInfo = getThingStatusInfo("sonos:Beam:RINCON_347E5C9D2F1801400")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    Sonos LivingRoom is ONLINE, resetting to 0")
+        postUpdate(SonosBeamLivingRoom_MediaTitle_ssu, 0)
+    } else {
+        logInfo("FILE", "    Sonos LivingRoom is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("sonos:PLAY1:RINCON_347E5CCA76B001400")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    Sonos Kitchen is ONLINE, resetting to 0")
+        postUpdate(SonosPlay1Kitchen_MediaTitle_ssu, 0)
+    } else {
+        logInfo("FILE", "    Sonos Kitchen is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("sonos:OneSL:RINCON_5CAAFDCBAB2601400")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    Sonos Master Bedroom is ONLINE, resetting to 0")
+        postUpdate(SonosOneSLBedroom_ssu, 0)
+    } else {
+        logInfo("FILE", "    Sonos Master Bedroom is offline, not updating")
+    }    
+end
+
+/* This method is relying on the HUE's online/offline status */
+rule "CheckHue"
+when Time cron "0 * * * * ?" then
+    logInfo("FILE", "#### Last update HUE update tick")
+    var thingStatusInfo = getThingStatusInfo("hue:0100:ecb5fa0d8680:16")
+
+    thingStatusInfo = getThingStatusInfo("hue:0100:ecb5fa0d8680:16")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE Hallbulb1_Brightness is ONLINE, resetting to 0")
+        postUpdate(Hallbulb1_Brightness_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Hallbulb1_Brightness is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0100:ecb5fa0d8680:17")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE Hallbulb2_Brightness is ONLINE, resetting to 0")
+        postUpdate(Hallbulb2_Brightness_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Hallbulb2_Brightness is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0100:ecb5fa0d8680:15")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE Hallbulb3_Brightness is ONLINE, resetting to 0")
+        postUpdate(Hallbulb3_Brightness_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Hallbulb3_Brightness is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0100:ecb5fa0d8680:18")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE Hallbulb3a_Brightness is ONLINE, resetting to 0")
+        postUpdate(Hallbulb3a_Brightness_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Hallbulb3a_Brightness is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0100:ecb5fa0d8680:1")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE Hallbulb4_Brightness is ONLINE, resetting to 0")
+        postUpdate(Hallbulb4_Brightness_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Hallbulb4_Brightness is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0100:ecb5fa0d8680:2")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE Hallbulb5_Brightness is ONLINE, resetting to 0")
+        postUpdate(Hallbulb5_Brightness_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Hallbulb5_Brightness is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0820:ecb5fa0d8680:2")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE downstairshallswitch_DimmerSwitchState is ONLINE, resetting to 0")
+        postUpdate(downstairshallswitch_DimmerSwitchState_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE downstairshallswitch_DimmerSwitchState is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0820:ecb5fa0d8680:31")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE Downstairshallswitch2_DimmerSwitchState is ONLINE, resetting to 0")
+        postUpdate(Downstairshallswitch2_DimmerSwitchState_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Downstairshallswitch2_DimmerSwitchState is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:group:ecb5fa0d8680:1")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE downstairshallRoom_Power is ONLINE, resetting to 0")
+        postUpdate(downstairshallRoom_Power_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE downstairshallRoom_Power is offline, not updating")
+    }    
+
+
+    thingStatusInfo = getThingStatusInfo("hue:0100:ecb5fa0d8680:25")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Basementbulb1_Brightness is ONLINE, resetting to 0")
+        postUpdate(Basementbulb1_Brightness_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Basementbulb1_Brightness is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:group:ecb5fa0d8680:5")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  BasmentRoom_Power is ONLINE, resetting to 0")
+        postUpdate(BasmentRoom_Power_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE BasmentRoom_Power is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0820:ecb5fa0d8680:26")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Basementswitch_DimmerSwitchState is ONLINE, resetting to 0")
+        postUpdate(Basementswitch_DimmerSwitchState_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Basementswitch_DimmerSwitchState is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0100:ecb5fa0d8680:19")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Basementbulb2_Brightness is ONLINE, resetting to 0")
+        postUpdate(Basementbulb2_Brightness_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Basementbulb2_Brightness is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0100:ecb5fa0d8680:20")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Basementbulb3_Brightness is ONLINE, resetting to 0")
+        postUpdate(Basementbulb3_Brightness_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Basementbulb3_Brightness is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:group:ecb5fa0d8680:2")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  TatesroomRoom_Power is ONLINE, resetting to 0")
+        postUpdate(TatesroomRoom_Power_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE TatesroomRoom_Power is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0820:ecb5fa0d8680:23")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Tatesroomswitch_DimmerSwitchState is ONLINE, resetting to 0")
+        postUpdate(Tatesroomswitch_DimmerSwitchState_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Tatesroomswitch_DimmerSwitchState is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0100:ecb5fa0d8680:5")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Takebulb1_Brightness is ONLINE, resetting to 0")
+        postUpdate(Takebulb1_Brightness_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Takebulb1_Brightness is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0100:ecb5fa0d8680:6")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Tatebulb2_Brightness is ONLINE, resetting to 0")
+        postUpdate(Tatebulb2_Brightness_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Tatebulb2_Brightness is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0100:ecb5fa0d8680:3")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Tatebulb3_Brightness is ONLINE, resetting to 0")
+        postUpdate(Tatebulb3_Brightness_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Tatebulb3_Brightness is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0100:ecb5fa0d8680:4")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Tatebulb4_Brightness is ONLINE, resetting to 0")
+        postUpdate(Tatebulb4_Brightness_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Tatebulb4_Brightness is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0100:ecb5fa0d8680:27")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Tatebulb5_Brightness is ONLINE, resetting to 0")
+        postUpdate(Tatebulb5_Brightness_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Tatebulb5_Brightness is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0100:ecb5fa0d8680:28")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Tatebulb6_Brightness is ONLINE, resetting to 0")
+        postUpdate(Tatebulb6_Brightness_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Tatebulb6_Brightness is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:group:ecb5fa0d8680:3")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  LivingroomRoom_Power is ONLINE, resetting to 0")
+        postUpdate(LivingroomRoom_Power_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE LivingroomRoom_Power is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0820:ecb5fa0d8680:8")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Livingroomswitch_DimmerSwitchState is ONLINE, resetting to 0")
+        postUpdate(Livingroomswitch_DimmerSwitchState_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Livingroomswitch_DimmerSwitchState is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0210:ecb5fa0d8680:14")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Livingroombulb1_Color is ONLINE, resetting to 0")
+        postUpdate(Livingroombulb1_Color_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Livingroombulb1_Color is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0210:ecb5fa0d8680:11")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Livingroombulb2_Color is ONLINE, resetting to 0")
+        postUpdate(Livingroombulb2_Color_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Livingroombulb2_Color is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0210:ecb5fa0d8680:12")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Livingroombulb3_Color is ONLINE, resetting to 0")
+        postUpdate(Livingroombulb3_Color_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Livingroombulb3_Color is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0210:ecb5fa0d8680:13")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Livingroombulb4_Color is ONLINE, resetting to 0")
+        postUpdate(Livingroombulb4_Color_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Livingroombulb4_Color is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0210:ecb5fa0d8680:9")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Livingroombulb5_Color is ONLINE, resetting to 0")
+        postUpdate(Livingroombulb5_Color_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Livingroombulb5_Color is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0210:ecb5fa0d8680:10")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Livingroombulb6_Color is ONLINE, resetting to 0")
+        postUpdate(Livingroombulb6_Color_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Livingroombulb6_Color is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0210:ecb5fa0d8680:8")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Livingroombulb7_Color is ONLINE, resetting to 0")
+        postUpdate(Livingroombulb7_Color_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Livingroombulb7_Color is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0210:ecb5fa0d8680:7")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Livingroombulb8_Color is ONLINE, resetting to 0")
+        postUpdate(Livingroombulb8_Color_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Livingroombulb8_Color is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:group:ecb5fa0d8680:7")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  MasterbedroomRoom_Power is ONLINE, resetting to 0")
+        postUpdate(MasterbedroomRoom_Power_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE MasterbedroomRoom_Power is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0820:ecb5fa0d8680:36")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Masterbedroomswitch_DimmerSwitchState is ONLINE, resetting to 0")
+        postUpdate(Masterbedroomswitch_DimmerSwitchState_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Masterbedroomswitch_DimmerSwitchState is offline, not updating")
+    }    
+    thingStatusInfo = getThingStatusInfo("hue:0210:ecb5fa0d8680:26")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Masterbedroombulb1 is ONLINE, resetting to 0")
+        postUpdate(Masterbedroombulb1_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Masterbedroombulb1 is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0820:ecb5fa0d8680:59")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  Wholehouseswitch is ONLINE, resetting to 0")
+        postUpdate(Wholehouseswitch_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE Wholehouseswitch is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:group:ecb5fa0d8680:4")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  PaigesspaceRoom is ONLINE, resetting to 0")
+        postUpdate(PaigesspaceRoom_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE PaigesspaceRoom is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0100:ecb5fa0d8680:22")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  paigespacelight1_Brightness is ONLINE, resetting to 0")
+        postUpdate(paigespacelight1_Brightness_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE paigespacelight1_Brightness is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0100:ecb5fa0d8680:23")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  paigespacelight2 is ONLINE, resetting to 0")
+        postUpdate(paigespacelight2_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE paigespacelight2 is offline, not updating")
+    }    
+
+    thingStatusInfo = getThingStatusInfo("hue:0100:ecb5fa0d8680:24")
+    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+        logInfo("FILE", "    HUE  paigespacelight3 is ONLINE, resetting to 0")
+        postUpdate(paigespacelight3_ssu, 0)
+    } else {
+        logInfo("FILE", "    HUE paigespacelight3 is offline, not updating")
+    }    
+
+//    thingStatusInfo = getThingStatusInfo("yy")
+//    if ((thingStatusInfo !== null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+//        logInfo("FILE", "    HUE  xx is ONLINE, resetting to 0")
+//        postUpdate(xx_ssu, 0)
+//    } else {
+//        logInfo("FILE", "    HUE xx is offline, not updating")
+//    }    
+
+end
+
+rule "LastUpdate EcobeeUpdate"
+when Item EcobeeSensorThermostat_SensorTemperature received update then 
+    logInfo("FILE", "## Last update EcobeeSensorThermostat_SensorTemperature recieved update, was " + EcobeeSensorThermostat_SensorTemperature_ssu.state)
+    postUpdate(EcobeeSensorThermostat_SensorTemperature_ssu, 0)
+end
+
+rule "LastUpdate EcobeeSensorHall1_SensorTemperature"
+when Item EcobeeSensorHall1_SensorTemperature received update then 
+    logInfo("FILE", "## Last update EcobeeSensorHall1_SensorTemperature recieved update, was " + EcobeeSensorHall1_SensorTemperature_ssu.state)
+    postUpdate(EcobeeSensorHall1_SensorTemperature_ssu, 0)
+end
+
+rule "LastUpdate EcobeeSensorLexiroom"
+when Item EcobeeSensorLexiroom_SensorTemperature received update then 
+    logInfo("FILE", "## Last update EcobeeSensorLexiroom_SensorTemperature recieved update, was " + EcobeeSensorLexiroom_ssu.state)
+    postUpdate(EcobeeSensorLexiroom_ssu, 0)
+end
+
+rule "LastUpdate EcobeeSensorTatebedroom_SensorTemperature"
+when Item EcobeeSensorTatebedroom_SensorTemperature received update then 
+    logInfo("FILE", "## Last update EcobeeSensorTatebedroom_SensorTemperature recieved update, was " + EcobeeSensorTatebedroom_SensorTemperature_ssu.state)
+    postUpdate(EcobeeSensorTatebedroom_SensorTemperature_ssu, 0)
+end
+    
+rule "LastUpdate EcobotDeebotMQTT_BatteryState"
+when Item EcobotDeebotMQTT_BatteryState received update then 
+    logInfo("FILE", "## Last update EcobotDeebotMQTT_BatteryState recieved update, was " + EcobotDeebotMQTT_BatteryState_ssu.state)
+    postUpdate(EcobotDeebotMQTT_BatteryState_ssu, 0)
+end
+
+rule "LastUpdate garage_door1_GarageDoorRollershutter"
+when Item garage_door1_GarageDoorRollershutter received update then 
+    logInfo("FILE", "## Last update garage_door1_GarageDoorRollershutter recieved update, was " + garage_door1_GarageDoorRollershutter_ssu.state)
+    postUpdate(garage_door1_GarageDoorRollershutter_ssu, 0)
+end
+
+rule "LastUpdate MyQGarageDoor2_GarageDoorRollershutter"
+when Item MyQGarageDoor2_GarageDoorRollershutter received update then 
+    logInfo("FILE", "## Last update MyQGarageDoor2_GarageDoorRollershutter recieved update, was " + MyQGarageDoor2_GarageDoorRollershutter_ssu.state)
+    postUpdate(MyQGarageDoor2_GarageDoorRollershutter_ssu, 0)
+end
+
+
+rule "LastUpdate Garageoutdoorlight_Power"
+when Item Garageoutdoorlight_Power received update then 
+//    logInfo("FILE", "## Last update Garageoutdoorlight_Power recieved update, was " + Garageoutdoorlight_Power_ssu.state)
+    postUpdate(Garageoutdoorlight_Power_ssu, 0)
+end
+
+rule "LastUpdate Garageoverhead_Power"
+when Item Garageoverhead_Power received update then 
+//    logInfo("FILE", "## Last update Garageoverhead_Power recieved update, was " + Garageoverhead_Power_ssu.state)
+    postUpdate(Garageoverhead_Power_ssu, 0)
+end
+
+rule "LastUpdate downstairshallRoom_Power"
+when Item downstairshallRoom_Power received update then 
+    logInfo("FILE", "## Last update downstairshallRoom_Power recieved update, was " + downstairshallRoom_Power_ssu.state)
+    postUpdate(downstairshallRoom_Power_ssu, 0)
+end
+
+rule "LastUpdate LitterRobot_Lasttimethedevicewasseen"
+when Item LitterRobot_Lasttimethedevicewasseen received update then 
+    logInfo("FILE", "## Last update LitterRobot_Lasttimethedevicewasseen recieved update, was " + LitterRobot_Lasttimethedevicewasseen_ssu.state)
+    postUpdate(LitterRobot_Lasttimethedevicewasseen_ssu, 0)
+end
+
+rule "LastUpdate Temp_Basement_Office"
+when Item Temp_Basement_Office received update then 
+    logInfo("FILE", "## Last update Temp_Basement_Office recieved update, was " + Temp_Basement_Office_ssu.state)
+    postUpdate(Temp_Basement_Office_ssu, 0)
+end
+
+rule "LastUpdate basementpcpinger_lsp"
+when Item basementpcpinger_lsp received update then 
+    logInfo("FILE", "## Last update basementpcpinger_lsp recieved update, was " + basementpcpinger_lsp_ssu.state)
+    postUpdate(basementpcpinger_lsp_ssu, 0)
+end
+
+rule "LastUpdate Power1_Watts"
+when Item Power1_Watts received update then 
+    logInfo("FILE", "## Last update Power1_Watts recieved update, was " + Power1_Watts_ssu.state)
+    postUpdate(Power1_Watts_ssu, 0)
+end
+
+rule "LastUpdate UPSthing_Ups_Load"
+when Item UPSthing_Ups_Load received update then 
+    logInfo("FILE", "## Last update UPSthing_Ups_Load recieved update, was " + UPSthing_Ups_Load_ssu.state)
+    postUpdate(UPSthing_Ups_Load_ssu, 0)
+end
+
+rule "LastUpdate Temp_Lexi_BR"
+when Item Temp_Lexi_BR received update then 
+    logInfo("FILE", "## Last update Temp_Lexi_BR recieved update, was " + Temp_Lexi_BR_ssu.state)
+    postUpdate(Temp_Lexi_BR_ssu, 0)
+end
+
+rule "LastUpdate Temp_Tate_BR"
+when Item xx received update then 
+    logInfo("FILE", "## Last update Temp_Tate_BR recieved update, was " + Temp_Tate_BR_ssu.state)
+    postUpdate(Temp_Tate_BR_ssu, 0)
+end
+
+rule "LastUpdate Kitchenoverheadlight1_KitchenOverhead1onoff"
+when Item Kitchenoverheadlight1_KitchenOverhead1onoff received update then 
+    logInfo("FILE", "## Last update Kitchenoverheadlight1_KitchenOverhead1onoff recieved update, was " + Kitchenoverheadlight1_KitchenOverhead1onoff_ssu.state)
+    postUpdate(Kitchenoverheadlight1_KitchenOverhead1onoff_ssu, 0)
+end
+
+rule "LastUpdate Kitchenoverhead2_Brightness"
+when Item Kitchenoverhead2_Brightness received update then 
+//    logInfo("FILE", "## Last update Kitchenoverhead2_Brightness recieved update, was " + Kitchenoverhead2_Brightness_ssu.state)
+    postUpdate(Kitchenoverhead2_Brightness_ssu, 0)
+end
+
+rule "LastUpdate Kitchensinklight_Power"
+when Item Kitchensinklight_Power received update then 
+//    logInfo("FILE", "## Last update Kitchensinklight_Power recieved update, was " + Kitchensinklight_Power_ssu.state)
+    postUpdate(Kitchensinklight_Power_ssu, 0)
+end
+
+rule "LastUpdate Temp_Kitchen_Thermo2"
+when Item Temp_Kitchen_Thermo2 received update then 
+    logInfo("FILE", "## Last update Temp_Kitchen_Thermo2 recieved update, was " + Temp_Kitchen_Thermo2_ssu.state)
+    postUpdate(Temp_Kitchen_Thermo2_ssu, 0)
+end
+
+rule "LastUpdate SonosPlay1Kitchen_MediaTitle"
+when Item SonosPlay1Kitchen_MediaTitle received update then 
+    logInfo("FILE", "## Last update SonosPlay1Kitchen_MediaTitle recieved update, was " + SonosPlay1Kitchen_MediaTitle_ssu.state)
+    postUpdate(SonosPlay1Kitchen_MediaTitle_ssu, 0)
+end
+
+rule "LastUpdate Temp_MBR"
+when Item Temp_MBR received update then 
+    logInfo("FILE", "## Last update Temp_MBR recieved update, was " + Temp_MBR_ssu.state)
+    postUpdate(Temp_MBR_ssu, 0)
+end
+
+rule "LastUpdate StairsLight_Stairslightonoff"
+when Item StairsLight_Stairslightonoff received update then 
+    logInfo("FILE", "## Last update StairsLight_Stairslightonoff recieved update, was " + StairsLight_Stairslightonoff_ssu.state)
+    postUpdate(StairsLight_Stairslightonoff_ssu, 0)
+end
+
+rule "LastUpdate StoveFan_StoveFanonoff"
+when Item StoveFan_StoveFanonoff received update then 
+    logInfo("FILE", "## Last update StoveFan_StoveFanonoff recieved update, was " + StoveFan_StoveFanonoff_ssu.state)
+    postUpdate(StoveFan_StoveFanonoff_ssu, 0)
+end
+
+rule "LastUpdate eqWeather__OutdoorTemperature"
+when Item eqWeather__OutdoorTemperature received update then 
+    logInfo("FILE", "## Last update eqWeather__OutdoorTemperature recieved update, was " + eqWeather__OutdoorTemperature_ssu.state)
+    postUpdate(eqWeather__OutdoorTemperature_ssu, 0)
+end
+
+rule "LastUpdate Sidedoorlight_Power"
+when Item Sidedoorlight_Power received update then 
+//    logInfo("FILE", "## Last update Sidedoorlight_Power recieved update, was " + Sidedoorlight_Power_ssu.state)
+    postUpdate(Sidedoorlight_Power_ssu, 0)
+end
+
+//rule "LastUpdate xx"
+//when Item xx received update then 
+//    logInfo("FILE", "## Last update xx recieved update, was " + xx_ssu.state)
+//    postUpdate(xx_ssu, 0)
+//end

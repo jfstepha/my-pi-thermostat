@@ -1,0 +1,15 @@
+# copy to /etc/systemd/system
+# start with sudo systemctl start influx_yahoo.service
+[Unit]
+Description=Keep updated INTC stock price inthe influx database
+After=multi-user.target
+
+[Service]
+User=jfstepha
+Type=simple
+WorkingDirectory=/home/jfstepha/bin/my-pi-thermostat/influx_yahoo
+ExecStart=/home/jfstepha/bin/my-pi-thermostat/influx_yahoo/influx_yahoo.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
