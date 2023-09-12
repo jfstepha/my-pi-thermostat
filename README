@@ -4,3 +4,42 @@ sudo service influxdb stop
 sudo rm -rf /var/lib/influxdb/data/_internal
 sudo service influxdb stop
 
+
+# services
+# service startup files are in ls /etc/systemd/system
+# use sudo systemctl service xxxx start to start one.
+# use sudo service xxxx restart to restart one (or do we need to use systemctl?)
+# use sudo journalctl -f -u xxxx # to monitor the output
+# sudo journalctl -u xxxx  # dumps all the recent history?
+
+# list of services:
+pzem_mqtt.service  - the pzem / usb power monitoring      - /home/jfstepha/bin/my-pi-thermostat/pzem_mqtt.py  - I wrote it, uses minimalmodbus
+pylitterrobot_mqtt - litter robot                         - /home/jfstepha/bin/my-pi-thermostat/pylitterrobot_mqtt.py - started with github example
+influx_yahoo
+
+
+# misc stuff
+# for the MyQ garage door bindings:
+#   - Add the bridge
+#   - Go to openhab -> things -> click the blue + in the corner to add a new thing
+#   - Select the MyQ binding
+#   - Click the blue "Scan" up at top.  It should find the garage door and add them to the inbox.
+#   - Add the new devices from the inbox
+# It didn't work to just add the garage door without the binding finding them first.
+
+
+
+# email
+# email config is in /etc/ssmtp/ssmtp.conf
+# use an app password from gmail.  Go to google->manage account -> security -> 2-step verification -> App passwords
+# Test by:
+
+cat /tmp/email.txt 
+
+Subject: Terminal Email Send
+
+Email Content line 1
+Email Content line 2
+
+sendamil jfstepha@gmail.com < /tmp/email.txt
+
